@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">Boreas</string>
+    <string name="reg_actname">Register</string>
+    <string name="reg_name">Full Name</string>
+    <string name="reg_idname">Unique User ID</string>
+    <string name="reg_idname_desc">A unique mix of letters and numbers others can use to identify you with</string>
+    <string name="reg_locations">Where can you be found?</string>
+    <string name="reg_addtolist">Add another</string>
+    <string name="reg_nolocsmsg">No locations yet...</string>
+    <string name="reg_complete">REGISTER</string>
+    <string name="reg_error">Error in registering...</string>
+
+    <string name="chat_menutitle">Chat Menu</string>
+</resources>
