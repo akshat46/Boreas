@@ -11,4 +11,5 @@
     <string name="reg_error">Error in registering...</string>
 
     <string name="chat_menutitle">Chat Menu</string>
+    <string name="title_activity_wdtest">WDTest</string>
 </resources>

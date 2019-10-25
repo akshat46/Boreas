@@ -1,12 +1,16 @@
 package com.sjsu.boreas;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.util.Log;
+import android.widget.Toast;
 
-import java.io.File;
+import com.sjsu.boreas.wifidirecttest.WDTestActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -18,9 +22,23 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_WIFI_STATE) != PackageManager.PERMISSION_GRANTED)
+            Toast.makeText(this, "Permission not granted!", Toast.LENGTH_SHORT).show();
+        ContextCompat.checkSelfPermission(this, Manifest.permission.CHANGE_WIFI_STATE);
+        ContextCompat.checkSelfPermission(this, Manifest.permission.CHANGE_NETWORK_STATE);
+        ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET);
+        ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_NETWORK_STATE);
+        ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION);
+
+
+
+        Intent intent = new Intent(this, WDTestActivity.class);
+        startActivity(intent);
+
         //Check if device is already registered
         String [] files = fileList();
 
+        /*
         //Register device
         if(files.length  == 0){
             Intent intent = new Intent(this, RegisterActivity.class);
@@ -31,13 +49,6 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(this, ChatMenuActivity.class);
             startActivity(intent);
         }
-
-        /*
-        File dir = getFilesDir();
-        Log.v(TAG, "file directory: "+dir.getParent());
-        Log.v(TAG, "File List: ");
-        for(String myfile : fileList())
-            Log.v(TAG, myfile);
         */
     }
 }
