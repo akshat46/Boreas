@@ -8,6 +8,8 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.sjsu.boreas.wifidirecttest.WDTestActivity;
@@ -16,6 +18,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "DEBUG";
     public static final String USER_DATA_FILE = "userdata";
+    private Button bluetooth, wifi, radio;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,10 +33,15 @@ public class MainActivity extends AppCompatActivity {
         ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_NETWORK_STATE);
         ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION);
 
+        //Connect the buttons in code to the UI buttons
+        bluetooth = (Button)findViewById(R.id.bluetooth);
+        wifi = (Button)findViewById(R.id.wifi);
+        radio = (Button)findViewById(R.id.radio);
 
-
-        Intent intent = new Intent(this, WDTestActivity.class);
-        startActivity(intent);
+        //Set the action listeners for the buttons
+        bluetooth.setOnClickListener(buttonClickListener);
+        wifi.setOnClickListener(buttonClickListener);
+        radio.setOnClickListener(buttonClickListener);
 
         //Check if device is already registered
         String [] files = fileList();
@@ -51,4 +59,22 @@ public class MainActivity extends AppCompatActivity {
         }
         */
     }
+
+    //This is an anonymous class for the button actions listeners
+    private View.OnClickListener buttonClickListener = new View.OnClickListener(){
+        public void onClick(View v){
+            switch (v.getId()){
+                case R.id.bluetooth:
+                    break;
+                case R.id.wifi:
+                    Intent intent = new Intent(MainActivity.this, WDTestActivity.class);
+                    startActivity(intent);
+                    break;
+                case R.id.radio:
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
 }
