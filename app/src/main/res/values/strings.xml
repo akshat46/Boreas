@@ -5,11 +5,21 @@
     <string name="reg_idname">Unique User ID</string>
     <string name="reg_idname_desc">A unique mix of letters and numbers others can use to identify you with</string>
     <string name="reg_locations">Where can you be found?</string>
-    <string name="reg_addtolist">Add another</string>
-    <string name="reg_nolocsmsg">No locations yet...</string>
+    <string name="reg_locateme">Locate Me</string>
+    <string name="reg_nolocsmsg">Can make it easier to send messages to you</string>
     <string name="reg_complete">REGISTER</string>
     <string name="reg_error">Error in registering...</string>
+    <string name="reg_error_unfilled">All fields must be filled</string>
 
     <string name="chat_menutitle">Chat Menu</string>
     <string name="title_activity_wdtest">WDTest</string>
+    <string name="title_activity_group_chat">GroupChatActivity</string>
+
+    <string name="title_localchat">Local Chat</string>
+
+    <string name="button_bluetooth">Bluetooth</string>
+    <string name="button_radio">Radio</string>
+    <string name="button_wifi">Wi-Fi</string>
+
+    <string name="service_id">borasconnectiontest</string>
 </resources>
