@@ -107,10 +107,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void openRegistration(View v){
-//        Intent intent = new Intent(this, RegisterActivity.class);
-//        startActivityForResult(intent, REGISTER_ACTIVTY_REQUEST_CODE);
-        Intent i = new Intent(this, LandingPage.class);
-        startActivity(i);
+        Intent intent = new Intent(this, RegisterActivity.class);
+        startActivityForResult(intent, REGISTER_ACTIVTY_REQUEST_CODE);
     }
 
     public void openGroupchat(View v){
