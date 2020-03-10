@@ -140,7 +140,7 @@ public class MainActivity extends AppCompatActivity {
             Intent intent;
             switch (v.getId()){
                 case R.id.bluetooth:
-                    intent = new Intent(MainActivity.this, ChatActivity.class);
+                    intent = new Intent(MainActivity.this, ChatActivity2.class);
                     startActivity(intent);
                     break;
                 case R.id.wifi:
