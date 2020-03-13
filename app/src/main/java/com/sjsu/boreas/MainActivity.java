@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -133,31 +134,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    //This is an anonymous class for the button actions listeners
-    /*
-    private View.OnClickListener buttonClickListener = new View.OnClickListener(){
-        public void onClick(View v){
-            Intent intent;
-            switch (v.getId()){
-                case R.id.bluetooth:
-                    intent = new Intent(MainActivity.this, ChatActivity.class);
-                    startActivity(intent);
-                    break;
-                case R.id.wifi:
-                    intent = new Intent(MainActivity.this, WDTestActivity.class);
-                    startActivity(intent);
-                    break;
-                case R.id.radio:
-                    intent = new Intent(MainActivity.this, RegisterActivity.class);
-                    //intent.setType()
-                    startActivity(intent);
-                    break;
-                default:
-                    break;
-            }
-        }
-    };*/
-
     public void requestPermissions(){
         if(ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
@@ -177,5 +153,9 @@ public class MainActivity extends AppCompatActivity {
         }else{
             System.out.println("Permission already granted");
         }
+    }
+
+    public static void makeLog(String text){
+        Log.i("BOREAS_LOG", text);
     }
 }

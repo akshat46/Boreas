@@ -10,8 +10,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import com.sjsu.boreas.MainActivity;
 import com.sjsu.boreas.R;
 import com.sjsu.boreas.connection_handlers.NearbyConnectionHandler;
+import com.sjsu.boreas.messages.TextMessage;
+
+import java.util.List;
 
 /**
  * Represents main chat activity. Pass in whichever set of messages or chat algorithm/participants
@@ -19,8 +23,6 @@ import com.sjsu.boreas.connection_handlers.NearbyConnectionHandler;
  * Lots of code from: https://www.scaledrone.com/blog/android-chat-tutorial/
  */
 public class ChatActivity extends AppCompatActivity {
-
-    private NearbyConnectionHandler messageAlgorithm;
 
     private ChatMessageAdapter messageAdapter;
     private ListView textArea;
@@ -38,9 +40,6 @@ public class ChatActivity extends AppCompatActivity {
         messageAdapter = new ChatMessageAdapter(this);
         textArea = (ListView) findViewById(R.id.chat_textarea);
         textArea.setAdapter(messageAdapter);
-
-        messageAlgorithm = new NearbyConnectionHandler(this);
-        messageAlgorithm.chatActivity = this;
 
         addMessage(true, "Me", "Hello, world!");
         //addMessage(false, "Me", "Hello, app!");
@@ -65,28 +64,30 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     public void toggleBluetooth(View v){
-        messageAlgorithm.startAdvertising();
+
     }
 
     public void toggleRadio(View v){
-        messageAlgorithm.startDiscovering();
+
     }
 
     public void toggleWifi(View v){
-        messageAlgorithm.startBroadcast();
+        //messageAlgorithm.startBroadcast();
     }
 
     @Override
     protected void onStart(){
-        messageAlgorithm.onStart();
-        messageAlgorithm.startAdvertising();
-        messageAlgorithm.startDiscovering();
         super.onStart();
+        MainActivity.nearbyConnectionHandler.setActiveActivity(this);
+        List<TextMessage> messageList = MainActivity.nearbyConnectionHandler.dequeueGroupChats();
+        for(TextMessage mess : messageList){
+            addMessage(false, mess.sender.name, mess.message);
+        }
     }
 
     @Override
     protected void onStop(){
-        messageAlgorithm.onStop();
+        MainActivity.nearbyConnectionHandler.removeActiveActivity();
         super.onStop();
     }
 
@@ -95,7 +96,7 @@ public class ChatActivity extends AppCompatActivity {
         if(msg.equals(""))
             return;
 
-        messageAlgorithm.sendMessage(msg);
+        MainActivity.nearbyConnectionHandler.sendGroupMessage(msg);
         messageText.setText("");
     }
 
