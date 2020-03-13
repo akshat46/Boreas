@@ -12,7 +12,9 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
-    <meta-data android:name="com.google.android.gms.nearby.connection.SERVICE_ID" android:value="@string/service_id" />
+    <meta-data
+        android:name="com.google.android.gms.nearby.connection.SERVICE_ID"
+        android:value="@string/service_id" />
 
     <uses-feature
         android:name="android.hardware.wifi.direct"
@@ -25,10 +27,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".GroupChatActivity"></activity>
+        <activity android:name=".LandingPage" />
         <activity
             android:name=".messaging.ChatActivity"
             android:label="@string/title_activity_group_chat"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".wifidirecttest.WDTestActivity" />
         <activity android:name=".ChatMenuActivity" />
         <activity android:name=".RegisterActivity" />
