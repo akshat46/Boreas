@@ -24,6 +24,9 @@ import com.sjsu.boreas.wifidirecttest.WDTestActivity;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+	
+	private static String TAG = "Boreas";
+	private static String SUB_TAG = "---MainActivity ";
 
     private static final int REGISTER_ACTIVTY_REQUEST_CODE = 0;
     private static final int GROUPCHAT_ACTIVTY_REQUEST_CODE = 1;
@@ -38,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+		Log.e(TAG, SUB_TAG+"On create");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -75,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
      * @return Whether user has registered yet
      */
     private void checkRegistration(){
+		Log.e(TAG, SUB_TAG+"Checking registration");
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
@@ -95,6 +100,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void enableBasedOnRegistration(boolean isRegistered){
+		Log.e(TAG, SUB_TAG+"Enable based on registration");
         buttonRegister.setEnabled(!isRegistered);
         buttonGroupchat.setEnabled(isRegistered);
         buttonFriends.setEnabled(isRegistered);
@@ -102,30 +108,36 @@ public class MainActivity extends AppCompatActivity {
         if(!isRegistered)
             openRegistration(null);
         else{
+			Log.e(TAG, SUB_TAG+"User is registered");
             if(nearbyConnectionHandler == null)
                 nearbyConnectionHandler = new NearbyConnectionHandler(this);
+			Intent intent = new Intent(this, LandingPage.class);
+			startActivity(intent);
         }
     }
 
     public void openRegistration(View v){
+		Log.e(TAG, SUB_TAG+"Opening registration activity");
         Intent intent = new Intent(this, RegisterActivity.class);
         startActivityForResult(intent, REGISTER_ACTIVTY_REQUEST_CODE);
     }
 
     public void openGroupchat(View v){
+		Log.e(TAG, SUB_TAG+"Opening group chat");
         Intent intent = new Intent(this, ChatActivity.class);
         startActivity(intent);
     }
 
     public void openFriends(View v){
-
+		Log.e(TAG, SUB_TAG+"Opening freinds");
     }
 
     public void openEmergency(View v){
-
+		Log.e(TAG, SUB_TAG+"Opening Emergency");
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data){
+		Log.e(TAG, SUB_TAG+"On activity result");
         super.onActivityResult(requestCode, resultCode, data);
         switch(resultCode){
             case REGISTER_ACTIVTY_REQUEST_CODE:
@@ -135,9 +147,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void requestPermissions(){
+		Log.e(TAG, SUB_TAG+"Request Permission");
         if(ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
             System.out.println("Permission not granted!");
+            Log.e(TAG, SUB_TAG+"Permission not granted");
             ActivityCompat.requestPermissions(this, new String[]{
                             Manifest.permission.ACCESS_WIFI_STATE,
                             Manifest.permission.CHANGE_WIFI_STATE,

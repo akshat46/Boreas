@@ -5,6 +5,7 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -27,11 +28,15 @@ public class ChatActivity extends AppCompatActivity {
     private ChatMessageAdapter messageAdapter;
     private ListView textArea;
 
+	private static String TAG = "Boreas";
+	private static String SUB_TAG = "---ChatAcitvity ";
+	
     private Button advertise, discover, broadcast;
     private EditText messageText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+		Log.e(TAG, SUB_TAG+"On Create");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -93,6 +98,7 @@ public class ChatActivity extends AppCompatActivity {
 
     public void sendMessage(View v){
         String msg = messageText.getText().toString();
+        Log.e(TAG, SUB_TAG+"Sending message");
         if(msg.equals(""))
             return;
 
