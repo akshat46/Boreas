@@ -28,7 +28,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".GroupChatActivity"></activity>
-        <activity android:name=".LandingPage" />
+        <activity android:name=".LandingPage"
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".messaging.ChatActivity"
             android:label="@string/title_activity_group_chat"

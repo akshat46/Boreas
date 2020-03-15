@@ -3,13 +3,18 @@ package com.sjsu.boreas.connection_handlers;
 import android.app.Activity;
 import android.util.Log;
 
+import androidx.fragment.app.Fragment;
+
 import com.google.android.gms.nearby.Nearby;
 import com.google.android.gms.nearby.connection.AdvertisingOptions;
 import com.google.android.gms.nearby.connection.ConnectionsClient;
 import com.google.android.gms.nearby.connection.DiscoveryOptions;
 import com.google.android.gms.nearby.connection.Payload;
 import com.google.android.gms.nearby.connection.Strategy;
+import com.sjsu.boreas.LandingPage;
 import com.sjsu.boreas.MainActivity;
+import com.sjsu.boreas.ViewFragments.OfflineGroupFragment;
+import com.sjsu.boreas.ViewFragments.OneOnOneFragment;
 import com.sjsu.boreas.database.User;
 import com.sjsu.boreas.messages.TextMessage;
 import com.sjsu.boreas.messaging.ChatActivity;
@@ -29,7 +34,11 @@ public class NearbyConnectionHandler {
     private static final int DISCOVER_PERIOD = 120000; //2 minutes
     private static final int MAX_GROUPCHAT_FORWARDS = 3; //max hops a group chat message will be propagated
 
+    private static String TAG = "BOREAS";
+    private static String SUB_TAG = "---NearbyConnectionHandler ";
+
     private Activity context;
+    public Fragment activeFrag;
     public ChatActivity chatActivity;
     String deviceName;
     private NearbyCallbackHandler handlerNearby;
@@ -50,6 +59,7 @@ public class NearbyConnectionHandler {
     protected HashMap<String, String> neighbors; //neighbor userId to endpointId
 
     public NearbyConnectionHandler(Activity context){
+        Log.e(TAG, SUB_TAG+"NearbyConnectionHandler");
         this.context = context;
 
         groupchatQueue = new LinkedList<>();
@@ -69,6 +79,7 @@ public class NearbyConnectionHandler {
     }
 
     public void advanceConnectionState(){
+        Log.e(TAG, SUB_TAG+"advanceConnectionState");
         switch(connectionState){
             case 0:
                 startDiscovering();
@@ -100,10 +111,12 @@ public class NearbyConnectionHandler {
     }
 
     public void onStart(){
+        Log.e(TAG, SUB_TAG+"onStart");
         advanceConnectionState();
     }
 
     public void onStop(){
+        Log.e(TAG, SUB_TAG+"onStop");
         client.stopAllEndpoints();
         isAdvertising = false;
         isDiscovering = false;
@@ -111,6 +124,7 @@ public class NearbyConnectionHandler {
     }
 
     public void startAdvertising(){
+        Log.e(TAG, SUB_TAG+"startAdvertising");
         if(isAdvertising)
             return;
         isAdvertising = true;
@@ -120,6 +134,7 @@ public class NearbyConnectionHandler {
     }
 
     public void startDiscovering(){
+        Log.e(TAG, SUB_TAG+"startDiscovering");
         if(isDiscovering)
             return;
         isDiscovering = true;
@@ -129,6 +144,7 @@ public class NearbyConnectionHandler {
     }
 
     public void startBroadcast(){
+        Log.e(TAG, SUB_TAG+"startBroadcast");
         String payloadStr = "Hello from "+deviceName+"!";
         client.sendPayload(endpointName, Payload.fromBytes(payloadStr.getBytes()));
         System.out.println("Sent payload!");
@@ -136,26 +152,42 @@ public class NearbyConnectionHandler {
 
     //Helper Functions
     public String getDeviceName(){
+        Log.e(TAG, SUB_TAG+"getDeviceName");
         return deviceName;
     }
 
     public void setConnectionEndpointName(String name){
+        Log.e(TAG, SUB_TAG+"setConnectionEndpointName");
         endpointName = name;
     }
 
     public ConnectionsClient getClient(){
+        Log.e(TAG, SUB_TAG+"ConnectionsClient");
         return client;
     }
 
     public void setActiveActivity(Activity act){
+        Log.e(TAG, SUB_TAG+"setActiveActivity");
         activeActivity = act;
     }
 
     public void removeActiveActivity(){
+        Log.e(TAG, SUB_TAG+"removeActiveActivity");
         activeActivity = null;
     }
 
+    public void setActiveFragment(Fragment act){
+        Log.e(TAG, SUB_TAG+"Set active frag");
+        activeFrag = act;
+    }
+
+    public void removeActiveFragment(){
+        Log.e(TAG, SUB_TAG+"removeACtiveFrag");
+        activeFrag = null;
+    }
+
     public List<TextMessage> dequeueGroupChats(){
+        Log.e(TAG, SUB_TAG+"dequeueGroupChats");
         ArrayList<TextMessage> messages = new ArrayList<>(groupchatQueue.size());
         while(!groupchatQueue.isEmpty())
             messages.add(groupchatQueue.remove());
@@ -163,9 +195,11 @@ public class NearbyConnectionHandler {
     }
 
     public void sendGroupMessage(String text){
+        Log.e(TAG, SUB_TAG+"sendGroupMessage");
         TextMessage message = new TextMessage(MainActivity.currentUser, true, text);
-        if(activeActivity instanceof ChatActivity){
-            ((ChatActivity) activeActivity).addMessage(true, null, text);
+        if(activeActivity instanceof LandingPage && activeFrag instanceof OfflineGroupFragment){
+            Log.e(TAG, SUB_TAG+"Active activity is Landing Page");
+            ((OfflineGroupFragment) activeFrag).addMessage(true, null, text);
         }
 
         for(String neighbor : neighbors.keySet()){
@@ -175,6 +209,7 @@ public class NearbyConnectionHandler {
     }
 
     public void receiveMessage(TextMessage message){
+        Log.e(TAG, SUB_TAG+"receiveMessage");
         //Add to proper queue if need be
         if(message.isGroupchat && activeActivity instanceof ChatActivity){
             ((ChatActivity) activeActivity).addMessage(false, message.sender.name, message.message);
@@ -199,11 +234,13 @@ public class NearbyConnectionHandler {
     }
 
     public void sendMessage(String text) {
+        Log.e(TAG, SUB_TAG+"sendMessage");
         receiveMessage(null, text);
         client.sendPayload(endpointName, Payload.fromBytes(text.getBytes()));
     }
 
     public void receiveMessage(String sender, String text) {
+        Log.e(TAG, SUB_TAG+"receiveMessage");
         chatActivity.addMessage(sender == null, sender, text);
     }
 }

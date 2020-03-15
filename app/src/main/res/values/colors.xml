@@ -5,4 +5,14 @@
     <color name="colorText">#C5C6C7</color>
     <color name="colorTitle">#66FCF1</color>
     <color name="colorOutline">#45A29E</color>
+    
+    <color name="colorPrimary">#008577</color>
+    <color name="light_green">#42C533</color>
+    <color name="colorPrimaryDark">#00574B</color>
+    <color name="green_color">#329E60</color>
+    <color name="white">#FFFFFF</color>
+
+    <color name="common_border_color">#ffffff</color>
+    <color name="round_green">#0aea07</color>
+    <color name="chat_view_separator">#2faaaaaa</color>
 </resources>
