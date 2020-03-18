@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+android:background="@drawable/bg_gradient"
+android:orientation="vertical">
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/login_layout"
+    android:layout_marginLeft="0dp"
+    android:layout_centerVertical="true"
+    android:paddingTop="40dp"
+    android:paddingBottom="40dp"
+    android:paddingLeft="40dp"
+    android:elevation="12dp"
+    android:orientation="vertical"
+    android:background="@drawable/bg_curved">
+
+    <TextView
+        android:id="@+id/boreas-welcome"
+        android:layout_width="match_parent"
+        android:maxWidth="275dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textSize="12sp"
+        android:layout_marginBottom="-2dp"
+        android:fontFamily="@font/worksans_regular"
+        android:text="SIGN UP AND CONTINUE TO" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:maxWidth="275dp"
+        android:orientation="horizontal"
+        android:layout_gravity="center"
+        android:layout_marginBottom="30dp">
+        <ImageView
+            android:layout_width="30sp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="1dp"
+            android:adjustViewBounds="true"
+            android:src="@drawable/ic_send"/>
+
+        <TextView
+            android:id="@+id/eager-title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="30sp"
+            android:layout_marginLeft="5dp"
+            android:fontFamily="@font/worksans_extrabold"
+            android:text="BOREAS" />
+    </LinearLayout>
+
+    <EditText
+        android:id="@+id/register_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Full Name"
+        android:paddingBottom="15dp"
+        android:paddingTop="15dp"
+        android:textSize="18sp"
+        android:background="@drawable/bg_edittext"
+        android:layout_gravity="center"/>
+
+    <Button
+        android:layout_width="100dp"
+        android:layout_height="40dp"
+        android:text="Sign Up*"
+        android:textAllCaps="false"
+        android:fontFamily="@font/worksans_medium"
+        android:textColor="@color/background"
+        android:onClick="onSwitchToLoginButton"
+        android:background="@drawable/bg_button"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_marginTop="20dp"
+        android:layout_gravity="left"/>
+
+    <TextView
+        android:id="@+id/permission-text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:paddingRight="10dp"
+        android:gravity="left"
+        android:textSize="10dp"
+        android:fontFamily="@font/worksans_light"
+        android:text="*Boreas requires location permission to generate your unique ID." />
+
+</LinearLayout>
+
+</RelativeLayout>
