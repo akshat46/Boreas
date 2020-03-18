@@ -144,8 +144,11 @@ public class RegisterActivity extends AppCompatActivity implements LocationListe
         switch(requestCode){
             case 0: //Location permission to add current location
                 Log.e(TAG, SUB_TAG+"Location permission to add");
-                if(grantResults[0] == PackageManager.PERMISSION_GRANTED)
-                    obtainLocation();
+                obtainLocation();
+//                if(grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                    Log.e(TAG, SUB_TAG+"Permission Granted");
+//                    obtainLocation();
+//                }
                 break;
         }
     }

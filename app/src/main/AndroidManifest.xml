@@ -27,9 +27,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".GroupChatActivity"></activity>
-        <activity android:name=".LandingPage"
-            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name=".RegisterTempActivity"></activity>
+        <activity android:name=".GroupChatActivity" />
+        <activity
+            android:name=".LandingPage"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".messaging.ChatActivity"
             android:label="@string/title_activity_group_chat"
