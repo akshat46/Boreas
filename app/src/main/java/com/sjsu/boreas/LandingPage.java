@@ -54,8 +54,6 @@ public class LandingPage extends AppCompatActivity{
     private void makeADummyUserForFirebase(){
         Log.e(TAG, SUB_TAG+"makeADummyUserForFirebase");
         User u = new User("23", "name of", 123.4, -123.4, false);
-        RegisterOnFirebase r = new RegisterOnFirebase();
-        r.RegisterUserOnFirebase(u);
     }
 
     private void init() {
