@@ -21,9 +21,11 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.sjsu.boreas.ChatViewRelatedStuff.ViewPagerTabAdapter;
+import com.sjsu.boreas.Firebase.RegisterOnFirebase;
 import com.sjsu.boreas.ViewFragments.OfflineGroupFragment;
 import com.sjsu.boreas.ViewFragments.OneOnOneFragment;
 import com.sjsu.boreas.ViewFragments.OnlineGroupFragment;
+import com.sjsu.boreas.database.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,9 +47,17 @@ public class LandingPage extends AppCompatActivity{
 		//~ setUpNavigationDrawer();
 		
 		init();
+		makeADummyUserForFirebase();
 
     }
-    
+
+    private void makeADummyUserForFirebase(){
+        Log.e(TAG, SUB_TAG+"makeADummyUserForFirebase");
+        User u = new User("23", "name of", 123.4, -123.4, false);
+        RegisterOnFirebase r = new RegisterOnFirebase();
+        r.RegisterUserOnFirebase(u);
+    }
+
     private void init() {
 		Log.e(TAG, SUB_TAG+"Init");
         initViews();

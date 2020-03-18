@@ -6,6 +6,8 @@ import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 @Entity
 public class User implements Serializable {
@@ -36,5 +38,17 @@ public class User implements Serializable {
 
     public String toString(){
         return name+": "+uid+"\n"+latitude + " , " + longitude+"\n" + (isMe ? "IS" : "NOT") + " me";
+    }
+
+    public Map<String, Object> toMap(){
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("name", name);
+        result.put("latitude", latitude);
+        result.put("longitude", longitude);
+        return result;
+    }
+
+    public String getUid(){
+        return uid;
     }
 }
