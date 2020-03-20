@@ -10,15 +10,10 @@
 
     <Button
         android:id="@+id/mainmenu_button_register"
-        android:text="@string/reg_actname"
-        android:onClick="openRegistration"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-
-    <Space
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1"/>
+        android:onClick="openRegistration"
+        android:text="@string/reg_actname" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -27,32 +22,35 @@
 
         <Button
             android:id="@+id/mainmenu_button_groupchat"
-            android:text="Group Chat"
-            android:onClick="openGroupchat"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            android:onClick="openGroupchat"
+            android:text="Group Chat" />
 
         <Button
             android:id="@+id/mainmenu_button_friends"
-            android:text="Friends"
-            android:onClick="openFriends"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            android:onClick="openFriends"
+            android:text="Friends" />
 
     </LinearLayout>
 
     <Space
         android:layout_width="match_parent"
-        android:layout_height="15dp"/>
+        android:layout_height="15dp" />
 
     <Button
         android:id="@+id/mainmenu_button_emergency"
-        android:text="Emergency: SOS Call"
-        android:onClick="openEmergency"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:background="@color/green_color"
+        android:layout_height="wrap_content"
+        android:textColor="@color/white"
+        android:textSize="23sp"
+        android:onClick="openEmergency"
+        android:text="Emergency: SOS Call" />
 
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/navigation"
@@ -60,7 +58,6 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
-        app:menu="@menu/my_navigation_items"
-        />
+        app:menu="@menu/my_navigation_items" />
 
 </androidx.drawerlayout.widget.DrawerLayout>

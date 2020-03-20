@@ -62,10 +62,10 @@ public class OfflineGroupFragment extends Fragment {
                              Bundle savedInstanceState) {
         Log.e(TAG, SUB_TAG+"onCreateView");
         // Inflate the layout for this fragment
-        rootView = inflater.inflate(R.layout.activity_chat, container, false);
+        rootView = inflater.inflate(R.layout.content_group_chat, container, false);
 
-        Toolbar toolbar = rootView.findViewById(R.id.toolbar);
-        ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
+       /* Toolbar toolbar = rootView.findViewById(R.id.toolbar);
+        ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);*/
 
         messageAdapter = new ChatMessageAdapter(getActivity().getApplicationContext());
         textArea = (ListView) rootView.findViewById(R.id.chat_textarea);
