@@ -3,60 +3,80 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/green_color"
     android:orientation="vertical"
     tools:context=".RegisterActivity">
 
     <TextView
+        android:id="@+id/tv_sing_up"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="80dp"
+        android:gravity="center"
         android:text="@string/reg_actname"
-        android:textSize="35dp"
-        android:gravity="center"/>
+        android:textColor="@color/white"
+        android:textSize="30sp"
+        android:textStyle="bold" />
+
+    <ImageView
+        android:id="@+id/img_chat"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_below="@+id/tv_sing_up"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        android:src="@drawable/ic_chat_black_24dp" />
 
     <Space
         android:layout_width="match_parent"
-        android:layout_height="25dp"/>
+        android:layout_height="25dp" />
 
     <EditText
         android:id="@+id/regitem_name"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/reg_name"/>
+        android:layout_height="50dp"
+        android:layout_centerInParent="true"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginRight="30dp"
+        android:background="@color/white"
+        android:hint="@string/reg_name"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:textSize="18sp" />
 
     <Space
         android:layout_width="wrap_content"
-        android:layout_height="50dp"/>
-
-    <Space
-        android:layout_width="wrap_content"
-        android:layout_height="50dp"/>
+        android:layout_height="50dp" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/reg_locations"
         android:gravity="center"
-        android:textSize="20dp"
-        />
+        android:text="@string/reg_locations"
+        android:textColor="@color/white"
+        android:textSize="20dp" />
 
     <Space
         android:layout_width="match_parent"
-        android:layout_height="25dp"/>
+        android:layout_height="25dp" />
 
     <Button
         android:id="@+id/regitem_coordbutton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginRight="30dp"
+        android:background="@color/white"
+        android:onClick="addLocation"
         android:text="@string/reg_locateme"
-        android:onClick="addLocation"/>
+        android:textSize="18sp" />
 
     <Space
         android:layout_width="match_parent"
-        android:layout_height="25dp"/>
+        android:layout_height="25dp" />
 
 
     <TextView
@@ -64,25 +84,29 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="@string/reg_nolocsmsg" />
+        android:text="@string/reg_nolocsmsg"
+        android:textColor="@color/white" />
 
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:gravity="center|bottom">
+        android:layout_marginBottom="15dp"
+        android:gravity="center|bottom"
+        android:orientation="vertical">
 
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/reg_complete"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginRight="30dp"
+            android:background="@color/white"
             android:gravity="center"
             android:onClick="completeRegistration"
-            />
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="15dp"/>
+            android:text="@string/reg_complete"
+            android:textColor="@color/colorBack"
+            android:textSize="22sp" />
 
     </LinearLayout>
 
