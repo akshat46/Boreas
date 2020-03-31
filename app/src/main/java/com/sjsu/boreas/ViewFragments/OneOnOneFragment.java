@@ -80,7 +80,7 @@ public class OneOnOneFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(mParent);
         recyclerView.setLayoutManager(layoutManager);
-        mAdapter = new OneOnOneChatViewAdapter();
+        mAdapter = new OneOnOneChatViewAdapter(getActivity());
         recyclerView.setAdapter(mAdapter);
     }
 }
