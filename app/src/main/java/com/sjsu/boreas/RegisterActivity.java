@@ -19,10 +19,13 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,6 +45,7 @@ public class RegisterActivity extends AppCompatActivity implements LocationListe
 	
     EditText fullNameEditor;
     TextView locationLabel;
+    private LinearLayout registerLayout;
 
     private String bestProvider;
     private Criteria criteria;
@@ -97,6 +101,13 @@ public class RegisterActivity extends AppCompatActivity implements LocationListe
 		Log.e(TAG, SUB_TAG+"On Create");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register_temp);
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        int width = displayMetrics.widthPixels;
+        int margin = (width/6);
+        registerLayout = (LinearLayout) findViewById(R.id.login_layout);
+        ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) registerLayout.getLayoutParams();
+        params.setMargins(margin,0,0,0);
 
         fullNameEditor = findViewById(R.id.register_name);
         locationLabel = findViewById(R.id.permission_text);
