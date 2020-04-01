@@ -15,6 +15,8 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -24,6 +26,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.sjsu.boreas.Firebase.RegisterOnFirebase;
 import com.sjsu.boreas.database.User;
 
 import java.io.FileOutputStream;
@@ -44,6 +47,8 @@ public class RegisterActivity extends AppCompatActivity implements LocationListe
     private Criteria criteria;
 
     Location location;
+    
+    private Button sign_up;
 
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
 
@@ -91,34 +96,48 @@ public class RegisterActivity extends AppCompatActivity implements LocationListe
     protected void onCreate(Bundle savedInstanceState) {
 		Log.e(TAG, SUB_TAG+"On Create");
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_register);
+        setContentView(R.layout.activity_register_temp);
 
-        fullNameEditor = findViewById(R.id.regitem_name);
-        locationLabel = findViewById(R.id.regitem_locationlabel);
+        fullNameEditor = findViewById(R.id.register_name);
+        locationLabel = findViewById(R.id.permission_text);
 
+        sign_up = findViewById(R.id.signup);
+
+        sign_up.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.e(TAG, SUB_TAG + "On click for signUp.");
+                if(addLocation(v)){
+                    completeRegistration(v);
+                }
+            }
+        });
     }
 
     /**
      * Called by add location button
      * @param view The location button itself
      */
-    public void addLocation(View view){
+    public boolean addLocation(View view){
 		Log.e(TAG, SUB_TAG+"AddLocation");
         if(ContextCompat.checkSelfPermission(this, "android.permission.ACCESS_FINE_LOCATION") == PackageManager.PERMISSION_DENIED){
             ActivityCompat.requestPermissions(this, new String[]{
                     "Manifest.permission.ACCESS_FINE_LOCATION"
             }, 0);
         }else {
-            obtainLocation();
+            if(obtainLocation()){
+                return true;
+            }
         }
+        return false;
     }
 
-    private void obtainLocation(){
+    private boolean obtainLocation(){
 		Log.e(TAG, SUB_TAG+"Obtain Location");
         checkLocationPermission();
         if(ContextCompat.checkSelfPermission(this, "android.permission.ACCESS_FINE_LOCATION") == PackageManager.PERMISSION_DENIED){
 			Log.e(TAG, SUB_TAG+"Don't have permission for Location");
-            return;
+            return false;
 		}
         criteria = new Criteria();
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
@@ -134,7 +153,9 @@ public class RegisterActivity extends AppCompatActivity implements LocationListe
 			}
             locationLabel.setText(location.getLatitude()+" , "+location.getLongitude());
             Log.e(TAG, SUB_TAG+"Location found: " + locationLabel.getText());
+            return true;
         }
+        return false;
     }
 
     public void onRequestPermissionsResult(int requestCode,
@@ -207,6 +228,29 @@ public class RegisterActivity extends AppCompatActivity implements LocationListe
 		
 		Log.e(TAG, SUB_TAG+"User: " + myUser);
         System.out.println(myUser);
+        pushNewUserToFIrebase(myUser);
+    }
+
+    public void pushNewUserToFIrebase(User myUser){
+        Log.e(TAG, SUB_TAG+"Push new user to firebase");
+        boolean connected = false;
+
+        if(networkIsAvailable()) {
+            Log.e(TAG, SUB_TAG+"Network is available: so pushing to firebase");
+            RegisterOnFirebase registerOnFirebase = new RegisterOnFirebase();
+            registerOnFirebase.RegisterUserOnFirebase(myUser);
+        }
+        else{
+            Log.e(TAG, SUB_TAG+"NEtwork isn't available");
+        }
+    }
+
+    public boolean networkIsAvailable(){
+        Log.e(TAG, SUB_TAG+"inside function networkIsAvailable");
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
     @Override
