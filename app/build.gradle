@@ -43,6 +43,7 @@ dependencies {
     testImplementation "androidx.room:room-testing:$room_version"
 
     implementation 'com.google.firebase:firebase-database:19.2.1'
+    implementation 'com.firebaseui:firebase-ui-database:6.2.1'
 }
 
 apply plugin: 'com.google.gms.google-services'
