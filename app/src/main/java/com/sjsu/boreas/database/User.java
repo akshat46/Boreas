@@ -20,6 +20,8 @@ public class User implements Serializable {
         this.isMe = isMe;
     }
 
+    public String getName(){    return name;}
+
     @NonNull
     @PrimaryKey
     public String uid;
@@ -42,6 +44,7 @@ public class User implements Serializable {
 
     public Map<String, Object> toMap(){
         HashMap<String, Object> result = new HashMap<>();
+        result.put("uid", uid);
         result.put("name", name);
         result.put("latitude", latitude);
         result.put("longitude", longitude);
