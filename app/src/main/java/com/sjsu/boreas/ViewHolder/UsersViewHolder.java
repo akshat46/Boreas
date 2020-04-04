@@ -17,13 +17,14 @@ public class UsersViewHolder extends RecyclerView.ViewHolder {
     private static String TAG = "BOREAS";
     private static String SUB_TAG = "------UsersViewHolder";
 
-    public LinearLayout root;
+    public View rootView;
     public TextView name;
     public TextView txtDesc;
 
     public UsersViewHolder(@NonNull View itemView) {
         super(itemView);
         Log.e(TAG, SUB_TAG+"UsersViewHolder");
+        this.rootView = itemView;
         this.name = itemView.findViewById(R.id.nameTV);
     }
 
@@ -31,5 +32,10 @@ public class UsersViewHolder extends RecyclerView.ViewHolder {
         Log.e(TAG, SUB_TAG+"Bind to Post");
         Log.e(TAG, SUB_TAG+"User passed: "+ user.getUid());
         this.name.setText(user.getName());
+    }
+
+    public void hideThisView(){
+        rootView.setVisibility(View.GONE);
+        rootView.setLayoutParams(new RecyclerView.LayoutParams(0, 0));
     }
 }

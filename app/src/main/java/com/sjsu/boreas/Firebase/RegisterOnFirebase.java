@@ -14,11 +14,11 @@ public class RegisterOnFirebase {
     private static String TAG = "BOREAS";
     private static String SUB_TAG = "---RegisterOnFirebase ";
 
-    private DatabaseReference database_ref;
+//    private DatabaseReference database_ref;
 
     public RegisterOnFirebase(){
         Log.e(TAG, SUB_TAG+"RegisterOnFirebase");
-        database_ref = FirebaseDatabase.getInstance().getReference();
+//        database_ref = FirebaseDatabase.getInstance().getReference();
     }
 
     public void RegisterUserOnFirebase(User user){
@@ -32,7 +32,7 @@ public class RegisterOnFirebase {
         firebase_child_update.put("/users/" + user.getUid(), new_user);
 
         //Do the actual writing of the data onto firebase
-        database_ref.updateChildren(firebase_child_update);
+        FirebaseDataRefAndInstance.getDatabaseReference().updateChildren(firebase_child_update);
     }
 
 }
