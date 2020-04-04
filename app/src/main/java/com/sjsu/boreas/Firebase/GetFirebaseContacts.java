@@ -23,8 +23,6 @@ public class GetFirebaseContacts {
         Log.e(TAG, SUB_TAG+"Get my contacts");
         User[] usersContacts = null;
 
-
-
         return usersContacts;
     }
 }
