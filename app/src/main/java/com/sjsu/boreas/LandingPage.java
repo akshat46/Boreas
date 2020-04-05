@@ -71,8 +71,8 @@ public class LandingPage extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Log.e(TAG, SUB_TAG + "onClick of initNewMessageFloatingButton");
-//                Intent intent = new Intent(LandingPage.this, .class);
-//                startActivity(intent);
+                Intent intent = new Intent(LandingPage.this, DeviceSearchActivity.class);
+                startActivity(intent);
             }
         });
     }
