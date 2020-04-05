@@ -1,11 +1,16 @@
 package com.sjsu.boreas;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -38,8 +43,8 @@ public class AddContactActivity extends AppCompatActivity {
     private FirebaseRecyclerAdapter<User, UsersViewHolder> mAdapter;
     private RecyclerView.LayoutManager layoutManager;
     private LandingPage mParent;
+    private Handler handler;
 
-    private User selectedUser;
 
 //    private DatabaseReference database_ref;
 
@@ -57,6 +62,8 @@ public class AddContactActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
+
+        manageMessageFromWorkerThread();
 
         initializeFirebaseAdapter();
 
@@ -88,7 +95,7 @@ public class AddContactActivity extends AppCompatActivity {
             @NonNull
             @Override
             public UsersViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-                Log.e(TAG, SUB_TAG+"onCreateViewHolder");
+//                Log.e(TAG, SUB_TAG+"onCreateViewHolder");
                 View view = LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.item_chat, parent, false);
 
@@ -96,11 +103,9 @@ public class AddContactActivity extends AppCompatActivity {
             }
 
             @Override
-            protected void onBindViewHolder(@NonNull UsersViewHolder holder, int position, @NonNull User model) {
-                Log.e(TAG, SUB_TAG+"onBindViewHolder");
+            protected void onBindViewHolder(@NonNull final UsersViewHolder holder, int position, @NonNull final User model) {
+//                Log.e(TAG, SUB_TAG+"onBindViewHolder");
                 holder.bindToListItemView(model);
-
-                selectedUser = model;
 
                 if(model.getUid().equals(MainActivity.currentUser.getUid())) {
                     Log.e(TAG, SUB_TAG+"Hiding item for user: " + MainActivity.currentUser.getName());
@@ -111,14 +116,15 @@ public class AddContactActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         // Launch PostDetailActivity
-                        addContact(selectedUser);
+                        Log.e(TAG, SUB_TAG+"999999999999999999999999 this is the selected user: " + model.getUid());
+                        addContact(model);
                     }
                 });
             }
         };
     }
 
-    private void addContact(User user){
+    private void addContact(final User user){
         Log.e(TAG, SUB_TAG+"addContact");
 
         Map<String, Object> new_user = user.toMap();
@@ -129,8 +135,29 @@ public class AddContactActivity extends AppCompatActivity {
 
         Log.e(TAG, SUB_TAG+"My user ID is: " + MainActivity.currentUser.getUid() + ", and the contact id is: " + user.getUid());
 
-        //Do the actual writing of the data onto firebase
+        //Do the actual writing of the data onto firebase and locally
         FirebaseDataRefAndInstance.getDatabaseReference().updateChildren(firebase_child_update);
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                Log.e(TAG, SUB_TAG+"Adding contact: " + user.getName());
+                if(MainActivity.database.userDao().getSpecificUser(user.getUid()).isEmpty()) {
+                    Log.e(TAG, SUB_TAG+"User doesn't already exist in the contacts");
+                    MainActivity.database.userDao().insertAll(user);
+                    Message mssg = new Message();
+                    mssg.obj = "This user with name: " + user.getName() + ", has been added locally (SUCESS!!!!)";
+                    handler.dispatchMessage(mssg);
+                }
+                else{
+                    Log.e(TAG, SUB_TAG+">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"+MainActivity.database.userDao().getUsers());
+                    Message mssg = new Message();
+                    mssg.obj = "This user with name: " + user.getName() + ", is already in the contacts (No success!!!!)";
+                    handler.dispatchMessage(mssg);
+                    Log.e(TAG, SUB_TAG+mssg.obj);
+                }
+                finish();
+            }
+        });
     }
 
     @Override
@@ -143,5 +170,18 @@ public class AddContactActivity extends AppCompatActivity {
     public void onStop() {
         super.onStop();
         mAdapter.stopListening();
+    }
+
+    private void manageMessageFromWorkerThread(){
+        Log.e(TAG, SUB_TAG+"***********************Manage messg from worker thread");
+        handler = new Handler(Looper.getMainLooper()) {
+            @Override
+            public void handleMessage(Message message) {
+                // This is where you do your work in the UI thread.
+                // Your worker tells you in the message what to do.
+                Log.e(TAG, SUB_TAG+"&&&&&&&&&&&&&&&&&&&&&&: " + message.obj);
+//                Toast.makeText(getApplicationContext(), (Integer) message.obj, Toast.LENGTH_LONG).show();
+            }
+        };
     }
 }

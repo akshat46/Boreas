@@ -20,6 +20,7 @@ public class UsersViewHolder extends RecyclerView.ViewHolder {
     public View rootView;
     public TextView name;
     public TextView txtDesc;
+    private String uid;
 
     public UsersViewHolder(@NonNull View itemView) {
         super(itemView);
@@ -32,10 +33,15 @@ public class UsersViewHolder extends RecyclerView.ViewHolder {
         Log.e(TAG, SUB_TAG+"Bind to Post");
         Log.e(TAG, SUB_TAG+"User passed: "+ user.getUid());
         this.name.setText(user.getName());
+        this.uid = user.getUid();
     }
 
     public void hideThisView(){
         rootView.setVisibility(View.GONE);
         rootView.setLayoutParams(new RecyclerView.LayoutParams(0, 0));
+    }
+
+    public String getUID(){
+        return uid;
     }
 }
