@@ -117,6 +117,9 @@ public class LandingPage extends AppCompatActivity {
             startActivity(new Intent(this, MainActivity.class));
             finish();
             return true;
+        } else if (id== R.id.action_account){
+            startActivity(new Intent(this, ProfileEditActivity.class));
+            return true;
         }
 
         return super.onOptionsItemSelected(item);
@@ -130,7 +133,7 @@ public class LandingPage extends AppCompatActivity {
         mFragments = new ArrayList<Fragment>();
         mFragments.add(OneOnOneFragment.newInstance(""));
         mFragments.add(OfflineGroupFragment.newInstance(""));
-        mFragments.add(OneOnOneFragment.newInstance(""));
+        mFragments.add(OfflineGroupFragment.newInstance(""));
 
         return mFragments;
     }
