@@ -8,10 +8,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -21,10 +19,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.sjsu.boreas.ChatViewRelatedStuff.ViewPagerTabAdapter;
-import com.sjsu.boreas.Firebase.RegisterOnFirebase;
-import com.sjsu.boreas.ViewFragments.OfflineGroupFragment;
-import com.sjsu.boreas.ViewFragments.OneOnOneFragment;
-import com.sjsu.boreas.ViewFragments.OnlineGroupFragment;
+import com.sjsu.boreas.ViewFragments.offlineSection.OfflineGroupFragment;
+import com.sjsu.boreas.ViewFragments.onlineSection.OneOnOneFragment;
 import com.sjsu.boreas.database.User;
 
 import java.util.ArrayList;

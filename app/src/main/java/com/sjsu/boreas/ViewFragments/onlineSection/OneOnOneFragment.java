@@ -1,8 +1,7 @@
-package com.sjsu.boreas.ViewFragments;
+package com.sjsu.boreas.ViewFragments.onlineSection;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,13 +19,8 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.firebase.ui.database.SnapshotParser;
 import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-import com.sjsu.boreas.ChatViewRelatedStuff.OneOnOneChatViewAdapter;
+import com.sjsu.boreas.ChatViewRelatedStuff.ChatActivity2;
 import com.sjsu.boreas.Firebase.FirebaseDataRefAndInstance;
-import com.sjsu.boreas.Firebase.GetFirebaseContacts;
 import com.sjsu.boreas.LandingPage;
 import com.sjsu.boreas.MainActivity;
 import com.sjsu.boreas.R;
@@ -34,9 +28,6 @@ import com.sjsu.boreas.ViewHolder.UsersViewHolder;
 import com.sjsu.boreas.database.AppDatabase;
 import com.sjsu.boreas.database.User;
 import com.sjsu.boreas.messaging.ChatActivity;
-import com.sjsu.boreas.messaging.ChatMessageAdapter;
-
-import java.util.List;
 
 public class OneOnOneFragment extends Fragment {
     public static final String EXTRA_TAB_NAME = "tab_name";
@@ -147,7 +138,7 @@ public class OneOnOneFragment extends Fragment {
                     @Override
                     public void onClick(View v) {
                         // Launch PostDetailActivity
-                        Intent intent = new Intent(getActivity(), ChatActivity.class);
+                        Intent intent = new Intent(getActivity(), ChatActivity2.class);
                         startActivity(intent);
                     }
                 });
