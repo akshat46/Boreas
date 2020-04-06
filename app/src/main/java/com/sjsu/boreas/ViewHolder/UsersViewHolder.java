@@ -26,7 +26,7 @@ public class UsersViewHolder extends RecyclerView.ViewHolder {
         super(itemView);
         Log.e(TAG, SUB_TAG+"UsersViewHolder");
         this.rootView = itemView;
-        this.name = itemView.findViewById(R.id.nameTV);
+        this.name = itemView.findViewById(R.id.userName);
     }
 
     public void bindToListItemView(User user) {
