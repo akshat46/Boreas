@@ -1,7 +1,5 @@
-package com.sjsu.boreas.ViewFragments;
+package com.sjsu.boreas.ViewFragments.offlineSection;
 
-import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -122,7 +120,7 @@ public class OfflineGroupFragment extends Fragment {
 
 
     public void addMessage(boolean isSelf, String sender, String text){
-        Log.e(TAG, SUB_TAG+"add Message");
+        Log.e(TAG, SUB_TAG+"add ChatMessage");
 
         final Message message = new Message(text, sender, isSelf);
         getActivity().runOnUiThread(new Runnable() {
@@ -169,7 +167,7 @@ public class OfflineGroupFragment extends Fragment {
     }
 
     public void sendOfflineGroupMessage(View v){
-        Log.e(TAG, SUB_TAG+"Sending Message");
+        Log.e(TAG, SUB_TAG+"Sending ChatMessage");
         String msg = messageText.getText().toString();
         Log.e(TAG, SUB_TAG+"Sending message");
         if(msg.equals(""))

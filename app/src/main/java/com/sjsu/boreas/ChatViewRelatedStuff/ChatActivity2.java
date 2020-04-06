@@ -1,4 +1,4 @@
-package com.sjsu.boreas;
+package com.sjsu.boreas.ChatViewRelatedStuff;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -10,8 +10,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.sjsu.boreas.ChatViewRelatedStuff.ChatBubble;
-import com.sjsu.boreas.ChatViewRelatedStuff.MessageAdapter;
+import com.sjsu.boreas.R;
 
 import java.util.ArrayList;
 import java.util.List;
