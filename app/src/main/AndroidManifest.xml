@@ -28,7 +28,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".AddContactActivity"></activity>
-        <activity android:name=".RegisterTempActivity" />
         <activity android:name=".GroupChatActivity" />
         <activity
             android:name=".LandingPage"
@@ -39,7 +38,8 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".wifidirecttest.WDTestActivity" />
         <activity android:name=".ChatMenuActivity" />
-        <activity android:name=".RegisterActivity" />
+        <activity android:name=".RegisterActivity"
+            android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen"/>
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
