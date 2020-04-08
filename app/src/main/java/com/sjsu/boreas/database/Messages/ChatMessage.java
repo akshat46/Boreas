@@ -88,6 +88,23 @@ public class ChatMessage implements Serializable {
 //        return name+": "+uid+"\n"+latitude + " , " + longitude+"\n" + (isMe ? "IS" : "NOT") + " me";
 //    }
 
+    public String toString(){
+       String mssgStr = "{" +
+                "mssgId: " + mssgId + ","
+                +   "mssgText: " + mssgText + ","
+                +   "receiverId: " + receiverId + ","
+                +   "receiverName: " + receiverName + ","
+                +   "senderId: " + senderId + ","
+                +   "senderName: " + senderName + ","
+                +   "latitude: " + String.valueOf(latitude) + ","
+                +   "longtidue: " + String.valueOf(longitude) + ","
+                +   "time: " + String.valueOf(time) + ","
+                +   "isMyMssg: " + String.valueOf(isMyMssg) + ","
+                +   "mssgType: " + String.valueOf(mssgType)
+                + "} \n";
+        return mssgStr;
+    }
+
     public Map<String, Object> toMap(){
         HashMap<String, Object> result = new HashMap<>();
         result.put("mssgId", mssgId);
