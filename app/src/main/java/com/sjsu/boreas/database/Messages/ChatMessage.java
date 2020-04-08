@@ -33,7 +33,7 @@ public class ChatMessage implements Serializable {
 
     public ChatMessage(String mssgId, String mssgText,
                        String receiverId, String receiverName,
-                       String senderName, String senderId,
+                       String senderId, String senderName,
                        double latitude, double longitude, long time, boolean isMyMssg, int mssgType){
         this.mssgId = mssgId;
         this.time = time;

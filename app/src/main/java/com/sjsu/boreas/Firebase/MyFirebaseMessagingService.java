@@ -18,16 +18,16 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     @Override
     public void onMessageReceived(RemoteMessage mssg) {
         super.onMessageReceived(mssg);
-        Log.e(TAG, SUB_TAG+"On mssg received][][][][][][][][][][][][][][" + mssg.getData().get("mssgText"));
+        Log.e(TAG, SUB_TAG+"On mssg received][][][][][][][][][][][][][][" + mssg.getData().get("body"));
 
         Map<String, String> data = mssg.getData();
 
-        ChatMessage newMssg = new ChatMessage(mssg.getData().get("mssgId"), mssg.getData().get("mssgText"),
-                                mssg.getData().get("receiverId"), mssg.getData().get("receiverName"),
-                                mssg.getData().get("senderName"), mssg.getData().get("senderId"),
-                                Double.parseDouble(mssg.getData().get("latitude")), Double.parseDouble(mssg.getData().get("longtitude")),
-                                Integer.parseInt(mssg.getData().get("time")), Boolean.parseBoolean(mssg.getData().get("isMyMssg")), Integer.parseInt(mssg.getData().get("mssgType")));
-        Log.e(TAG, SUB_TAG+"New mssg: "+ newMssg.receiverName + ", mssgType: " + newMssg.mssgType);
+////        ChatMessage newMssg = new ChatMessage(mssg.getData().get("mssgId"), mssg.getData().get("mssgText"),
+////                                mssg.getData().get("receiverId"), mssg.getData().get("receiverName"),
+////                                mssg.getData().get("senderName"), mssg.getData().get("senderId"),
+////                                Double.parseDouble(mssg.getData().get("latitude")), Double.parseDouble(mssg.getData().get("longtitude")),
+////                                Integer.parseInt(mssg.getData().get("time")), Boolean.parseBoolean(mssg.getData().get("isMyMssg")), Integer.parseInt(mssg.getData().get("mssgType")));
+//        Log.e(TAG, SUB_TAG+"New mssg: "+ newMssg.receiverName + ", mssgType: " + newMssg.mssgType);
 
     }
 
