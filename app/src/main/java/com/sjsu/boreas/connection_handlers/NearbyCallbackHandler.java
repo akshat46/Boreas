@@ -15,6 +15,7 @@ import com.google.android.gms.nearby.connection.PayloadTransferUpdate;
 import com.sjsu.boreas.MainActivity;
 import com.sjsu.boreas.database.User;
 import com.sjsu.boreas.messages.AdjacencyListMessage;
+import com.sjsu.boreas.messages.LongDistanceMessage;
 import com.sjsu.boreas.messages.TextMessage;
 
 import java.io.ByteArrayInputStream;
@@ -28,6 +29,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 
 public class NearbyCallbackHandler {
 
@@ -68,6 +70,26 @@ public class NearbyCallbackHandler {
                 }else if(result instanceof TextMessage){
                     TextMessage message = (TextMessage) result;
                     connectionHandler.receiveMessage(message);
+                }else if(result instanceof LongDistanceMessage){
+                    LongDistanceMessage message = (LongDistanceMessage) result;
+                    User forwarder = message.forwarder;
+                    message.forwarder = MainActivity.currentUser;
+                    //Decide who to forward it to based on distances to recipient
+                    int forwardCount = 0;
+                    List<User> nearestUsers = MainActivity.database.userDao().getClosestUsers(message.recipient.latitude, message.recipient.longitude);
+                    for(User user : nearestUsers){
+                        //Complete message forwarding once messages have been sent to at most 3 users
+                        if(forwardCount >= 3)
+                            break;
+                        if(connectionHandler.neighbors.containsKey(user.uid)){
+                            if(!user.isMe && user.uid != forwarder.uid){
+                                //Send message to user and increment
+                                forwardCount++;
+                                Payload forwardPayload = Payload.fromStream(constructStreamFromSerializable(message));
+                                connectionHandler.getClient().sendPayload(connectionHandler.neighbors.get(user.uid), forwardPayload);
+                            }
+                        }
+                    }
                 }
             }catch(Exception e){
                 e.printStackTrace();
