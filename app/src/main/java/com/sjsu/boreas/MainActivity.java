@@ -23,6 +23,9 @@ import com.sjsu.boreas.wifidirecttest.WDTestActivity;
 
 import java.util.List;
 
+import io.reactivex.Completable;
+import io.reactivex.functions.Action;
+
 public class MainActivity extends AppCompatActivity {
 	
 	private static String TAG = "Boreas";
