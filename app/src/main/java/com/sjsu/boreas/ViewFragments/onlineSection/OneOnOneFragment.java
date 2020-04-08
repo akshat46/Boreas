@@ -130,7 +130,7 @@ public class OneOnOneFragment extends Fragment {
             }
 
             @Override
-            protected void onBindViewHolder(@NonNull UsersViewHolder holder, int position, @NonNull User model) {
+            protected void onBindViewHolder(@NonNull UsersViewHolder holder, int position, @NonNull final User model) {
                 Log.e(TAG, SUB_TAG+"onBindViewHolder");
                 holder.bindToListItemView(model);
 
@@ -139,6 +139,8 @@ public class OneOnOneFragment extends Fragment {
                     public void onClick(View v) {
                         // Launch PostDetailActivity
                         Intent intent = new Intent(getActivity(), ChatActivity2.class);
+                        //Passing the user object using intent
+                        intent.putExtra("ReceiverObj", model);
                         startActivity(intent);
                     }
                 });

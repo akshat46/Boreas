@@ -31,7 +31,7 @@ public class MessageAdapter extends ArrayAdapter<ChatBubble> {
         ChatBubble ChatBubble = getItem(position);
         int viewType = getItemViewType(position);
 
-        if (ChatBubble.myMessage()) {
+        if (!(ChatBubble.myMessage())) {
             layoutResource = R.layout.left_chat_bubble;
         } else {
             layoutResource = R.layout.right_chat_bubble;
