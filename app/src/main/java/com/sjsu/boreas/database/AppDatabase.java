@@ -7,7 +7,11 @@ import androidx.room.RoomDatabase;
 import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
-@Database(entities= {User.class}, version = 1, exportSchema = false)
+import com.sjsu.boreas.database.Messages.ChatMessage;
+import com.sjsu.boreas.database.Messages.ChatMessageDao;
+
+@Database(entities= {User.class, ChatMessage.class}, version = 1, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
     public abstract UserDao userDao();
+    public abstract ChatMessageDao chatMessageDao();
 }

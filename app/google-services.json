@@ -1,0 +1,85 @@
+{
+  "project_info": {
+    "project_number": "250913575990",
+    "firebase_url": "https://boreas-bf0bb.firebaseio.com",
+    "project_id": "boreas-bf0bb",
+    "storage_bucket": "boreas-bf0bb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:250913575990:android:d3e4fd640d66b14f127497",
+        "android_client_info": {
+          "package_name": "com.google.firebase.codelab.friendlychat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "250913575990-ujjndbscdegl0timfbu3mn9pcrkfst81.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.google.firebase.codelab.friendlychat",
+            "certificate_hash": "3508b0bfcb5dc7cf883994076281ca5043bcfab2"
+          }
+        },
+        {
+          "client_id": "250913575990-dn9fj84aokkpk7lh6acsktgursihr5ck.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.google.firebase.codelab.friendlychat",
+            "certificate_hash": "9560fafd40dc99947618a52c43dc64db16c033a7"
+          }
+        },
+        {
+          "client_id": "250913575990-hlt10bnkfbsvo7ijqd6t3vqu1r8h7r1m.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAO6sr9R3pT3wDyS6l6S4nPYt6f3ee7UMI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "250913575990-hlt10bnkfbsvo7ijqd6t3vqu1r8h7r1m.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:250913575990:android:b421fe09ff91d498127497",
+        "android_client_info": {
+          "package_name": "com.sjsu.boreas"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "250913575990-hlt10bnkfbsvo7ijqd6t3vqu1r8h7r1m.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAO6sr9R3pT3wDyS6l6S4nPYt6f3ee7UMI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "250913575990-hlt10bnkfbsvo7ijqd6t3vqu1r8h7r1m.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

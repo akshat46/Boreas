@@ -8,10 +8,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -21,9 +19,9 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.sjsu.boreas.ChatViewRelatedStuff.ViewPagerTabAdapter;
-import com.sjsu.boreas.ViewFragments.OfflineGroupFragment;
-import com.sjsu.boreas.ViewFragments.OneOnOneFragment;
-import com.sjsu.boreas.ViewFragments.OnlineGroupFragment;
+import com.sjsu.boreas.ViewFragments.offlineSection.OfflineGroupFragment;
+import com.sjsu.boreas.ViewFragments.onlineSection.OneOnOneFragment;
+import com.sjsu.boreas.database.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,9 +43,15 @@ public class LandingPage extends AppCompatActivity{
 		//~ setUpNavigationDrawer();
 		
 		init();
+		makeADummyUserForFirebase();
 
     }
-    
+
+    private void makeADummyUserForFirebase(){
+        Log.e(TAG, SUB_TAG+"makeADummyUserForFirebase");
+        User u = new User("23", "name of", 123.4, -123.4, false);
+    }
+
     private void init() {
 		Log.e(TAG, SUB_TAG+"Init");
         initViews();
@@ -74,8 +78,8 @@ public class LandingPage extends AppCompatActivity{
             @Override
             public void onClick(View view) {
                 Log.e(TAG, SUB_TAG+"onClick of initNewMessageFloatingButton");
-//                Intent intent = new Intent(LandingPage.this, .class);
-//                startActivity(intent);
+                Intent intent = new Intent(view.getContext(), AddContactActivity.class);
+                startActivity(intent);
             }
         });
     }
@@ -94,11 +98,13 @@ public class LandingPage extends AppCompatActivity{
         mViewPager.setAdapter(viewPagerTabAdapter);
     }
 
-
     private void initTabLayout() {
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
         tabLayout.setSelectedTabIndicatorColor(Color.parseColor("#FFFFFF"));
+        tabLayout.getTabAt(0).setIcon(R.drawable.ic_contacts_white_24dp);
+        tabLayout.getTabAt(1).setIcon(R.drawable.ic_location_city_white_24dp);
+        tabLayout.getTabAt(2).setIcon(R.drawable.ic_cloud_white_24dp);
     }
 
     @Override
