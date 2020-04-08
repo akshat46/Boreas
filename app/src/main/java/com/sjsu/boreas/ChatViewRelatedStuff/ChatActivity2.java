@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.sjsu.boreas.Firebase.FirebaseDataRefAndInstance;
 import com.sjsu.boreas.MainActivity;
+import com.sjsu.boreas.PhoneBluetoothRadio.BlueTerm;
 import com.sjsu.boreas.R;
 import com.sjsu.boreas.database.Messages.ChatMessage;
 import com.sjsu.boreas.database.User;
@@ -106,8 +107,10 @@ public class ChatActivity2 extends AppCompatActivity {
 
         ChatBubble ChatBubble = new ChatBubble(mssgText.getText().toString(), myMessage);
 
-        pushMessageToFirebase(chatMessage);
-        saveMessageLocally(chatMessage);
+//        pushMessageToFirebase(chatMessage);
+//        saveMessageLocally(chatMessage);
+
+        sendMessageThruRadio(chatMessage);
 
         chatBubbles.add(ChatBubble);
         adapter.notifyDataSetChanged();
@@ -163,6 +166,31 @@ public class ChatActivity2 extends AppCompatActivity {
         }
         Log.e(TAG, SUB_TAG+"This is the id: " + user2ID+user1ID);
         return false;
+    }
+
+    private void sendMessageThruRadio(ChatMessage chatMessage){
+        Log.e(TAG, SUB_TAG+"Sending message thru radio.");
+        String mssgForRadio = convertMessageToString(chatMessage);
+        BlueTerm.sendMessage(mssgForRadio, chatMessage.mssgType);
+    }
+
+    private String convertMessageToString(ChatMessage mssg){
+        if(mssg == null)
+            return null;
+        String mssgStr = "{" +
+                                "mssgId: " + mssg.mssgId + ","
+                            +   "mssgText: " + mssg.mssgText + ","
+                            +   "receiverId: " + mssg.receiverId + ","
+                            +   "receiverName: " + mssg.receiverName + ","
+                            +   "senderId: " + mssg.senderId + ","
+                            +   "senderName: " + mssg.senderName + ","
+                            +   "latitude: " + String.valueOf(mssg.latitude) + ","
+                            +   "longtidue: " + String.valueOf(mssg.longitude) + ","
+                            +   "time: " + String.valueOf(mssg.time) + ","
+                            +   "isMyMssg: " + String.valueOf(mssg.isMyMssg) + ","
+                            +   "mssgType: " + String.valueOf(mssg.mssgType)
+                        + "}";
+        return mssgStr;
     }
 
 }
