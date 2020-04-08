@@ -107,8 +107,8 @@ public class ChatActivity2 extends AppCompatActivity {
 
         ChatBubble ChatBubble = new ChatBubble(mssgText.getText().toString(), myMessage);
 
-//        pushMessageToFirebase(chatMessage);
-//        saveMessageLocally(chatMessage);
+        pushMessageToFirebase(chatMessage);
+        saveMessageLocally(chatMessage);
 
         sendMessageThruRadio(chatMessage);
 
