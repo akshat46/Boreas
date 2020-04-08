@@ -7,6 +7,9 @@ import com.google.firebase.messaging.RemoteMessage;
 import com.sjsu.boreas.MainActivity;
 import com.sjsu.boreas.database.Messages.ChatMessage;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,14 +23,43 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         super.onMessageReceived(mssg);
         Log.e(TAG, SUB_TAG+"On mssg received][][][][][][][][][][][][][][" + mssg.getData().get("body"));
 
-        Map<String, String> data = mssg.getData();
+        JSONObject jsonMssg = null;
+        String mssgId, mssgText, receiverId, receiverName, senderId, senderName;
+        double latitude, longitude;
+        long time;
+        int mssgType;
+        boolean isMyMssg;
 
-////        ChatMessage newMssg = new ChatMessage(mssg.getData().get("mssgId"), mssg.getData().get("mssgText"),
-////                                mssg.getData().get("receiverId"), mssg.getData().get("receiverName"),
-////                                mssg.getData().get("senderName"), mssg.getData().get("senderId"),
-////                                Double.parseDouble(mssg.getData().get("latitude")), Double.parseDouble(mssg.getData().get("longtitude")),
-////                                Integer.parseInt(mssg.getData().get("time")), Boolean.parseBoolean(mssg.getData().get("isMyMssg")), Integer.parseInt(mssg.getData().get("mssgType")));
-//        Log.e(TAG, SUB_TAG+"New mssg: "+ newMssg.receiverName + ", mssgType: " + newMssg.mssgType);
+        //First get json object from string
+        try {
+            jsonMssg = new JSONObject(mssg.getData().get("body"));
+
+            mssgId = jsonMssg.getString("mssgId");
+            mssgText = jsonMssg.getString("mssgText");
+            receiverId = jsonMssg.getString("receiverId");
+            receiverName = jsonMssg.getString("receiverName");
+            senderId = jsonMssg.getString("senderId");
+            senderName = jsonMssg.getString("senderName");
+            Log.e(TAG, SUB_TAG+"SO far so good");
+            latitude = Double.parseDouble(jsonMssg.getString("latitude"));
+            longitude = Double.parseDouble(jsonMssg.getString("longtitude"));
+            Log.e(TAG, SUB_TAG+"SO far so good 2");
+            time = Long.parseLong(jsonMssg.getString("time"));
+            isMyMssg = Boolean.parseBoolean(jsonMssg.getString("isMyMssg"));
+            mssgType = Integer.parseInt(jsonMssg.getString("mssgType"));
+
+            ChatMessage newMssg = new ChatMessage(mssgId, mssgText,
+                    receiverId, receiverName,
+                    senderId, senderName,
+                    latitude, longitude,
+                    time, isMyMssg, mssgType);
+            Log.e(TAG, SUB_TAG+"New mssg: "+ newMssg.receiverName + ", mssgType: " + newMssg.mssgType);
+        } catch (JSONException e) {
+            Log.e(TAG, SUB_TAG+"JSON exception: \n\t" + e);
+            e.printStackTrace();
+        }
+
+        Log.e(TAG, SUB_TAG+"<><><><><><><><><><> Leaving hera");
 
     }
 
