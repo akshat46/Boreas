@@ -2,16 +2,39 @@ package com.sjsu.boreas.database.Messages;
 
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
+import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+@Entity
 public class ChatMessage implements Serializable {
 
-    public ChatMessage(String mssgId, String mssgText, String receiverId, String receiverName,
-                       String senderName, String senderId, double latitude, double longitude, String time, boolean isMyMssg){
+    public enum ChatTypes {
+        ONEONONEONLINECHAT(0),
+        ONEONONEOFFLINECHAT(1),
+        ONLINEGROUPCHAT(2),
+        OFFLINEGROUPCHAT(3);
+
+        private int value;
+        private static Map map = new HashMap<>();
+
+        private ChatTypes(int value) {
+            this.value = value;
+        }
+
+        public int getValue() {
+            return value;
+        }
+
+    }
+
+    public ChatMessage(String mssgId, String mssgText,
+                       String receiverId, String receiverName,
+                       String senderName, String senderId,
+                       double latitude, double longitude, long time, boolean isMyMssg, int mssgType){
         this.mssgId = mssgId;
         this.time = time;
         this.latitude = latitude;
@@ -22,6 +45,7 @@ public class ChatMessage implements Serializable {
         this.receiverName = receiverName;
         this.mssgText = mssgText;
         this.isMyMssg = isMyMssg;
+        this.mssgType = mssgType;
     }
 
     public String getSenderName(){    return senderName;}
@@ -52,11 +76,13 @@ public class ChatMessage implements Serializable {
     public double longitude;
 
     @ColumnInfo(name = "time")
-    public String time;
+    public long time;
 
     @ColumnInfo(name = "isMyMssg")
     public boolean isMyMssg;
 
+    @ColumnInfo(name = "mssgType")
+    public int mssgType;
 
 //    public String toString(){
 //        return name+": "+uid+"\n"+latitude + " , " + longitude+"\n" + (isMe ? "IS" : "NOT") + " me";
@@ -74,6 +100,7 @@ public class ChatMessage implements Serializable {
         result.put("longitude", longitude);
         result.put("time", time);
         result.put("isMyMssg", isMyMssg);
+        result.put("mssgType", mssgType);
         return result;
     }
 
