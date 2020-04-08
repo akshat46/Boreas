@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.google.firebase.FirebaseApp;
 import com.sjsu.boreas.connection_handlers.NearbyConnectionHandler;
 import com.sjsu.boreas.database.AppDatabase;
 import com.sjsu.boreas.database.User;
@@ -45,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 		Log.e(TAG, SUB_TAG+"On create");
+        FirebaseApp.initializeApp(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 

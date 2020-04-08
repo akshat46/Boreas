@@ -1,4 +1,4 @@
-package com.sjsu.boreas.ViewFragments;
+package com.sjsu.boreas.ViewFragments.onlineSection;
 
 import android.content.Context;
 import android.net.Uri;
