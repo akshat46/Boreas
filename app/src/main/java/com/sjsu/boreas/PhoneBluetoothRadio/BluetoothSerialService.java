@@ -21,6 +21,7 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.SubMenu;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -37,7 +38,8 @@ import java.util.UUID;
  */
 public class BluetoothSerialService {
     // Debugging
-    private static final String TAG = "BluetoothReadService";
+    private static final String TAG = "BOREAS";
+    private static final String SUB_TAG = "------BluetoothSErialService ";
     private static final boolean D = true;
 
 
@@ -80,7 +82,7 @@ public class BluetoothSerialService {
      * @param state  An integer defining the current connection state
      */
     private synchronized void setState(int state) {
-        if (D) Log.d(TAG, "setState() " + mState + " -> " + state);
+        if (D) Log.d(TAG, SUB_TAG+"setState() " + mState + " -> " + state);
         mState = state;
 
         // Give the new state to the Handler so the UI Activity can update
@@ -97,7 +99,7 @@ public class BluetoothSerialService {
      * Start the chat service. Specifically start AcceptThread to begin a
      * session in listening (server) mode. Called by the Activity onResume() */
     public synchronized void start() {
-        if (D) Log.d(TAG, "start");
+        if (D) Log.d(TAG, SUB_TAG+"start");
 
         // Cancel any thread attempting to make a connection
         if (mConnectThread != null) {
@@ -119,7 +121,7 @@ public class BluetoothSerialService {
      * @param device  The BluetoothDevice to connect
      */
     public synchronized void connect(BluetoothDevice device) {
-        if (D) Log.d(TAG, "connect to: " + device);
+        if (D) Log.d(TAG, SUB_TAG+"connect to: " + device);
 
         // Cancel any thread attempting to make a connection
         if (mState == STATE_CONNECTING) {
@@ -141,7 +143,7 @@ public class BluetoothSerialService {
      * @param device  The BluetoothDevice that has been connected
      */
     public synchronized void connected(BluetoothSocket socket, BluetoothDevice device) {
-        if (D) Log.d(TAG, "connected");
+        if (D) Log.d(TAG, SUB_TAG+"connected");
 
         // Cancel the thread that completed the connection
         if (mConnectThread != null) {
@@ -174,7 +176,7 @@ public class BluetoothSerialService {
      * Stop all threads
      */
     public synchronized void stop() {
-        if (D) Log.d(TAG, "stop");
+        if (D) Log.d(TAG, SUB_TAG+"stop");
 
 
         if (mConnectThread != null) {
@@ -196,7 +198,7 @@ public class BluetoothSerialService {
      * @see ConnectedThread#write(byte[])
      */
     public void write(byte[] out) throws UnsupportedEncodingException {
-        Log.e(TAG, "Sending message, final step.");
+        Log.e(TAG, SUB_TAG+"Sending message, final step.");
         // Create temporary object
         ConnectedThread r;
         // Synchronize a copy of the ConnectedThread
@@ -264,13 +266,13 @@ public class BluetoothSerialService {
                     tmp = device.createRfcommSocketToServiceRecord( SerialPortServiceClass_UUID );
                 }
             } catch (Exception e) {
-                Log.e(TAG, "create() failed", e);
+                Log.e(TAG, SUB_TAG+"create() failed", e);
             }
             mmSocket = tmp;
         }
 
         public void run() {
-            Log.e(TAG, "BEGIN mConnectThread");
+            Log.e(TAG, SUB_TAG+"BEGIN mConnectThread");
             setName("ConnectThread");
 
             // Always cancel discovery because it will slow down a connection
@@ -289,7 +291,7 @@ public class BluetoothSerialService {
                 try {
                     mmSocket.close();
                 } catch (IOException e2) {
-                    Log.e(TAG, "unable to close() socket during connection failure", e2);
+                    Log.e(TAG, SUB_TAG+"unable to close() socket during connection failure", e2);
                 }
                 // Start the service over to restart listening mode
                 //BluetoothSerialService.this.start();
@@ -301,7 +303,7 @@ public class BluetoothSerialService {
                 mConnectThread = null;
             }
 
-            Log.e(TAG, "Connected Thread starting");
+            Log.e(TAG, SUB_TAG+"Connected Thread starting");
             // Start the connected thread
             connected(mmSocket, mmDevice);
         }
@@ -310,7 +312,7 @@ public class BluetoothSerialService {
             try {
                 mmSocket.close();
             } catch (IOException e) {
-                Log.e(TAG, "close() of connect socket failed", e);
+                Log.e(TAG, SUB_TAG+"close() of connect socket failed", e);
             }
         }
     }
@@ -338,7 +340,7 @@ public class BluetoothSerialService {
                     tmpOut = socket.getOutputStream();
                 }
             } catch (IOException e) {
-                Log.e(TAG, "temp sockets not created", e);
+                Log.e(TAG, SUB_TAG+"temp sockets not created", e);
             }
 
             mmInStream = tmpIn;
@@ -346,13 +348,13 @@ public class BluetoothSerialService {
         }
 
         public void run() {
-            Log.e(TAG, "BEGIN mConnectedThread");
+            Log.e(TAG, SUB_TAG+"BEGIN mConnectedThread");
             byte[] buffer = new byte[1024];
             int bytes;
 
             // Keep listening to the InputStream while connected
             while (true) {
-                Log.e(TAG, "Listening for incoming mssgs.");
+                Log.e(TAG, SUB_TAG+"Listening for incoming mssgs.");
                 try {
                     // Read from the InputStream
                     if(mmInStream != null) {
@@ -367,7 +369,7 @@ public class BluetoothSerialService {
                         Log.e(TAG, "mmInstream is null");
                     }
                 } catch (IOException e) {
-                    Log.e(TAG, "disconnected", e);
+                    Log.e(TAG, SUB_TAG+"disconnected", e);
                     connectionLost();
                     break;
                 }
@@ -380,14 +382,14 @@ public class BluetoothSerialService {
          */
         public void write(byte[] buffer) throws UnsupportedEncodingException {
             String str = new String(buffer, "US-ASCII");
-            Log.i(TAG, "Sent: " + str);
+            Log.i(TAG, SUB_TAG+"Sent: " + str);
             try {
                 mmOutStream.write(buffer);
 
                 // Share the sent message back to the UI Activity
 //                mHandler.obtainMessage(BlueTerm.MESSAGE_WRITE, buffer.length, -1, buffer).sendToTarget();
             } catch (IOException e) {
-                Log.e(TAG, "Exception during write", e);
+                Log.e(TAG, SUB_TAG+"Exception during write", e);
             }
         }
 
@@ -395,7 +397,7 @@ public class BluetoothSerialService {
             try {
                 mmSocket.close();
             } catch (IOException e) {
-                Log.e(TAG, "close() of connect socket failed", e);
+                Log.e(TAG, SUB_TAG+"close() of connect socket failed", e);
             }
         }
     }
