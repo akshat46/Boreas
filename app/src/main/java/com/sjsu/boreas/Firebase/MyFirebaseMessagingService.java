@@ -6,6 +6,7 @@ import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.sjsu.boreas.MainActivity;
 import com.sjsu.boreas.database.Messages.ChatMessage;
+import com.sjsu.boreas.database.User;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -53,6 +54,13 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     senderId, senderName,
                     latitude, longitude,
                     time, isMyMssg, mssgType);
+
+            MainActivity.database.chatMessageDao().insertAll(newMssg); //Save chat message
+
+            //Save the sender's info to the database
+            User sender = new User(senderId, senderName, latitude, longitude, false);
+            MainActivity.database.userDao().insertNewUser(sender);
+
             Log.e(TAG, SUB_TAG+"New mssg: "+ newMssg.receiverName + ", mssgType: " + newMssg.mssgType);
         } catch (JSONException e) {
             Log.e(TAG, SUB_TAG+"JSON exception: \n\t" + e);
