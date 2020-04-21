@@ -13,6 +13,7 @@ import com.google.android.gms.nearby.connection.Payload;
 import com.google.android.gms.nearby.connection.PayloadCallback;
 import com.google.android.gms.nearby.connection.PayloadTransferUpdate;
 import com.sjsu.boreas.MainActivity;
+import com.sjsu.boreas.database.Messages.ChatMessage;
 import com.sjsu.boreas.database.User;
 import com.sjsu.boreas.messages.AdjacencyListMessage;
 import com.sjsu.boreas.messages.LongDistanceMessage;
@@ -79,6 +80,13 @@ public class NearbyCallbackHandler {
                     TextMessage message = (TextMessage) result;
                     connectionHandler.receiveMessage(message);
                     MainActivity.database.userDao().insertNewUser(message.sender);
+                    MainActivity.database.userDao().insertNewUser(message.forwarder);
+
+                    MainActivity.database.chatMessageDao().insertAll(
+                            new ChatMessage("", message.message, MainActivity.currentUser.uid, MainActivity.currentUser.name,
+                                    message.sender.uid, message.sender.name, message.sender.latitude, message.sender.longitude,
+                                    message.timestamp, false, ChatMessage.ChatTypes.OFFLINEGROUPCHAT.getValue())
+                    );
                 }
 
 
