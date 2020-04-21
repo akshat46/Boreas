@@ -51,8 +51,13 @@ public class NearbyCallbackHandler {
                 //ByteArrayInputStream bytes = new ByteArrayInputStream();
                 ObjectInputStream stream = new ObjectInputStream(payload.asStream().asInputStream());
                 Object result = stream.readObject();
+
+                /*Parse message and find its type*/
+
+                //Adjacency List
                 if(result instanceof AdjacencyListMessage){
                     AdjacencyListMessage message = (AdjacencyListMessage) result;
+                    MainActivity.database.userDao().insertNewUser(message.sender);
                     //Check if received adjacency list overlaps current adjacency list
                     boolean isMeshMember = false;
                     HashSet<String> adjacencySet = createIdSet(connectionHandler.meshMembers);
@@ -66,12 +71,22 @@ public class NearbyCallbackHandler {
                         connectionHandler.getClient().disconnectFromEndpoint(endpointId);
                         return;
                     }
+                }
 
-                }else if(result instanceof TextMessage){
+
+                //Local chat
+                else if(result instanceof TextMessage){
                     TextMessage message = (TextMessage) result;
                     connectionHandler.receiveMessage(message);
-                }else if(result instanceof LongDistanceMessage){
+                    MainActivity.database.userDao().insertNewUser(message.sender);
+                }
+
+
+                //Long distance chat message
+                else if(result instanceof LongDistanceMessage){
                     LongDistanceMessage message = (LongDistanceMessage) result;
+                    MainActivity.database.userDao().insertNewUser(message.recipient);
+                    MainActivity.database.userDao().insertNewUser(message.sender);
                     User forwarder = message.forwarder;
                     message.forwarder = MainActivity.currentUser;
                     //Decide who to forward it to based on distances to recipient
