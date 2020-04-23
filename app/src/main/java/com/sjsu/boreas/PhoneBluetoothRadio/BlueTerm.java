@@ -125,7 +125,7 @@ public class BlueTerm{
         if(mssg == null || mssg.isEmpty())
             mssg = "BOREAS";
 
-        String mssgToBeSent = String.valueOf(mssgType) + "-" + mssg;
+        String mssgToBeSent = String.valueOf(mssgType) + "-\n" + mssg;
         byte[] bytesToSend = mssgToBeSent.getBytes(Charset.forName("UTF-8"));
 
         try {
