@@ -16,7 +16,8 @@ public class ChatMessage implements Serializable {
         ONEONONEONLINECHAT(0),
         ONEONONEOFFLINECHAT(1),
         ONLINEGROUPCHAT(2),
-        OFFLINEGROUPCHAT(3);
+        OFFLINEGROUPCHAT(3),
+        GETMESSAGESFROMRADIO(4);
 
         private int value;
         private static Map map = new HashMap<>();

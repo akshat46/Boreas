@@ -98,22 +98,25 @@ public class ChatActivity2 extends AppCompatActivity {
         Log.e(TAG, SUB_TAG+"sending message");
 
         long time  = Calendar.getInstance().getTimeInMillis();
+        ChatMessage chatMessage = null;
 
-        ChatMessage chatMessage = new ChatMessage(MainActivity.currentUser.getUid()+String.valueOf(time), mssg,
-                                            myChatPartner.getUid(), myChatPartner.getName(),
-                                            MainActivity.currentUser.getUid(), MainActivity.currentUser.getName(),
-                                            MainActivity.currentUser.latitude, MainActivity.currentUser.longitude,
-                                            time, true, ChatMessage.ChatTypes.ONEONONEONLINECHAT.getValue());
+        if(!(mssg.equals("4"))) {
+            chatMessage = new ChatMessage(MainActivity.currentUser.getUid() + String.valueOf(time), mssg,
+                    myChatPartner.getUid(), myChatPartner.getName(),
+                    MainActivity.currentUser.getUid(), MainActivity.currentUser.getName(),
+                    MainActivity.currentUser.latitude, MainActivity.currentUser.longitude,
+                    time, true, ChatMessage.ChatTypes.ONEONONEONLINECHAT.getValue());
+        }
 
         ChatBubble ChatBubble = new ChatBubble(mssgText.getText().toString(), myMessage);
 
-        pushMessageToFirebase(chatMessage);
-        saveMessageLocally(chatMessage);
+//        pushMessageToFirebase(chatMessage);
+//        saveMessageLocally(chatMessage);
 
         sendMessageThruRadio(chatMessage);
 
-        chatBubbles.add(ChatBubble);
-        adapter.notifyDataSetChanged();
+//        chatBubbles.add(ChatBubble);
+//        adapter.notifyDataSetChanged();
         mssgText.setText("");
     }
 
@@ -170,8 +173,17 @@ public class ChatActivity2 extends AppCompatActivity {
 
     private void sendMessageThruRadio(ChatMessage chatMessage){
         Log.e(TAG, SUB_TAG+"Sending message thru radio.");
-        String mssgForRadio = convertMessageToString(chatMessage);
-        BlueTerm.sendMessage(mssgForRadio, chatMessage.mssgType);
+        String mssgForRadio = "";
+        int mssgType = 0;
+        if(chatMessage != null) {
+            mssgForRadio = convertMessageToString(chatMessage);
+            mssgType = chatMessage.mssgType;
+        }
+        else{
+            mssgType = ChatMessage.ChatTypes.GETMESSAGESFROMRADIO.getValue();
+        }
+        Log.e(TAG, SUB_TAG+mssgForRadio.getBytes());
+        BlueTerm.sendMessage(mssgForRadio, mssgType);
     }
 
     private String convertMessageToString(ChatMessage mssg){
