@@ -1,16 +1,26 @@
 package com.sjsu.boreas.database.Messages;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+import com.sjsu.boreas.DataChangeListeners.messageListener;
+
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Entity
 public class ChatMessage implements Serializable {
+
+    private static String TAG = "BOREAS";
+    private static String SUB_TAG = "-----ChatMessage data class ";
+    private static List<messageListener> listeners = new ArrayList<messageListener>();
 
     public enum ChatTypes {
         ONEONONEONLINECHAT(0),
@@ -120,6 +130,20 @@ public class ChatMessage implements Serializable {
         result.put("isMyMssg", isMyMssg);
         result.put("mssgType", mssgType);
         return result;
+    }
+
+    public static void addMessageListener(messageListener listener){
+        Log.e(TAG, SUB_TAG+"adding a listener");
+        listeners.add(listener);
+    }
+
+    public static void notifySpecificListener(String senderId){
+        Log.e(TAG, SUB_TAG+"notify specific user");
+        for(int i = 0; i < listeners.size(); i++){
+            if(listeners.get(i).getChatPartnerID().equals(senderId)){
+
+            }
+        }
     }
 
 }
