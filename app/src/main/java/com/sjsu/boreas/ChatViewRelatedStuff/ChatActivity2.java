@@ -62,6 +62,9 @@ public class ChatActivity2 extends AppCompatActivity implements messageListener 
         adapter = new MessageAdapter(this, R.layout.left_chat_bubble, chatBubbles);
         listView.setAdapter(adapter);
 
+        //Add this instance of chatactivity2 as a listener to the ChatMessage data class
+        ChatMessage.addMessageListener(this);
+
         //event for button SEND
         btnSend.setOnClickListener(new View.OnClickListener() {
             @Override
