@@ -17,7 +17,6 @@
   <component name="ChangeListManager">
     <list default="true" id="49f8b3d3-f678-438a-b6fb-ad25673b4b3a" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/ChatViewRelatedStuff/ChatActivity2.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/ChatViewRelatedStuff/ChatActivity2.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/database/Messages/ChatMessage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/database/Messages/ChatMessage.java" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -82,8 +81,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/sjsu/boreas/ChatViewRelatedStuff/ChatActivity2.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="538">
-              <caret line="220" selection-start-line="220" selection-end-line="220" />
+            <state relative-caret-position="368">
+              <caret line="64" column="88" selection-start-line="64" selection-start-column="88" selection-end-line="64" selection-end-column="88" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#2061#2548#0" expanded="true" />
@@ -471,7 +470,7 @@
     <editor active="true" />
     <layout>
       <window_info id="Captures" order="0" side_tool="true" weight="0.25" />
-      <window_info active="true" content_ui="combo" id="Project" order="1" visible="true" weight="0.1923077" />
+      <window_info content_ui="combo" id="Project" order="1" visible="true" weight="0.1923077" />
       <window_info id="Structure" order="2" side_tool="true" />
       <window_info id="Favorites" order="3" side_tool="true" />
       <window_info id="Build Variants" order="4" side_tool="true" />
@@ -483,7 +482,7 @@
       <window_info anchor="bottom" id="Logcat" order="1" sideWeight="0.49946582" weight="0.75328946" />
       <window_info anchor="bottom" id="TODO" order="2" weight="0.39802632" />
       <window_info anchor="bottom" id="Debug" order="3" />
-      <window_info anchor="bottom" id="Terminal" order="4" visible="true" weight="0.21720882" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="4" visible="true" weight="0.2339979" />
       <window_info anchor="bottom" id="Event Log" order="5" sideWeight="0.5005342" side_tool="true" weight="0.96710527" />
       <window_info anchor="bottom" id="Version Control" order="6" />
       <window_info anchor="bottom" id="Build" order="7" weight="0.2258772" />
@@ -946,8 +945,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/sjsu/boreas/ChatViewRelatedStuff/ChatActivity2.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="538">
-          <caret line="220" selection-start-line="220" selection-end-line="220" />
+        <state relative-caret-position="368">
+          <caret line="64" column="88" selection-start-line="64" selection-start-column="88" selection-end-line="64" selection-end-column="88" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#2061#2548#0" expanded="true" />
