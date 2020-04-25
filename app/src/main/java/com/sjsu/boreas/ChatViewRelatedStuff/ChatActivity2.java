@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.sjsu.boreas.DataChangeListeners.messageListener;
 import com.sjsu.boreas.Firebase.FirebaseDataRefAndInstance;
 import com.sjsu.boreas.MainActivity;
 import com.sjsu.boreas.PhoneBluetoothRadio.BlueTerm;
@@ -25,7 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ChatActivity2 extends AppCompatActivity {
+public class ChatActivity2 extends AppCompatActivity implements messageListener {
 
     private ListView listView;
     private View btnSend;
@@ -203,6 +204,19 @@ public class ChatActivity2 extends AppCompatActivity {
                             +   "mssgType: " + String.valueOf(mssg.mssgType)
                         + "}";
         return mssgStr;
+    }
+
+    @Override
+    public void newMessageReceived(ChatMessage mssg) {
+        Log.e(TAG, SUB_TAG+"new message is received");
+        chatBubbles.add(new ChatBubble(mssg.mssgText, false));
+        adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public String getChatPartnerID() {
+        Log.e(TAG, SUB_TAG+"get chat partner id");
+        return myChatPartner.uid;
     }
 
 }
