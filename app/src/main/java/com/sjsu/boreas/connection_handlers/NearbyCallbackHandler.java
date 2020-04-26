@@ -13,8 +13,10 @@ import com.google.android.gms.nearby.connection.Payload;
 import com.google.android.gms.nearby.connection.PayloadCallback;
 import com.google.android.gms.nearby.connection.PayloadTransferUpdate;
 import com.sjsu.boreas.MainActivity;
+import com.sjsu.boreas.database.Messages.ChatMessage;
 import com.sjsu.boreas.database.User;
 import com.sjsu.boreas.messages.AdjacencyListMessage;
+import com.sjsu.boreas.messages.LongDistanceMessage;
 import com.sjsu.boreas.messages.TextMessage;
 
 import java.io.ByteArrayInputStream;
@@ -28,6 +30,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 
 public class NearbyCallbackHandler {
 
@@ -49,8 +52,13 @@ public class NearbyCallbackHandler {
                 //ByteArrayInputStream bytes = new ByteArrayInputStream();
                 ObjectInputStream stream = new ObjectInputStream(payload.asStream().asInputStream());
                 Object result = stream.readObject();
+
+                /*Parse message and find its type*/
+
+                //Adjacency List
                 if(result instanceof AdjacencyListMessage){
                     AdjacencyListMessage message = (AdjacencyListMessage) result;
+                    MainActivity.database.userDao().insertNewUser(message.sender);
                     //Check if received adjacency list overlaps current adjacency list
                     boolean isMeshMember = false;
                     HashSet<String> adjacencySet = createIdSet(connectionHandler.meshMembers);
@@ -64,10 +72,47 @@ public class NearbyCallbackHandler {
                         connectionHandler.getClient().disconnectFromEndpoint(endpointId);
                         return;
                     }
+                }
 
-                }else if(result instanceof TextMessage){
+
+                //Local chat
+                else if(result instanceof TextMessage){
                     TextMessage message = (TextMessage) result;
                     connectionHandler.receiveMessage(message);
+                    MainActivity.database.userDao().insertNewUser(message.sender);
+                    MainActivity.database.userDao().insertNewUser(message.forwarder);
+
+                    MainActivity.database.chatMessageDao().insertAll(
+                            new ChatMessage("", message.message, MainActivity.currentUser.uid, MainActivity.currentUser.name,
+                                    message.sender.uid, message.sender.name, message.sender.latitude, message.sender.longitude,
+                                    message.timestamp, false, ChatMessage.ChatTypes.OFFLINEGROUPCHAT.getValue())
+                    );
+                }
+
+
+                //Long distance chat message
+                else if(result instanceof LongDistanceMessage){
+                    LongDistanceMessage message = (LongDistanceMessage) result;
+                    MainActivity.database.userDao().insertNewUser(message.recipient);
+                    MainActivity.database.userDao().insertNewUser(message.sender);
+                    User forwarder = message.forwarder;
+                    message.forwarder = MainActivity.currentUser;
+                    //Decide who to forward it to based on distances to recipient
+                    int forwardCount = 0;
+                    List<User> nearestUsers = MainActivity.database.userDao().getClosestUsers(message.recipient.latitude, message.recipient.longitude);
+                    for(User user : nearestUsers){
+                        //Complete message forwarding once messages have been sent to at most 3 users
+                        if(forwardCount >= 3)
+                            break;
+                        if(connectionHandler.neighbors.containsKey(user.uid)){
+                            if(!user.isMe && user.uid != forwarder.uid){
+                                //Send message to user and increment
+                                forwardCount++;
+                                Payload forwardPayload = Payload.fromStream(constructStreamFromSerializable(message));
+                                connectionHandler.getClient().sendPayload(connectionHandler.neighbors.get(user.uid), forwardPayload);
+                            }
+                        }
+                    }
                 }
             }catch(Exception e){
                 e.printStackTrace();
