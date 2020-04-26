@@ -33,6 +33,9 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         //First get json object from string
         try {
+            if(mssg.getData().get("body")==null){
+                return;
+            }
             jsonMssg = new JSONObject(mssg.getData().get("body"));
 
             mssgId = jsonMssg.getString("mssgId");
