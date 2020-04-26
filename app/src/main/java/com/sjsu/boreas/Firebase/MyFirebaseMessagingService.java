@@ -46,7 +46,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             senderName = jsonMssg.getString("senderName");
             Log.e(TAG, SUB_TAG+"SO far so good");
             latitude = Double.parseDouble(jsonMssg.getString("latitude"));
-            longitude = Double.parseDouble(jsonMssg.getString("longtitude"));
+            longitude = Double.parseDouble(jsonMssg.getString("longitude"));
             Log.e(TAG, SUB_TAG+"SO far so good 2");
             time = Long.parseLong(jsonMssg.getString("time"));
             isMyMssg = Boolean.parseBoolean(jsonMssg.getString("isMyMssg"));
