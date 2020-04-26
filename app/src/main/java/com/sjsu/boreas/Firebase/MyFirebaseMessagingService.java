@@ -61,6 +61,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         Log.e(TAG, SUB_TAG+"<><><><><><><><><><> Leaving hera");
 
+        ChatMessage fakeMssg = new ChatMessage();
+
+        newMessageReceived(fakeMssg);
+
     }
 
     /**
@@ -86,5 +90,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         //Do the actual writing of the data onto firebase
         FirebaseDataRefAndInstance.getDatabaseReference().updateChildren(firebase_child_update);
+    }
+
+    private void newMessageReceived(ChatMessage mssg){
+        Log.e(TAG, SUB_TAG+"New message received and notifying Caht message");
+        ChatMessage.notifyAllListeners(mssg);
     }
 }
