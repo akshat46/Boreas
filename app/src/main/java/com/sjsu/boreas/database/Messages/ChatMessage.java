@@ -20,7 +20,7 @@ public class ChatMessage implements Serializable {
 
     private static String TAG = "BOREAS";
     private static String SUB_TAG = "-----ChatMessage data class ";
-    private static List<messageListener> listeners = new ArrayList<messageListener>();
+    private static messageListener listener;
 
     public enum ChatTypes {
         ONEONONEONLINECHAT(0),
@@ -146,25 +146,26 @@ public class ChatMessage implements Serializable {
         return result;
     }
 
-    public static void addMessageListener(messageListener listener){
+    public static void addMessageListener(messageListener mssgListener){
         Log.e(TAG, SUB_TAG+"adding a listener");
-        listeners.add(listener);
+        listener = mssgListener;
     }
 
-    public static void notifySpecificListener(String senderId, ChatMessage mssg){
-        Log.e(TAG, SUB_TAG+"notify specific user");
-        for(int i = 0; i < listeners.size(); i++){
-            if(listeners.get(i).getChatPartnerID().equals(senderId)){
-                listeners.get(i).newMessageReceived(mssg);
-            }
-        }
-    }
+//    public static void notifySpecificListener(String senderId, ChatMessage mssg){
+//        Log.e(TAG, SUB_TAG+"notify specific user");
+//        for(int i = 0; i < listeners.size(); i++){
+//            if(listeners.get(i).getChatPartnerID().equals(senderId)){
+//                listeners.get(i).newMessageReceived(mssg);
+//            }
+//        }
+//    }
 
-    public static void notifyAllListeners(ChatMessage mssg){
+    public static void notifyListener(ChatMessage mssg){
         Log.e(TAG, SUB_TAG+"Notifying all listeners: This function is for testing");
-        for(int i = 0; i < listeners.size(); i++){
-            listeners.get(i).newMessageReceived(mssg);
-        }
+        listener.newMessageReceived(mssg);
+//        for(int i = 0; i < listeners.size(); i++){
+//            listeners.get(i).newMessageReceived(mssg);
+//        }
     }
 
 }

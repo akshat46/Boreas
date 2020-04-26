@@ -56,13 +56,15 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     receiverId, receiverName,
                     senderId, senderName,
                     latitude, longitude,
-                    time, isMyMssg, mssgType);
+                    time, false, mssgType);
 
             MainActivity.database.chatMessageDao().insertAll(newMssg); //Save chat message
 
             //Save the sender's info to the database
             User sender = new User(senderId, senderName, latitude, longitude, false);
             MainActivity.database.userDao().insertNewUser(sender);
+
+            newMessageReceived(newMssg);
 
             Log.e(TAG, SUB_TAG+"New mssg: "+ newMssg.receiverName + ", mssgType: " + newMssg.mssgType);
         } catch (JSONException e) {
@@ -71,11 +73,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         }
 
         Log.e(TAG, SUB_TAG+"<><><><><><><><><><> Leaving hera");
-
-        ChatMessage fakeMssg = new ChatMessage();
-
-        newMessageReceived(fakeMssg);
-
     }
 
     /**
@@ -105,6 +102,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     private void newMessageReceived(ChatMessage mssg){
         Log.e(TAG, SUB_TAG+"New message received and notifying Caht message");
-        ChatMessage.notifyAllListeners(mssg);
+        ChatMessage.notifyListener(mssg);
     }
 }

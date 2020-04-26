@@ -212,20 +212,7 @@ public class ChatActivity2 extends AppCompatActivity implements messageListener 
     @Override
     public void newMessageReceived(ChatMessage mssg) {
         Log.e(TAG, SUB_TAG+"new message is received");
-
-        AsyncTask.execute(new Runnable() {
-            @Override
-            public void run() {
-                //Making a fake mssg and saving it, for testing purposes
-                ChatMessage tmp = new ChatMessage();
-                tmp.receiverId = MainActivity.currentUser.getUid();
-                tmp.senderId = myChatPartner.uid;
-                tmp.isMyMssg = false;
-                MainActivity.database.chatMessageDao().insertAll(tmp);
-            }
-        });
-
-        chatBubbles.add(new ChatBubble(mssg.mssgText + " " + String.valueOf(System.currentTimeMillis()), false));
+        chatBubbles.add(new ChatBubble(mssg.mssgText, mssg.isMyMssg));
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
