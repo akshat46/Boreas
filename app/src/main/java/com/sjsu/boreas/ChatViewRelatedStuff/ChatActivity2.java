@@ -50,7 +50,7 @@ public class ChatActivity2 extends AppCompatActivity implements messageListener 
         Intent intent = getIntent();
         myChatPartner = (User) intent.getSerializableExtra("ReceiverObj");
 
-        Log.e(TAG, SUB_TAG+"-=-=-=-=-==-///////// "+myChatPartner);
+        Log.e(TAG, SUB_TAG+"-=-=-=-=-==-///////// "+myChatPartner+", and me: "+MainActivity.currentUser.getName());
 
         initializeChatScreen();
 
@@ -114,13 +114,13 @@ public class ChatActivity2 extends AppCompatActivity implements messageListener 
 
         ChatBubble ChatBubble = new ChatBubble(mssgText.getText().toString(), myMessage);
 
-//        pushMessageToFirebase(chatMessage);
-//        saveMessageLocally(chatMessage);
+        pushMessageToFirebase(chatMessage);
+        saveMessageLocally(chatMessage);
 
-        sendMessageThruRadio(chatMessage);
+//        sendMessageThruRadio(chatMessage);
 
-//        chatBubbles.add(ChatBubble);
-//        adapter.notifyDataSetChanged();
+        chatBubbles.add(ChatBubble);
+        adapter.notifyDataSetChanged();
         mssgText.setText("");
     }
 
@@ -212,8 +212,26 @@ public class ChatActivity2 extends AppCompatActivity implements messageListener 
     @Override
     public void newMessageReceived(ChatMessage mssg) {
         Log.e(TAG, SUB_TAG+"new message is received");
-        chatBubbles.add(new ChatBubble(mssg.mssgText, false));
-        adapter.notifyDataSetChanged();
+
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                //Making a fake mssg and saving it, for testing purposes
+                ChatMessage tmp = new ChatMessage();
+                tmp.receiverId = MainActivity.currentUser.getUid();
+                tmp.senderId = myChatPartner.uid;
+                tmp.isMyMssg = false;
+                MainActivity.database.chatMessageDao().insertAll(tmp);
+            }
+        });
+
+        chatBubbles.add(new ChatBubble(mssg.mssgText + " " + String.valueOf(System.currentTimeMillis()), false));
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                adapter.notifyDataSetChanged();
+            }
+        });
     }
 
     @Override

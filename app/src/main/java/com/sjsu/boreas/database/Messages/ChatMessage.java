@@ -59,6 +59,20 @@ public class ChatMessage implements Serializable {
         this.mssgType = mssgType;
     }
 
+    public ChatMessage(){
+        this.mssgId = String.valueOf(System.currentTimeMillis());
+        this.time = System.currentTimeMillis();
+        this.latitude = 123.13;
+        this.longitude = -123.123;
+        this.senderName = "fakeSender1";
+        this.senderId = "fakeIdOfSender1";
+        this.receiverId = "receiverFakeID";
+        this.receiverName = "fakeReciver";
+        this.mssgText = "testing";
+        this.isMyMssg = false;
+        this.mssgType = ChatTypes.ONEONONEONLINECHAT.getValue();
+    }
+
     public String getSenderName(){    return senderName;}
 
     @NonNull
@@ -137,12 +151,19 @@ public class ChatMessage implements Serializable {
         listeners.add(listener);
     }
 
-    public static void notifySpecificListener(String senderId){
+    public static void notifySpecificListener(String senderId, ChatMessage mssg){
         Log.e(TAG, SUB_TAG+"notify specific user");
         for(int i = 0; i < listeners.size(); i++){
             if(listeners.get(i).getChatPartnerID().equals(senderId)){
-
+                listeners.get(i).newMessageReceived(mssg);
             }
+        }
+    }
+
+    public static void notifyAllListeners(ChatMessage mssg){
+        Log.e(TAG, SUB_TAG+"Notifying all listeners: This function is for testing");
+        for(int i = 0; i < listeners.size(); i++){
+            listeners.get(i).newMessageReceived(mssg);
         }
     }
 
