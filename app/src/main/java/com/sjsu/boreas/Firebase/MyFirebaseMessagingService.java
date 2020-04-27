@@ -6,6 +6,7 @@ import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.sjsu.boreas.MainActivity;
 import com.sjsu.boreas.database.Messages.ChatMessage;
+import com.sjsu.boreas.database.Messages.MessageHandler;
 import com.sjsu.boreas.database.User;
 
 import org.json.JSONException;
@@ -24,52 +25,14 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         super.onMessageReceived(mssg);
         Log.e(TAG, SUB_TAG+"On mssg received][][][][][][][][][][][][][][" + mssg.getData().get("body"));
 
-        JSONObject jsonMssg = null;
-        String mssgId, mssgText, receiverId, receiverName, senderId, senderName;
-        double latitude, longitude;
-        long time;
-        int mssgType;
-        boolean isMyMssg;
+        ChatMessage chatMssg = null;
 
-        //First get json object from string
-        try {
-            if(mssg.getData().get("body")==null){
-                return;
-            }
-            jsonMssg = new JSONObject(mssg.getData().get("body"));
-
-            mssgId = jsonMssg.getString("mssgId");
-            mssgText = jsonMssg.getString("mssgText");
-            receiverId = jsonMssg.getString("receiverId");
-            receiverName = jsonMssg.getString("receiverName");
-            senderId = jsonMssg.getString("senderId");
-            senderName = jsonMssg.getString("senderName");
-            Log.e(TAG, SUB_TAG+"SO far so good");
-            latitude = Double.parseDouble(jsonMssg.getString("latitude"));
-            longitude = Double.parseDouble(jsonMssg.getString("longitude"));
-            Log.e(TAG, SUB_TAG+"SO far so good 2");
-            time = Long.parseLong(jsonMssg.getString("time"));
-            isMyMssg = Boolean.parseBoolean(jsonMssg.getString("isMyMssg"));
-            mssgType = Integer.parseInt(jsonMssg.getString("mssgType"));
-
-            ChatMessage newMssg = new ChatMessage(mssgId, mssgText,
-                    receiverId, receiverName,
-                    senderId, senderName,
-                    latitude, longitude,
-                    time, false, mssgType);
-
-            MainActivity.database.chatMessageDao().insertAll(newMssg); //Save chat message
-
-            //Save the sender's info to the database
-            User sender = new User(senderId, senderName, latitude, longitude, false);
-            MainActivity.database.userDao().insertNewUser(sender);
-
-            newMessageReceived(newMssg);
-
-            Log.e(TAG, SUB_TAG+"New mssg: "+ newMssg.receiverName + ", mssgType: " + newMssg.mssgType);
-        } catch (JSONException e) {
-            Log.e(TAG, SUB_TAG+"JSON exception: \n\t" + e);
-            e.printStackTrace();
+        if(mssg.getData().get("body")==null){
+            return;
+        }else{
+            chatMssg = MessageHandler.convertJsonToMessage(mssg.getData().get("body"));
+            if(chatMssg != null)
+                newMessageReceived(chatMssg);
         }
 
         Log.e(TAG, SUB_TAG+"<><><><><><><><><><> Leaving hera");

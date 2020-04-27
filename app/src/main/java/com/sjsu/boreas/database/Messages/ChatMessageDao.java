@@ -19,6 +19,10 @@ public interface ChatMessageDao {
             "ASC LIMIT 20")
     List<ChatMessage> getLastTwentyMessagesForUser(String chatPartnerID, int mssgType);
 
+    @Query("SELECT * FROM chatMessage " +
+            "WHERE mssgId is :messageId")
+    List<ChatMessage> getSpecificMessage(String messageId);
+
     @Query("SELECT * FROM chatmessage")
     List<ChatMessage> getAllMessages();
 
