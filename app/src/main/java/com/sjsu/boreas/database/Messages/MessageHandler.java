@@ -35,7 +35,7 @@ public class MessageHandler {
             receiverName = jsonMssg.getString("receiverName");
             senderId = jsonMssg.getString("senderId");
             senderName = jsonMssg.getString("senderName");
-            Log.e(TAG, SUB_TAG+"SO far so good");
+            Log.e(TAG, SUB_TAG+"SO far so good: senderId: " + senderId);
             latitude = Double.parseDouble(jsonMssg.getString("latitude"));
             longitude = Double.parseDouble(jsonMssg.getString("longitude"));
             Log.e(TAG, SUB_TAG+"SO far so good 2");
@@ -50,9 +50,7 @@ public class MessageHandler {
                     time, isMyMssg, mssgType);
 
             //We check if the message is already in database, if it is, don't save
-            if(messageAlreadyInDatabase(mssg))
-                return null;
-            else
+            if(!messageAlreadyInDatabase(mssg))
                 MainActivity.database.chatMessageDao().insertAll(mssg); //Save chat message
 
             //Save the sender's info to the database
