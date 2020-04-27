@@ -369,7 +369,10 @@ public class BluetoothSerialService {
                         String str = new String(buffer, "UTF-8"); // for UTF-8 encoding
                         Log.i(TAG, "\t\tReceived: " + str.substring(0,bytes));
                         ChatMessage mssg = MessageHandler.convertJsonToMessage(str.substring(0,bytes));
-                        ChatMessage.notifyListener(mssg);
+                        if(mssg != null)
+                            ChatMessage.notifyListener(mssg);
+                        else
+                            Log.e(TAG, SUB_TAG+"[[[[[[[[[[[[[[[[[[[[[[[[[[[[[The chat mssg returned was null bruh -------------------");
                     }else{
                         Log.e(TAG, "mmInstream is null");
                     }
