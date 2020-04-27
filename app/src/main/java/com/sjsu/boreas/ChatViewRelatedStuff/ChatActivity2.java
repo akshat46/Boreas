@@ -114,10 +114,10 @@ public class ChatActivity2 extends AppCompatActivity implements messageListener 
 
         ChatBubble ChatBubble = new ChatBubble(mssgText.getText().toString(), myMessage);
 
-        pushMessageToFirebase(chatMessage);
-        saveMessageLocally(chatMessage);
+//        pushMessageToFirebase(chatMessage);
+//        saveMessageLocally(chatMessage);
 
-//        sendMessageThruRadio(chatMessage);
+        sendMessageThruRadio(chatMessage);
 
         chatBubbles.add(ChatBubble);
         adapter.notifyDataSetChanged();

@@ -162,7 +162,8 @@ public class ChatMessage implements Serializable {
 
     public static void notifyListener(ChatMessage mssg){
         Log.e(TAG, SUB_TAG+"Notifying all listeners: This function is for testing");
-        listener.newMessageReceived(mssg);
+        if(mssg.senderId.equals(listener.getChatPartnerID()))
+            listener.newMessageReceived(mssg);
 //        for(int i = 0; i < listeners.size(); i++){
 //            listeners.get(i).newMessageReceived(mssg);
 //        }
