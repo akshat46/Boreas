@@ -10,6 +10,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -21,15 +24,19 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.firebase.ui.database.SnapshotParser;
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+import com.sjsu.boreas.Adapters.AdapterForFirebase;
 import com.sjsu.boreas.Firebase.FirebaseDataRefAndInstance;
 import com.sjsu.boreas.ViewHolder.UsersViewHolder;
 import com.sjsu.boreas.database.AppDatabase;
 import com.sjsu.boreas.database.User;
 import com.sjsu.boreas.messaging.ChatActivity;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,10 +47,12 @@ public class AddContactActivity extends AppCompatActivity {
     private static String SUB_TAG = "-------ADdContactActivity ";
 
     private RecyclerView recyclerView;
+    private ArrayList<User> userArrayList;
     private FirebaseRecyclerAdapter<User, UsersViewHolder> mAdapter;
     private RecyclerView.LayoutManager layoutManager;
     private LandingPage mParent;
-    private Handler handler;
+    private SearchView searchBar;
+    private AdapterForFirebase mAdapter2;
 
 
 //    private DatabaseReference database_ref;
@@ -52,6 +61,7 @@ public class AddContactActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         Log.e(TAG, SUB_TAG+"on create");
         super.onCreate(savedInstanceState);
+        userArrayList = new ArrayList<User>();
         setContentView(R.layout.activity_add_contact);
         initUI();
     }
@@ -62,17 +72,16 @@ public class AddContactActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
+        searchBar = findViewById(R.id.search_bar);
 
         manageMessageFromWorkerThread();
-
-        initializeFirebaseAdapter();
-
-        recyclerView.setAdapter(mAdapter);
+//        firebaseContactsAdapter();
     }
 
-    public void initializeFirebaseAdapter(){
-        Log.e(TAG, SUB_TAG+"InitializeFirebase adapter");
-        Query query = FirebaseDatabase.getInstance().getReference().child("users");
+    public void firebaseContactsAdapter(){
+        Query query;
+        Log.e(TAG, SUB_TAG + "InitializeFirebase adapter");
+        query = FirebaseDatabase.getInstance().getReference().child("users");
 
         FirebaseRecyclerOptions<User> options = new FirebaseRecyclerOptions.Builder<User>()
                 .setQuery(query, new SnapshotParser<User>() {
@@ -95,7 +104,7 @@ public class AddContactActivity extends AppCompatActivity {
             @NonNull
             @Override
             public UsersViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-//                Log.e(TAG, SUB_TAG+"onCreateViewHolder");
+                Log.e(TAG, SUB_TAG+"onCreateViewHolder");
                 View view = LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.item_chat, parent, false);
 
@@ -104,7 +113,7 @@ public class AddContactActivity extends AppCompatActivity {
 
             @Override
             protected void onBindViewHolder(@NonNull final UsersViewHolder holder, int position, @NonNull final User model) {
-//                Log.e(TAG, SUB_TAG+"onBindViewHolder");
+                Log.e(TAG, SUB_TAG+"onBindViewHolder");
                 holder.bindToListItemView(model);
 
                 if(model.getUid().equals(MainActivity.currentUser.getUid())) {
@@ -122,9 +131,26 @@ public class AddContactActivity extends AppCompatActivity {
                 });
             }
         };
+
+        recyclerView.setAdapter(mAdapter);
+        Log.e(TAG, SUB_TAG+"--------These are all the things in adapter "+ mAdapter);
     }
 
-    private void addContact(final User user){
+    private void searchFireBaseContact(String searchedName){
+        Log.e(TAG, SUB_TAG+"    Search Firebase contacts");
+        ArrayList<User> filteredContacts = new ArrayList<User>();
+
+        for(User u : userArrayList){
+            if(u.name.toLowerCase().contains(searchedName.toLowerCase())){
+                filteredContacts.add(u);
+            }
+        }
+
+        AdapterForFirebase newAdapter = new AdapterForFirebase(filteredContacts);
+        recyclerView.setAdapter(newAdapter);
+    }
+
+    public static void addContact(final User user){
         Log.e(TAG, SUB_TAG+"addContact");
 
         Map<String, Object> new_user = user.toMap();
@@ -132,12 +158,21 @@ public class AddContactActivity extends AppCompatActivity {
 
         //We are putting this data under the users branch of the firebase database
         firebase_child_update.put("/contacts/" + MainActivity.currentUser.getUid() + "/" + user.getUid(), new_user);
-
         Log.e(TAG, SUB_TAG+"My user ID is: " + MainActivity.currentUser.getUid() + ", and the contact id is: " + user.getUid());
 
         //Do the actual writing of the data onto firebase and locally
         FirebaseDataRefAndInstance.getDatabaseReference().updateChildren(firebase_child_update);
         AsyncTask.execute(new Runnable() {
+            public Handler handler = new Handler(Looper.getMainLooper()) {
+                @Override
+                public void handleMessage(Message message) {
+                    // This is where you do your work in the UI thread.
+                    // Your worker tells you in the message what to do.
+                    Log.e(TAG, SUB_TAG+"&&&&&&&&&&&&&&&&&&&&&&: " + message.obj);
+//                Toast.makeText(getApplicationContext(), (Integer) message.obj, Toast.LENGTH_LONG).show();
+                }
+            };
+
             @Override
             public void run() {
                 Log.e(TAG, SUB_TAG+"Adding contact: " + user.getName());
@@ -155,7 +190,6 @@ public class AddContactActivity extends AppCompatActivity {
                     handler.dispatchMessage(mssg);
                     Log.e(TAG, SUB_TAG+mssg.obj);
                 }
-                finish();
             }
         });
     }
@@ -163,25 +197,59 @@ public class AddContactActivity extends AppCompatActivity {
     @Override
     public void onStart() {
         super.onStart();
-        mAdapter.startListening();
+//        mAdapter2.startListening();
+        Log.e(TAG, SUB_TAG+"----intialize custom firebase");
+        final DatabaseReference nm = FirebaseDatabase.getInstance().getReference().child("users");
+        nm.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()){
+                    for (DataSnapshot npsnapshot : dataSnapshot.getChildren()){
+                        Log.e(TAG, SUB_TAG+"    onstart new adapter snapshot thing");
+                        User u = new User(npsnapshot.child("uid").getValue().toString(),
+                                npsnapshot.child("name").getValue().toString(),
+                                Double.parseDouble(npsnapshot.child("latitude").getValue().toString()),
+                                Double.parseDouble(npsnapshot.child("longitude").getValue().toString()),
+                                false);
+                        if(MainActivity.currentUser.uid != u.uid)
+                            userArrayList.add(u);
+                    }
+                    mAdapter2=new AdapterForFirebase(userArrayList);
+                    recyclerView.setAdapter(mAdapter2);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        if(searchBar != null){
+            searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                @Override
+                public boolean onQueryTextSubmit(String query) {
+                    return false;
+                }
+
+                @Override
+                public boolean onQueryTextChange(String newText) {
+                    Log.e(TAG, SUB_TAG+"    searching firebase contact");
+                    searchFireBaseContact(newText);
+                    return true;
+                }
+            });
+        }
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        mAdapter.stopListening();
+//        mAdapter2.stopListening();
     }
 
     private void manageMessageFromWorkerThread(){
         Log.e(TAG, SUB_TAG+"***********************Manage messg from worker thread");
-        handler = new Handler(Looper.getMainLooper()) {
-            @Override
-            public void handleMessage(Message message) {
-                // This is where you do your work in the UI thread.
-                // Your worker tells you in the message what to do.
-                Log.e(TAG, SUB_TAG+"&&&&&&&&&&&&&&&&&&&&&&: " + message.obj);
-//                Toast.makeText(getApplicationContext(), (Integer) message.obj, Toast.LENGTH_LONG).show();
-            }
-        };
+
     }
 }
