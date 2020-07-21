@@ -7,7 +7,6 @@ import android.widget.RelativeLayout;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.sjsu.boreas.Firebase.GetFirebaseContacts;
 import com.sjsu.boreas.R;
 import com.sjsu.boreas.database.User;
 
@@ -33,8 +32,6 @@ public class OneOnOneChatViewAdapter extends RecyclerView.Adapter<OneOnOneChatVi
 
     public OneOnOneChatViewAdapter(){
         Log.e(TAG, SUB_TAG+"OneOnOneChatView adapter");
-        GetFirebaseContacts getFirebaseContacts = new GetFirebaseContacts();
-        this.userContactList  = getFirebaseContacts.getMyFirebaseContacts();
     }
 
     // Create new views (invoked by the layout manager)
