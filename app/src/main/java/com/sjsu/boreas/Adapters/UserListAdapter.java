@@ -18,13 +18,13 @@ import com.sjsu.boreas.database.User;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AdapterForFirebase extends RecyclerView.Adapter<UsersViewHolder>{
+public class UserListAdapter extends RecyclerView.Adapter<UsersViewHolder>{
 
     private static String TAG = "BOREAS";
     private static String SUB_TAG = "------AdapterForFirebase-----";
     private List<User>userList;
 
-    public AdapterForFirebase(ArrayList<User> ul){
+    public UserListAdapter(ArrayList<User> ul){
         this.userList = ul;
     }
 

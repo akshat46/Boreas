@@ -1,6 +1,6 @@
 package com.sjsu.boreas;
 
-import android.content.Intent;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -10,31 +10,33 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.SearchView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.firebase.ui.database.SnapshotParser;
+import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.sjsu.boreas.Adapters.AdapterForFirebase;
+import com.sjsu.boreas.Adapters.UserListAdapter;
+import com.sjsu.boreas.ChatViewRelatedStuff.ViewPagerTabAdapter;
 import com.sjsu.boreas.Firebase.FirebaseDataRefAndInstance;
+import com.sjsu.boreas.ViewFragments.offlineSection.OfflinePeopleContactedListFragment;
+import com.sjsu.boreas.ViewFragments.onlineSection.OnlineListOfPeopleFragment;
 import com.sjsu.boreas.ViewHolder.UsersViewHolder;
-import com.sjsu.boreas.database.AppDatabase;
 import com.sjsu.boreas.database.User;
-import com.sjsu.boreas.messaging.ChatActivity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -52,7 +54,10 @@ public class AddContactActivity extends AppCompatActivity {
     private RecyclerView.LayoutManager layoutManager;
     private LandingPage mParent;
     private SearchView searchBar;
-    private AdapterForFirebase mAdapter2;
+    private UserListAdapter mAdapter2;
+    private ViewPager mViewPager;
+    private FragmentTransaction mFragmentTransaction;
+    private List<Fragment> mFragments;
 
 
 //    private DatabaseReference database_ref;
@@ -63,91 +68,40 @@ public class AddContactActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         userArrayList = new ArrayList<User>();
         setContentView(R.layout.activity_add_contact);
-        initUI();
+        initViews();
     }
 
-    private void initUI() {
-        Log.e(TAG, SUB_TAG+"initUI");
-        recyclerView = findViewById(R.id.online_ppl_list);
-        recyclerView.setHasFixedSize(true);
-        layoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);
-        searchBar = findViewById(R.id.search_bar);
-
-        manageMessageFromWorkerThread();
-//        firebaseContactsAdapter();
+    private void initViews() {
+        Log.e(TAG, SUB_TAG+"InitViews");
+        initViewPager();
+        initTabLayout();
     }
 
-    public void firebaseContactsAdapter(){
-        Query query;
-        Log.e(TAG, SUB_TAG + "InitializeFirebase adapter");
-        query = FirebaseDatabase.getInstance().getReference().child("users");
-
-        FirebaseRecyclerOptions<User> options = new FirebaseRecyclerOptions.Builder<User>()
-                .setQuery(query, new SnapshotParser<User>() {
-                    @NonNull
-                    @Override
-                    public User parseSnapshot(@NonNull DataSnapshot snapshot) {
-                        Log.e(TAG, SUB_TAG+"Parse snapshot");
-                        if(snapshot.child("uid").getValue().toString().equals(MainActivity.currentUser.getUid()))
-                            Log.e(TAG, SUB_TAG+"This is my user: " + MainActivity.currentUser.getName());
-                        return new User(snapshot.child("uid").getValue().toString(),
-                                snapshot.child("name").getValue().toString(),
-                                Double.parseDouble(snapshot.child("latitude").getValue().toString()),
-                                Double.parseDouble(snapshot.child("longitude").getValue().toString()),
-                                false);
-                    }
-                })
-                .build();
-
-        mAdapter = new FirebaseRecyclerAdapter<User, UsersViewHolder>(options) {
-            @NonNull
-            @Override
-            public UsersViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-                Log.e(TAG, SUB_TAG+"onCreateViewHolder");
-                View view = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.item_chat, parent, false);
-
-                return new UsersViewHolder(view);
-            }
-
-            @Override
-            protected void onBindViewHolder(@NonNull final UsersViewHolder holder, int position, @NonNull final User model) {
-                Log.e(TAG, SUB_TAG+"onBindViewHolder");
-                holder.bindToListItemView(model);
-
-                if(model.getUid().equals(MainActivity.currentUser.getUid())) {
-                    Log.e(TAG, SUB_TAG+"Hiding item for user: " + MainActivity.currentUser.getName());
-                    holder.hideThisView();
-                }
-
-                holder.itemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        // Launch PostDetailActivity
-                        Log.e(TAG, SUB_TAG+"999999999999999999999999 this is the selected user: " + model.getUid());
-                        addContact(model);
-                    }
-                });
-            }
-        };
-
-        recyclerView.setAdapter(mAdapter);
-        Log.e(TAG, SUB_TAG+"--------These are all the things in adapter "+ mAdapter);
+    private void initViewPager() {
+        mViewPager = (ViewPager) findViewById(R.id.viewpager);
+        List<String> tabNames = new ArrayList<String>();
+        tabNames.add("Online People List");
+        tabNames.add("Offline People List");
+        ViewPagerTabAdapter viewPagerTabAdapter = new ViewPagerTabAdapter(getSupportFragmentManager(), getFragments(), tabNames);
+        mViewPager.setOffscreenPageLimit(2);
+        mViewPager.setAdapter(viewPagerTabAdapter);
     }
 
-    private void searchFireBaseContact(String searchedName){
-        Log.e(TAG, SUB_TAG+"    Search Firebase contacts");
-        ArrayList<User> filteredContacts = new ArrayList<User>();
+    private void initTabLayout() {
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        tabLayout.setupWithViewPager(mViewPager);
+        tabLayout.setSelectedTabIndicatorColor(Color.parseColor("#FFFFFF"));
+        tabLayout.getTabAt(0).setIcon(R.drawable.ic_contacts_white_24dp);
+        tabLayout.getTabAt(1).setIcon(R.drawable.ic_contacts_white_24dp);
+    }
 
-        for(User u : userArrayList){
-            if(u.name.toLowerCase().contains(searchedName.toLowerCase())){
-                filteredContacts.add(u);
-            }
-        }
+    private List<Fragment> getFragments() {
 
-        AdapterForFirebase newAdapter = new AdapterForFirebase(filteredContacts);
-        recyclerView.setAdapter(newAdapter);
+        mFragments = new ArrayList<Fragment>();
+        mFragments.add(OnlineListOfPeopleFragment.newInstance(""));
+        mFragments.add(OfflinePeopleContactedListFragment.newInstance(""));
+
+        return mFragments;
     }
 
     public static void addContact(final User user){
@@ -192,64 +146,5 @@ public class AddContactActivity extends AppCompatActivity {
                 }
             }
         });
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-//        mAdapter2.startListening();
-        Log.e(TAG, SUB_TAG+"----intialize custom firebase");
-        final DatabaseReference nm = FirebaseDatabase.getInstance().getReference().child("users");
-        nm.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()){
-                    for (DataSnapshot npsnapshot : dataSnapshot.getChildren()){
-                        Log.e(TAG, SUB_TAG+"    onstart new adapter snapshot thing");
-                        User u = new User(npsnapshot.child("uid").getValue().toString(),
-                                npsnapshot.child("name").getValue().toString(),
-                                Double.parseDouble(npsnapshot.child("latitude").getValue().toString()),
-                                Double.parseDouble(npsnapshot.child("longitude").getValue().toString()),
-                                false);
-                        if(MainActivity.currentUser.uid != u.uid)
-                            userArrayList.add(u);
-                    }
-                    mAdapter2=new AdapterForFirebase(userArrayList);
-                    recyclerView.setAdapter(mAdapter2);
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
-        if(searchBar != null){
-            searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-                @Override
-                public boolean onQueryTextSubmit(String query) {
-                    return false;
-                }
-
-                @Override
-                public boolean onQueryTextChange(String newText) {
-                    Log.e(TAG, SUB_TAG+"    searching firebase contact");
-                    searchFireBaseContact(newText);
-                    return true;
-                }
-            });
-        }
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-//        mAdapter2.stopListening();
-    }
-
-    private void manageMessageFromWorkerThread(){
-        Log.e(TAG, SUB_TAG+"***********************Manage messg from worker thread");
-
     }
 }
