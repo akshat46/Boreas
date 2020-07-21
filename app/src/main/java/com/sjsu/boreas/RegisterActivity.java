@@ -1,7 +1,6 @@
 package com.sjsu.boreas;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
@@ -9,9 +8,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -32,10 +29,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.sjsu.boreas.Firebase.RegisterOnFirebase;
+import com.sjsu.boreas.Firebase.FirebaseDataRefAndInstance;
 import com.sjsu.boreas.database.User;
 
-import java.io.FileOutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -256,8 +252,7 @@ public class RegisterActivity extends Activity implements LocationListener {
 
         if(networkIsAvailable()) {
             Log.e(TAG, SUB_TAG+"Network is available: so pushing to firebase");
-            RegisterOnFirebase registerOnFirebase = new RegisterOnFirebase();
-            registerOnFirebase.RegisterUserOnFirebase(myUser);
+            FirebaseDataRefAndInstance.RegisterUserOnFirebase(myUser);
         }
         else{
             Log.e(TAG, SUB_TAG+"NEtwork isn't available");
