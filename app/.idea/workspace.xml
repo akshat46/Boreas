@@ -11,9 +11,7 @@
     <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="No Filters" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="49f8b3d3-f678-438a-b6fb-ad25673b4b3a" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-    </list>
+    <list default="true" id="49f8b3d3-f678-438a-b6fb-ad25673b4b3a" name="Default Changelist" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -153,6 +151,10 @@
       <screen x="0" y="27" width="1920" height="1053" />
     </state>
     <state x="768" y="264" width="374" height="586" key="#com.intellij.ide.util.MemberChooser/0.27.1920.1053@0.27.1920.1053" timestamp="1595205187607" />
+    <state x="707" y="289" width="526" height="501" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1598396030809">
+      <screen x="28" y="0" width="1892" height="1080" />
+    </state>
+    <state x="707" y="289" width="526" height="501" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/28.0.1892.1080@28.0.1892.1080" timestamp="1598396030809" />
     <state x="557" y="298" width="826" height="483" key="AndroidCreateResourceFileDialog" timestamp="1595368775443">
       <screen x="28" y="0" width="1892" height="1080" />
     </state>

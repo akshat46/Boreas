@@ -20,8 +20,8 @@ import com.google.android.material.tabs.TabLayout;
 import com.sjsu.boreas.Adapters.UserListAdapter;
 import com.sjsu.boreas.ChatViewRelatedStuff.ViewPagerTabAdapter;
 import com.sjsu.boreas.online_connection_handlers.FirebaseDataRefAndInstance;
-import com.sjsu.boreas.ViewFragments.offlineSection.OfflinePeopleContactedListFragment;
-import com.sjsu.boreas.ViewFragments.onlineSection.OnlineListOfPeopleFragment;
+import com.sjsu.boreas.AddContacts.OfflinePeopleContactedListFragment;
+import com.sjsu.boreas.AddContacts.OnlineListOfPeopleFragment;
 import com.sjsu.boreas.ViewHolder.UsersViewHolder;
 import com.sjsu.boreas.database.User;
 

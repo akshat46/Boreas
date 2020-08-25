@@ -1,6 +1,7 @@
-package com.sjsu.boreas.ViewFragments.onlineSection;
+package com.sjsu.boreas.AddContacts;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,43 +14,36 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.sjsu.boreas.Adapters.UserListAdapter;
 import com.sjsu.boreas.AddContactActivity;
 import com.sjsu.boreas.MainActivity;
 import com.sjsu.boreas.R;
-import com.sjsu.boreas.ViewHolder.UsersViewHolder;
 import com.sjsu.boreas.database.User;
 
 import java.util.ArrayList;
 
-public class OnlineListOfPeopleFragment extends Fragment {
+public class OfflinePeopleContactedListFragment extends Fragment {
+
     private static final String EXTRA_TAB_NAME = "tab_name";
     private String mTabName;
     private static String TAG = "BOREAS";
-    private static String SUB_TAG = "---Online list of people ---";
+    private static String SUB_TAG = "---Offline people who were contacted";
 
     private View rootView;
     private RecyclerView recyclerView;
-    private ArrayList<User> userArrayList;
-    private FirebaseRecyclerAdapter<User, UsersViewHolder> mAdapter;
-    private RecyclerView.LayoutManager layoutManager;
+    private LinearLayoutManager layoutManager;
     private AddContactActivity mParent;
     private SearchView searchBar;
-    private UserListAdapter mAdapter2;
+    private ArrayList<User> userArrayList;
+    private UserListAdapter mAdapter;
     private Context mContext;
 
-
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        Log.e(TAG, SUB_TAG+"on create");
+    public void onCreate(Bundle savedInstanceState){
+        Log.e(TAG, SUB_TAG+"    on create");
         super.onCreate(savedInstanceState);
         mParent = (AddContactActivity) getActivity();
+
     }
 
     @Override
@@ -60,10 +54,10 @@ public class OnlineListOfPeopleFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        Log.e(TAG, SUB_TAG+"onCreateView");
+                             Bundle savedInstanceState){
+        Log.e(TAG, SUB_TAG+"    on Create view");
         // Inflate the layout for this fragment
-        rootView = inflater.inflate(R.layout.fragment_online_people_list, container, false);
+        rootView = inflater.inflate(R.layout.fragment_offline_people_contacted, container, false);
         mTabName = getArguments().getString(EXTRA_TAB_NAME);
         mContext = container.getContext();
         return rootView;
@@ -75,22 +69,22 @@ public class OnlineListOfPeopleFragment extends Fragment {
         initUI();
     }
 
-    public static OnlineListOfPeopleFragment newInstance(String tabName) {
+    public static OfflinePeopleContactedListFragment newInstance(String tabName) {
         Log.e(TAG, SUB_TAG+"OneOnOneFragment");
         Bundle args = new Bundle();
         args.putString(EXTRA_TAB_NAME, tabName);
-        OnlineListOfPeopleFragment fragment = new OnlineListOfPeopleFragment();
+        OfflinePeopleContactedListFragment fragment = new OfflinePeopleContactedListFragment();
         fragment.setArguments(args);
         return fragment;
     }
 
     private void initUI() {
         Log.e(TAG, SUB_TAG+"initUI");
-        recyclerView = rootView.findViewById(R.id.online_ppl_list);
+        recyclerView = rootView.findViewById(R.id.offline_ppl_list);
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(mParent);
         recyclerView.setLayoutManager(layoutManager);
-        searchBar = rootView.findViewById(R.id.search_bar_online);
+        searchBar = rootView.findViewById(R.id.search_bar_offline);
 
         initializeAdapter();
 
@@ -98,7 +92,8 @@ public class OnlineListOfPeopleFragment extends Fragment {
 //        firebaseContactsAdapter();
     }
 
-    private void searchOnlinePeoplList(String searchedName){
+
+    private void searchOfflinePeopleList(String searchedName){
         Log.e(TAG, SUB_TAG+"    Search Firebase contacts");
         ArrayList<User> filteredContacts = new ArrayList<User>();
 
@@ -116,30 +111,13 @@ public class OnlineListOfPeopleFragment extends Fragment {
         super.onStart();
 //        mAdapter2.startListening();
         Log.e(TAG, SUB_TAG+"----intialize custom firebase");
-        final DatabaseReference nm = FirebaseDatabase.getInstance().getReference().child("users");
-        nm.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()){
-                    userArrayList = new ArrayList<User>();
-                    for (DataSnapshot npsnapshot : dataSnapshot.getChildren()){
-                        Log.e(TAG, SUB_TAG+"    onstart new adapter snapshot thing");
-                        User u = new User(npsnapshot.child("uid").getValue().toString(),
-                                npsnapshot.child("name").getValue().toString(),
-                                Double.parseDouble(npsnapshot.child("latitude").getValue().toString()),
-                                Double.parseDouble(npsnapshot.child("longitude").getValue().toString()),
-                                false);
-                        if(MainActivity.currentUser.uid != u.uid)
-                            userArrayList.add(u);
-                    }
-                    mAdapter2=new UserListAdapter(userArrayList);
-                    recyclerView.setAdapter(mAdapter2);
-                }
-            }
 
+        AsyncTask.execute(new Runnable() {
             @Override
-            public void onCancelled(DatabaseError databaseError) {
-
+            public void run() {
+                userArrayList = new ArrayList<User>(MainActivity.database.userDao().getUsers());
+                mAdapter=new UserListAdapter(userArrayList);
+                recyclerView.setAdapter(mAdapter);
             }
         });
 
@@ -153,7 +131,7 @@ public class OnlineListOfPeopleFragment extends Fragment {
                 @Override
                 public boolean onQueryTextChange(String newText) {
                     Log.e(TAG, SUB_TAG+"    searching firebase contact");
-                    searchOnlinePeoplList(newText);
+                    searchOfflinePeopleList(newText);
                     return true;
                 }
             });
