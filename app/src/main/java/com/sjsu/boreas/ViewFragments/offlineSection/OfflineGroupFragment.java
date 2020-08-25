@@ -16,8 +16,8 @@ import androidx.fragment.app.Fragment;
 import com.sjsu.boreas.MainActivity;
 import com.sjsu.boreas.R;
 import com.sjsu.boreas.messages.TextMessage;
-import com.sjsu.boreas.messaging.ChatMessageAdapter;
-import com.sjsu.boreas.messaging.Message;
+import com.sjsu.boreas.pdel_messaging.ChatMessageAdapter;
+import com.sjsu.boreas.pdel_messaging.Message;
 
 import java.util.List;
 

@@ -1,6 +1,4 @@
-package com.sjsu.boreas.connection_handlers;
-
-import android.util.Log;
+package com.sjsu.boreas.offline_connection_handlers;
 
 import androidx.annotation.NonNull;
 

@@ -1,4 +1,4 @@
-package com.sjsu.boreas.messaging;
+package com.sjsu.boreas.pdel_messaging;
 
 import android.os.Bundle;
 
@@ -13,7 +13,6 @@ import android.widget.ListView;
 
 import com.sjsu.boreas.MainActivity;
 import com.sjsu.boreas.R;
-import com.sjsu.boreas.connection_handlers.NearbyConnectionHandler;
 import com.sjsu.boreas.messages.TextMessage;
 
 import java.util.List;

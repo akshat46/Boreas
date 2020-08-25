@@ -1,44 +1,32 @@
 package com.sjsu.boreas.ViewFragments.onlineSection;
 
 import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SearchView;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.firebase.ui.database.FirebaseRecyclerOptions;
-import com.firebase.ui.database.SnapshotParser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.sjsu.boreas.Adapters.UserListAdapter;
 import com.sjsu.boreas.AddContactActivity;
-import com.sjsu.boreas.Firebase.FirebaseDataRefAndInstance;
 import com.sjsu.boreas.MainActivity;
 import com.sjsu.boreas.R;
-import com.sjsu.boreas.ViewFragments.offlineSection.OfflinePeopleContactedListFragment;
 import com.sjsu.boreas.ViewHolder.UsersViewHolder;
 import com.sjsu.boreas.database.User;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 public class OnlineListOfPeopleFragment extends Fragment {
     private static final String EXTRA_TAB_NAME = "tab_name";

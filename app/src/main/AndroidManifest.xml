@@ -34,7 +34,7 @@
             android:name=".LandingPage"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".messaging.ChatActivity"
+            android:name=".pdel_messaging.ChatActivity"
             android:label="@string/title_activity_group_chat"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".wifidirecttest.WDTestActivity" />
@@ -52,7 +52,7 @@
         </activity>
 
         <service
-            android:name=".Firebase.MyFirebaseMessagingService"
+            android:name=".online_connection_handlers.MyFirebaseMessagingService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />

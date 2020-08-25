@@ -1,4 +1,4 @@
-package com.sjsu.boreas.connection_handlers;
+package com.sjsu.boreas.offline_connection_handlers;
 
 /**
  * Represents a type of messaging algorithm. It can send messages and receive them from others.

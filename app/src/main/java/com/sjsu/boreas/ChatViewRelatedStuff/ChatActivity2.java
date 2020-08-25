@@ -13,7 +13,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.sjsu.boreas.DataChangeListeners.messageListener;
-import com.sjsu.boreas.Firebase.FirebaseDataRefAndInstance;
+import com.sjsu.boreas.online_connection_handlers.FirebaseDataRefAndInstance;
 import com.sjsu.boreas.MainActivity;
 import com.sjsu.boreas.PhoneBluetoothRadio.BlueTerm;
 import com.sjsu.boreas.R;

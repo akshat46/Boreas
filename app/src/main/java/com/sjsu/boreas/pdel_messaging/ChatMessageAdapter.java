@@ -1,16 +1,12 @@
-package com.sjsu.boreas.messaging;
+package com.sjsu.boreas.pdel_messaging;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
-
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.sjsu.boreas.R;
 
