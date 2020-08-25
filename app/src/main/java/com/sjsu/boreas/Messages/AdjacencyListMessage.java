@@ -1,6 +1,6 @@
-package com.sjsu.boreas.messages;
+package com.sjsu.boreas.Messages;
 
-import com.sjsu.boreas.database.User;
+import com.sjsu.boreas.Database.Users.User;
 
 /**
  * Send a list of currently adjacent users. If the adjacency list overlaps the recipient's

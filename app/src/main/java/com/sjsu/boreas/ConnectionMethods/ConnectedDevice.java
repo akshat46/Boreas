@@ -1,4 +1,4 @@
-package com.sjsu.boreas.connection_methods;
+package com.sjsu.boreas.ConnectionMethods;
 
 /**
  * Represents another android device that this user has connected to and can send messages to.

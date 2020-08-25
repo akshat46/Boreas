@@ -1,4 +1,4 @@
-package com.sjsu.boreas.database;
+package com.sjsu.boreas.Database.Users;
 
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;

@@ -1,16 +1,16 @@
-package com.sjsu.boreas.database.Messages;
+package com.sjsu.boreas.Database.Messages;
 
 import android.util.Log;
 
 import com.sjsu.boreas.MainActivity;
-import com.sjsu.boreas.database.User;
+import com.sjsu.boreas.Database.Users.User;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.List;
 
-public class MessageHandler {
+public class MessageUtility {
 
     private static String TAG = "BOREAS";
     private static String SUB_TAG = "------MessageHandler ";

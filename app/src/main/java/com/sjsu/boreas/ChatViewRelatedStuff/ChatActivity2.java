@@ -13,12 +13,12 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.sjsu.boreas.DataChangeListeners.messageListener;
-import com.sjsu.boreas.online_connection_handlers.FirebaseDataRefAndInstance;
+import com.sjsu.boreas.OnlineConnectionHandlers.FirebaseDataRefAndInstance;
 import com.sjsu.boreas.MainActivity;
 import com.sjsu.boreas.PhoneBluetoothRadio.BlueTerm;
 import com.sjsu.boreas.R;
-import com.sjsu.boreas.database.Messages.ChatMessage;
-import com.sjsu.boreas.database.User;
+import com.sjsu.boreas.Database.Messages.ChatMessage;
+import com.sjsu.boreas.Database.Users.User;
 
 import java.util.ArrayList;
 import java.util.Calendar;

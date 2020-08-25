@@ -1,16 +1,14 @@
-package com.sjsu.boreas.ViewHolder;
+package com.sjsu.boreas.UserRecyclerViewStuff;
 
 import android.util.Log;
-import android.view.SubMenu;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.sjsu.boreas.R;
-import com.sjsu.boreas.database.User;
+import com.sjsu.boreas.Database.Users.User;
 
 public class UsersViewHolder extends RecyclerView.ViewHolder {
 

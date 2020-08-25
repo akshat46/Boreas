@@ -1,4 +1,4 @@
-package com.sjsu.boreas.database;
+package com.sjsu.boreas.Database.Users;
 
 import androidx.room.Dao;
 import androidx.room.Delete;

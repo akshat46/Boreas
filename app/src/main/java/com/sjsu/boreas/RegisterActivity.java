@@ -29,8 +29,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.sjsu.boreas.online_connection_handlers.FirebaseDataRefAndInstance;
-import com.sjsu.boreas.database.User;
+import com.sjsu.boreas.OnlineConnectionHandlers.FirebaseDataRefAndInstance;
+import com.sjsu.boreas.Database.Users.User;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;

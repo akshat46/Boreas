@@ -1,4 +1,4 @@
-package com.sjsu.boreas.offline_connection_handlers;
+package com.sjsu.boreas.OfflineConnectionHandlers;
 
 import android.app.Activity;
 import android.util.Log;
@@ -14,8 +14,8 @@ import com.google.android.gms.nearby.connection.Strategy;
 import com.sjsu.boreas.LandingPage;
 import com.sjsu.boreas.MainActivity;
 import com.sjsu.boreas.GroupChats.OfflineGroupFragment;
-import com.sjsu.boreas.database.User;
-import com.sjsu.boreas.messages.TextMessage;
+import com.sjsu.boreas.Database.Users.User;
+import com.sjsu.boreas.Messages.TextMessage;
 import com.sjsu.boreas.pdel_messaging.ChatActivity;
 
 import java.util.ArrayList;

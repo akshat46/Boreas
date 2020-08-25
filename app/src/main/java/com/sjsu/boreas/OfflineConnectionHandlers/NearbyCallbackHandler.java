@@ -1,4 +1,4 @@
-package com.sjsu.boreas.offline_connection_handlers;
+package com.sjsu.boreas.OfflineConnectionHandlers;
 
 import androidx.annotation.NonNull;
 
@@ -11,11 +11,11 @@ import com.google.android.gms.nearby.connection.Payload;
 import com.google.android.gms.nearby.connection.PayloadCallback;
 import com.google.android.gms.nearby.connection.PayloadTransferUpdate;
 import com.sjsu.boreas.MainActivity;
-import com.sjsu.boreas.database.Messages.ChatMessage;
-import com.sjsu.boreas.database.User;
-import com.sjsu.boreas.messages.AdjacencyListMessage;
-import com.sjsu.boreas.messages.LongDistanceMessage;
-import com.sjsu.boreas.messages.TextMessage;
+import com.sjsu.boreas.Database.Messages.ChatMessage;
+import com.sjsu.boreas.Database.Users.User;
+import com.sjsu.boreas.Messages.AdjacencyListMessage;
+import com.sjsu.boreas.Messages.LongDistanceMessage;
+import com.sjsu.boreas.Messages.TextMessage;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
