@@ -19,8 +19,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.sjsu.boreas.ChatViewRelatedStuff.ViewPagerTabAdapter;
-import com.sjsu.boreas.ViewFragments.offlineSection.OfflineGroupFragment;
-import com.sjsu.boreas.ViewFragments.onlineSection.OneOnOneFragment;
+import com.sjsu.boreas.GroupChats.OfflineGroupFragment;
+import com.sjsu.boreas.OneOnOneChat.OneOnOneFragment;
 import com.sjsu.boreas.database.User;
 
 import java.util.ArrayList;

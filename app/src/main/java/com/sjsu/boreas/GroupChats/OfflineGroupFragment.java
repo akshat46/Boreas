@@ -1,4 +1,4 @@
-package com.sjsu.boreas.ViewFragments.offlineSection;
+package com.sjsu.boreas.GroupChats;
 
 import android.os.Bundle;
 import android.util.Log;

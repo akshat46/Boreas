@@ -1,4 +1,4 @@
-package com.sjsu.boreas.ViewFragments.onlineSection;
+package com.sjsu.boreas.GroupChats;
 
 import android.content.Context;
 import android.net.Uri;

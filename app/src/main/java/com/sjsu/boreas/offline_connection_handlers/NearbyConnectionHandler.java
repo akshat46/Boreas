@@ -13,7 +13,7 @@ import com.google.android.gms.nearby.connection.Payload;
 import com.google.android.gms.nearby.connection.Strategy;
 import com.sjsu.boreas.LandingPage;
 import com.sjsu.boreas.MainActivity;
-import com.sjsu.boreas.ViewFragments.offlineSection.OfflineGroupFragment;
+import com.sjsu.boreas.GroupChats.OfflineGroupFragment;
 import com.sjsu.boreas.database.User;
 import com.sjsu.boreas.messages.TextMessage;
 import com.sjsu.boreas.pdel_messaging.ChatActivity;
