@@ -11,23 +11,7 @@
     <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="No Filters" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="49f8b3d3-f678-438a-b6fb-ad25673b4b3a" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/AndroidManifest.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/Adapters/UserListAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/Adapters/UserListAdapter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/AddContactActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/AddContactActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/ChatViewRelatedStuff/ChatActivity2.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/ChatViewRelatedStuff/ChatActivity2.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/Firebase/FirebaseDataRefAndInstance.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/online_connection_handlers/FirebaseDataRefAndInstance.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/Firebase/MyFirebaseMessagingService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/online_connection_handlers/MyFirebaseMessagingService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/MainActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/RegisterActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/RegisterActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/ViewFragments/onlineSection/OneOnOneFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/ViewFragments/onlineSection/OneOnOneFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/ViewFragments/onlineSection/OnlineListOfPeopleFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/ViewFragments/onlineSection/OnlineListOfPeopleFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/connection_handlers/MessageAlgorithm.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/offline_connection_handlers/MessageAlgorithm.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/connection_handlers/NearbyCallbackHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/offline_connection_handlers/NearbyCallbackHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/connection_handlers/NearbyConnectionHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/offline_connection_handlers/NearbyConnectionHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/messaging/ChatActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/messaging/ChatActivity.java" afterDir="false" />
-    </list>
+    <list default="true" id="49f8b3d3-f678-438a-b6fb-ad25673b4b3a" name="Default Changelist" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
