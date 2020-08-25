@@ -13,7 +13,7 @@ import android.widget.ListView;
 
 import com.sjsu.boreas.MainActivity;
 import com.sjsu.boreas.R;
-import com.sjsu.boreas.messages.TextMessage;
+import com.sjsu.boreas.Messages.TextMessage;
 
 import java.util.List;
 

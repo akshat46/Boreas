@@ -4,17 +4,10 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.view.SubMenu;
-
-import com.sjsu.boreas.ChatViewRelatedStuff.ChatBubble;
-import com.sjsu.boreas.MainActivity;
-import com.sjsu.boreas.database.Messages.ChatMessage;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 
 public class BlueTerm{

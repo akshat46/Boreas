@@ -19,12 +19,12 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.sjsu.boreas.Adapters.UserListAdapter;
+import com.sjsu.boreas.UserRecyclerViewStuff.UserListAdapter;
 import com.sjsu.boreas.AddContactActivity;
 import com.sjsu.boreas.MainActivity;
 import com.sjsu.boreas.R;
-import com.sjsu.boreas.ViewHolder.UsersViewHolder;
-import com.sjsu.boreas.database.User;
+import com.sjsu.boreas.UserRecyclerViewStuff.UsersViewHolder;
+import com.sjsu.boreas.Database.Users.User;
 
 import java.util.ArrayList;
 

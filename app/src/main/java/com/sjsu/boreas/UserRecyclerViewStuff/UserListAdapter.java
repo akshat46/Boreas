@@ -1,4 +1,4 @@
-package com.sjsu.boreas.Adapters;
+package com.sjsu.boreas.UserRecyclerViewStuff;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,8 +11,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.sjsu.boreas.AddContactActivity;
 import com.sjsu.boreas.MainActivity;
 import com.sjsu.boreas.R;
-import com.sjsu.boreas.ViewHolder.UsersViewHolder;
-import com.sjsu.boreas.database.User;
+import com.sjsu.boreas.UserRecyclerViewStuff.UsersViewHolder;
+import com.sjsu.boreas.Database.Users.User;
 
 import java.util.ArrayList;
 import java.util.List;

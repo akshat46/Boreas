@@ -1,4 +1,4 @@
-package com.sjsu.boreas.connection_methods;
+package com.sjsu.boreas.ConnectionMethods;
 
 /**
  * Represents a method of connecting to one or many other device(s). Subclass to implement

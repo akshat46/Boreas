@@ -1,12 +1,12 @@
-package com.sjsu.boreas.online_connection_handlers;
+package com.sjsu.boreas.OnlineConnectionHandlers;
 
 import android.util.Log;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.sjsu.boreas.MainActivity;
-import com.sjsu.boreas.database.Messages.ChatMessage;
-import com.sjsu.boreas.database.Messages.MessageHandler;
+import com.sjsu.boreas.Database.Messages.ChatMessage;
+import com.sjsu.boreas.Database.Messages.MessageUtility;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,7 +26,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         if(mssg.getData().get("body")==null){
             return;
         }else{
-            chatMssg = MessageHandler.convertJsonToMessage(mssg.getData().get("body"));
+            chatMssg = MessageUtility.convertJsonToMessage(mssg.getData().get("body"));
             if(chatMssg != null)
                 newMessageReceived(chatMssg);
         }

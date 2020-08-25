@@ -1,4 +1,4 @@
-package com.sjsu.boreas.database.Messages;
+package com.sjsu.boreas.Database.Messages;
 
 import android.util.Log;
 
@@ -10,9 +10,7 @@ import androidx.room.PrimaryKey;
 import com.sjsu.boreas.DataChangeListeners.messageListener;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Entity

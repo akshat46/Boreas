@@ -1,12 +1,8 @@
-package com.sjsu.boreas.database.Messages;
+package com.sjsu.boreas.Database.Messages;
 
 import androidx.room.Dao;
-import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
-
-import com.sjsu.boreas.database.Messages.ChatMessage;
-import com.sjsu.boreas.database.User;
 
 import java.util.List;
 

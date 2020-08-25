@@ -1,6 +1,6 @@
 package com.sjsu.boreas.DataChangeListeners;
 
-import com.sjsu.boreas.database.Messages.ChatMessage;
+import com.sjsu.boreas.Database.Messages.ChatMessage;
 
 public interface messageListener {
     public void newMessageReceived(ChatMessage mssg);

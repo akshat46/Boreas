@@ -16,9 +16,9 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.firebase.FirebaseApp;
-import com.sjsu.boreas.offline_connection_handlers.NearbyConnectionHandler;
-import com.sjsu.boreas.database.AppDatabase;
-import com.sjsu.boreas.database.User;
+import com.sjsu.boreas.OfflineConnectionHandlers.NearbyConnectionHandler;
+import com.sjsu.boreas.Database.AppDatabase;
+import com.sjsu.boreas.Database.Users.User;
 import com.sjsu.boreas.pdel_messaging.ChatActivity;
 
 import java.util.List;

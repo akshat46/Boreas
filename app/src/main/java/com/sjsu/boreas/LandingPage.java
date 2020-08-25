@@ -21,7 +21,7 @@ import com.google.android.material.tabs.TabLayout;
 import com.sjsu.boreas.ChatViewRelatedStuff.ViewPagerTabAdapter;
 import com.sjsu.boreas.GroupChats.OfflineGroupFragment;
 import com.sjsu.boreas.OneOnOneChat.OneOnOneFragment;
-import com.sjsu.boreas.database.User;
+import com.sjsu.boreas.Database.Users.User;
 
 import java.util.ArrayList;
 import java.util.List;

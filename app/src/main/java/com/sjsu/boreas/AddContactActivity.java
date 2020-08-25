@@ -17,13 +17,13 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.material.tabs.TabLayout;
-import com.sjsu.boreas.Adapters.UserListAdapter;
+import com.sjsu.boreas.UserRecyclerViewStuff.UserListAdapter;
 import com.sjsu.boreas.ChatViewRelatedStuff.ViewPagerTabAdapter;
-import com.sjsu.boreas.online_connection_handlers.FirebaseDataRefAndInstance;
+import com.sjsu.boreas.OnlineConnectionHandlers.FirebaseDataRefAndInstance;
 import com.sjsu.boreas.AddContacts.OfflinePeopleContactedListFragment;
 import com.sjsu.boreas.AddContacts.OnlineListOfPeopleFragment;
-import com.sjsu.boreas.ViewHolder.UsersViewHolder;
-import com.sjsu.boreas.database.User;
+import com.sjsu.boreas.UserRecyclerViewStuff.UsersViewHolder;
+import com.sjsu.boreas.Database.Users.User;
 
 import java.util.ArrayList;
 import java.util.HashMap;

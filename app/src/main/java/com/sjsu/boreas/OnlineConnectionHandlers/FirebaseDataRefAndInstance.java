@@ -1,4 +1,4 @@
-package com.sjsu.boreas.online_connection_handlers;
+package com.sjsu.boreas.OnlineConnectionHandlers;
 
 import android.util.Log;
 
@@ -10,7 +10,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
-import com.sjsu.boreas.database.User;
+import com.sjsu.boreas.Database.Users.User;
 
 import java.util.HashMap;
 import java.util.Map;

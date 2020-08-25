@@ -21,10 +21,9 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.SubMenu;
 
-import com.sjsu.boreas.database.Messages.ChatMessage;
-import com.sjsu.boreas.database.Messages.MessageHandler;
+import com.sjsu.boreas.Database.Messages.ChatMessage;
+import com.sjsu.boreas.Database.Messages.MessageUtility;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -368,7 +367,7 @@ public class BluetoothSerialService {
                         //mHandler.obtainMessage(BlueTerm.MESSAGE_READ, bytes, -1, buffer).sendToTarget();
                         String str = new String(buffer, "UTF-8"); // for UTF-8 encoding
                         Log.i(TAG, "\t\tReceived: " + str.substring(0,bytes));
-                        ChatMessage mssg = MessageHandler.convertJsonToMessage(str.substring(0,bytes));
+                        ChatMessage mssg = MessageUtility.convertJsonToMessage(str.substring(0,bytes));
                         if(mssg != null)
                             ChatMessage.notifyListener(mssg);
                         else
