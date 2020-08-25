@@ -27,7 +27,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ViewFragments.offlineSection.OfflineContactsActivity"></activity>
         <activity android:name=".AddContactActivity" />
         <activity android:name=".GroupChatActivity" />
         <activity
