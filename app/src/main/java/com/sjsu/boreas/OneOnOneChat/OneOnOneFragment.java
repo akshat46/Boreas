@@ -1,4 +1,4 @@
-package com.sjsu.boreas.ViewFragments.onlineSection;
+package com.sjsu.boreas.OneOnOneChat;
 
 import android.content.Context;
 import android.content.Intent;
