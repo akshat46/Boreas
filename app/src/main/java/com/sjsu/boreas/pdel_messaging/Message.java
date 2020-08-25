@@ -1,4 +1,4 @@
-package com.sjsu.boreas.messaging;
+package com.sjsu.boreas.pdel_messaging;
 
 public class Message {
     private String text;

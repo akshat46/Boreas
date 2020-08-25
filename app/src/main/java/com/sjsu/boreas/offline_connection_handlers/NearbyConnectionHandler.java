@@ -1,4 +1,4 @@
-package com.sjsu.boreas.connection_handlers;
+package com.sjsu.boreas.offline_connection_handlers;
 
 import android.app.Activity;
 import android.util.Log;
@@ -16,7 +16,7 @@ import com.sjsu.boreas.MainActivity;
 import com.sjsu.boreas.ViewFragments.offlineSection.OfflineGroupFragment;
 import com.sjsu.boreas.database.User;
 import com.sjsu.boreas.messages.TextMessage;
-import com.sjsu.boreas.messaging.ChatActivity;
+import com.sjsu.boreas.pdel_messaging.ChatActivity;
 
 import java.util.ArrayList;
 import java.util.HashMap;

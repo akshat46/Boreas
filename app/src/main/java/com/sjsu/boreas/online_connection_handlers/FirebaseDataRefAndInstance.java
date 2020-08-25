@@ -1,4 +1,4 @@
-package com.sjsu.boreas.Firebase;
+package com.sjsu.boreas.online_connection_handlers;
 
 import android.util.Log;
 

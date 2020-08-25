@@ -29,7 +29,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.sjsu.boreas.Firebase.FirebaseDataRefAndInstance;
+import com.sjsu.boreas.online_connection_handlers.FirebaseDataRefAndInstance;
 import com.sjsu.boreas.database.User;
 
 import java.security.MessageDigest;

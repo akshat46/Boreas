@@ -9,7 +9,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.sjsu.boreas.AddContactActivity;
-import com.sjsu.boreas.Firebase.FirebaseDataRefAndInstance;
 import com.sjsu.boreas.MainActivity;
 import com.sjsu.boreas.R;
 import com.sjsu.boreas.ViewHolder.UsersViewHolder;

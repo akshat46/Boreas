@@ -20,14 +20,13 @@ import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.firebase.ui.database.SnapshotParser;
 import com.google.firebase.database.DataSnapshot;
 import com.sjsu.boreas.ChatViewRelatedStuff.ChatActivity2;
-import com.sjsu.boreas.Firebase.FirebaseDataRefAndInstance;
+import com.sjsu.boreas.online_connection_handlers.FirebaseDataRefAndInstance;
 import com.sjsu.boreas.LandingPage;
 import com.sjsu.boreas.MainActivity;
 import com.sjsu.boreas.R;
 import com.sjsu.boreas.ViewHolder.UsersViewHolder;
 import com.sjsu.boreas.database.AppDatabase;
 import com.sjsu.boreas.database.User;
-import com.sjsu.boreas.messaging.ChatActivity;
 
 public class OneOnOneFragment extends Fragment {
     public static final String EXTRA_TAB_NAME = "tab_name";

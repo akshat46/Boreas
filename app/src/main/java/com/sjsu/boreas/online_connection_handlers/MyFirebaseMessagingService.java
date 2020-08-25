@@ -1,4 +1,4 @@
-package com.sjsu.boreas.Firebase;
+package com.sjsu.boreas.online_connection_handlers;
 
 import android.util.Log;
 
@@ -7,10 +7,6 @@ import com.google.firebase.messaging.RemoteMessage;
 import com.sjsu.boreas.MainActivity;
 import com.sjsu.boreas.database.Messages.ChatMessage;
 import com.sjsu.boreas.database.Messages.MessageHandler;
-import com.sjsu.boreas.database.User;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;

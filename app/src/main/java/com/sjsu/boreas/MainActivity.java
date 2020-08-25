@@ -16,16 +16,12 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.firebase.FirebaseApp;
-import com.sjsu.boreas.connection_handlers.NearbyConnectionHandler;
+import com.sjsu.boreas.offline_connection_handlers.NearbyConnectionHandler;
 import com.sjsu.boreas.database.AppDatabase;
 import com.sjsu.boreas.database.User;
-import com.sjsu.boreas.messaging.ChatActivity;
-import com.sjsu.boreas.wifidirecttest.WDTestActivity;
+import com.sjsu.boreas.pdel_messaging.ChatActivity;
 
 import java.util.List;
-
-import io.reactivex.Completable;
-import io.reactivex.functions.Action;
 
 public class MainActivity extends AppCompatActivity {
 	
