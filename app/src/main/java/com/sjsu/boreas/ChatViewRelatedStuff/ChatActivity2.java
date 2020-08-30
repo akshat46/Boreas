@@ -13,6 +13,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.sjsu.boreas.DataChangeListeners.messageListener;
+import com.sjsu.boreas.Database.DatabaseReference;
 import com.sjsu.boreas.OnlineConnectionHandlers.FirebaseDataRefAndInstance;
 import com.sjsu.boreas.MainActivity;
 import com.sjsu.boreas.PhoneBluetoothRadio.BlueTerm;
@@ -36,6 +37,8 @@ public class ChatActivity2 extends AppCompatActivity implements messageListener 
     private ArrayAdapter<ChatBubble> adapter;
     private User myChatPartner;
     private List<ChatMessage> mssgList;
+
+    public DatabaseReference databaseReference = DatabaseReference.getInstance(null);
 
     private static String TAG = "BOREAS";
     private static String SUB_TAG = "----------------ChatActivity2 ";
@@ -86,8 +89,7 @@ public class ChatActivity2 extends AppCompatActivity implements messageListener 
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
-                mssgList = MainActivity.database.chatMessageDao().getLastTwentyMessagesForUser(myChatPartner.getUid(),
-                                        ChatMessage.ChatTypes.ONEONONEONLINECHAT.getValue());
+                mssgList = databaseReference.getLastTwentyMessagesForSpecificUser(myChatPartner);
                 if(!(mssgList.isEmpty())){
                     for(int i = 0; i < mssgList.size(); i++){
                         chatBubbles.add(new ChatBubble(mssgList.get(i).mssgText, mssgList.get(i).isMyMssg));
@@ -158,7 +160,7 @@ public class ChatActivity2 extends AppCompatActivity implements messageListener 
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
-                MainActivity.database.chatMessageDao().insertAll(chatMessage);
+                databaseReference.saveChatMessageLocally(chatMessage);
             }
         });
     }

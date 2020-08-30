@@ -14,6 +14,8 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.sjsu.boreas.Database.DatabaseReference;
+import com.sjsu.boreas.HelperStuff.ContextHelper;
 import com.sjsu.boreas.UserRecyclerViewStuff.UserListAdapter;
 import com.sjsu.boreas.AddContactActivity;
 import com.sjsu.boreas.MainActivity;
@@ -103,7 +105,7 @@ public class OfflinePeopleContactedListFragment extends Fragment {
             }
         }
 
-        UserListAdapter newAdapter = new UserListAdapter(filteredContacts);
+        UserListAdapter newAdapter = new UserListAdapter(filteredContacts, mContext);
         recyclerView.setAdapter(newAdapter);
     }
 
@@ -112,11 +114,13 @@ public class OfflinePeopleContactedListFragment extends Fragment {
 //        mAdapter2.startListening();
         Log.e(TAG, SUB_TAG+"----intialize custom firebase");
 
+        ContextHelper contextHelper = ContextHelper.getContextHelper(null);
+        final DatabaseReference databaseReference = DatabaseReference.getInstance(contextHelper.getApplicationContext());
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
-                userArrayList = new ArrayList<User>(MainActivity.database.userDao().getUsers());
-                mAdapter=new UserListAdapter(userArrayList);
+                userArrayList = new ArrayList<User>(databaseReference.getContacts());
+                mAdapter=new UserListAdapter(userArrayList, mContext);
                 recyclerView.setAdapter(mAdapter);
             }
         });

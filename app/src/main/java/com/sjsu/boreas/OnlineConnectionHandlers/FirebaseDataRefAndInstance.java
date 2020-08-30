@@ -11,6 +11,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 import com.sjsu.boreas.Database.Users.User;
+import com.sjsu.boreas.MainActivity;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -70,5 +71,19 @@ public class FirebaseDataRefAndInstance { //This is class should be used to acce
                         database_ref.updateChildren(firebase_child_update);
                     }
                 });
+    }
+
+    public static void addContact(User user){
+        Log.e(TAG, SUB_TAG+"adding contact to firebase");
+
+        Map<String, Object> new_user = user.toMap();
+        final Map<String, Object> firebase_child_update = new HashMap<>();
+
+        //We are putting this data under the users branch of the firebase database
+        firebase_child_update.put("/contacts/" + MainActivity.currentUser.getUid() + "/" + user.getUid(), new_user);
+        Log.e(TAG, SUB_TAG+"My user ID is: " + MainActivity.currentUser.getUid() + ", and the contact id is: " + user.getUid());
+
+        //Do the actual writing of the data onto firebase and locally
+        database_ref.updateChildren(firebase_child_update);
     }
 }

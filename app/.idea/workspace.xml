@@ -13,40 +13,16 @@
   <component name="ChangeListManager">
     <list default="true" id="49f8b3d3-f678-438a-b6fb-ad25673b4b3a" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/AndroidManifest.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/Adapters/UserListAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/Adapters/UserListAdapter.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/AddContactActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/AddContactActivity.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/AddContacts/OfflinePeopleContactedListFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/AddContacts/OfflinePeopleContactedListFragment.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/AddContacts/OnlineListOfPeopleFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/AddContacts/OnlineListOfPeopleFragment.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/ChatViewRelatedStuff/ChatActivity2.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/ChatViewRelatedStuff/ChatActivity2.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/ChatViewRelatedStuff/OneOnOneChatViewAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/ChatViewRelatedStuff/OneOnOneChatViewAdapter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/DataChangeListeners/messageListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/DataChangeListeners/messageListener.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/GroupChats/OfflineGroupFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/GroupChats/OfflineGroupFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/LandingPage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/LandingPage.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/Database/Messages/MessageUtility.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/Database/Messages/MessageUtility.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/MainActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/OneOnOneChat/OneOnOneFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/OneOnOneChat/OneOnOneFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/PhoneBluetoothRadio/BlueTerm.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/PhoneBluetoothRadio/BlueTerm.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/PhoneBluetoothRadio/BluetoothSerialService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/PhoneBluetoothRadio/BluetoothSerialService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/OfflineConnectionHandlers/NearbyCallbackHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/OfflineConnectionHandlers/NearbyCallbackHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/OnlineConnectionHandlers/FirebaseDataRefAndInstance.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/OnlineConnectionHandlers/FirebaseDataRefAndInstance.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/RegisterActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/RegisterActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/ViewHolder/UsersViewHolder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/ViewHolder/UsersViewHolder.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/connection_methods/ConnectedDevice.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/ConnectionMethods/ConnectedDevice.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/connection_methods/ConnectionMethod.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/ConnectionMethods/ConnectionMethod.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/database/AppDatabase.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/Database/AppDatabase.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/database/Messages/ChatMessage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/Database/Messages/ChatMessage.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/database/Messages/ChatMessageDao.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/Database/Messages/ChatMessageDao.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/database/Messages/MessageHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/Database/Messages/MessageUtility.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/database/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/Database/Users/User.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/database/UserDao.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/Database/Users/UserDao.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/messages/AdjacencyListMessage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/Messages/AdjacencyListMessage.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/messages/LongDistanceMessage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/Messages/LongDistanceMessage.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/messages/NearbyMessage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/Messages/NearbyMessage.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/messages/TextMessage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/Messages/TextMessage.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/offline_connection_handlers/MessageAlgorithm.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/OfflineConnectionHandlers/MessageAlgorithm.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/offline_connection_handlers/NearbyCallbackHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/OfflineConnectionHandlers/NearbyCallbackHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/offline_connection_handlers/NearbyConnectionHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/OfflineConnectionHandlers/NearbyConnectionHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/online_connection_handlers/FirebaseDataRefAndInstance.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/OnlineConnectionHandlers/FirebaseDataRefAndInstance.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/online_connection_handlers/MyFirebaseMessagingService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/OnlineConnectionHandlers/MyFirebaseMessagingService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/pdel_messaging/ChatActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/pdel_messaging/ChatActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/UserRecyclerViewStuff/UserListAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/UserRecyclerViewStuff/UserListAdapter.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -80,8 +56,8 @@
         <option value="valueResourceFile" />
         <option value="layoutResourceFile_vertical" />
         <option value="resourceFile" />
-        <option value="Class" />
         <option value="layoutResourceFile" />
+        <option value="Class" />
       </list>
     </option>
   </component>
@@ -183,10 +159,11 @@
     <servers />
   </component>
   <component name="WindowStateProjectService">
-    <state x="768" y="264" width="374" height="586" key="#com.intellij.ide.util.MemberChooser" timestamp="1595205187607">
-      <screen x="0" y="27" width="1920" height="1053" />
+    <state x="785" y="243" width="376" height="574" key="#com.intellij.ide.util.MemberChooser" timestamp="1598666394613">
+      <screen x="28" y="0" width="1892" height="1080" />
     </state>
     <state x="768" y="264" width="374" height="586" key="#com.intellij.ide.util.MemberChooser/0.27.1920.1053@0.27.1920.1053" timestamp="1595205187607" />
+    <state x="785" y="243" width="376" height="574" key="#com.intellij.ide.util.MemberChooser/28.0.1892.1080@28.0.1892.1080" timestamp="1598666394613" />
     <state x="393" y="468" key="#com.intellij.refactoring.move.MoveHandler.SelectRefactoringDialog" timestamp="1598398127920">
       <screen x="28" y="0" width="1892" height="1080" />
     </state>
@@ -199,33 +176,38 @@
       <screen x="28" y="0" width="1892" height="1080" />
     </state>
     <state x="557" y="298" width="826" height="483" key="AndroidCreateResourceFileDialog/28.0.1892.1080@28.0.1892.1080" timestamp="1595368775443" />
-    <state width="1846" height="402" key="GridCell.Tab.0.bottom" timestamp="1598397947702">
+    <state width="1846" height="282" key="GridCell.Tab.0.bottom" timestamp="1598749283542">
       <screen x="28" y="0" width="1892" height="1080" />
     </state>
     <state width="1872" height="383" key="GridCell.Tab.0.bottom/0.27.1920.1053@0.27.1920.1053" timestamp="1595209257740" />
-    <state width="1846" height="402" key="GridCell.Tab.0.bottom/28.0.1892.1080@28.0.1892.1080" timestamp="1598397947702" />
-    <state width="1846" height="402" key="GridCell.Tab.0.center" timestamp="1598397947701">
+    <state width="1846" height="282" key="GridCell.Tab.0.bottom/28.0.1892.1080@28.0.1892.1080" timestamp="1598749283542" />
+    <state width="1846" height="282" key="GridCell.Tab.0.center" timestamp="1598749283541">
       <screen x="28" y="0" width="1892" height="1080" />
     </state>
     <state width="1872" height="383" key="GridCell.Tab.0.center/0.27.1920.1053@0.27.1920.1053" timestamp="1595209257739" />
-    <state width="1846" height="402" key="GridCell.Tab.0.center/28.0.1892.1080@28.0.1892.1080" timestamp="1598397947701" />
-    <state width="1846" height="402" key="GridCell.Tab.0.left" timestamp="1598397947701">
+    <state width="1846" height="282" key="GridCell.Tab.0.center/28.0.1892.1080@28.0.1892.1080" timestamp="1598749283541" />
+    <state width="1846" height="282" key="GridCell.Tab.0.left" timestamp="1598749283540">
       <screen x="28" y="0" width="1892" height="1080" />
     </state>
     <state width="1872" height="383" key="GridCell.Tab.0.left/0.27.1920.1053@0.27.1920.1053" timestamp="1595209257738" />
-    <state width="1846" height="402" key="GridCell.Tab.0.left/28.0.1892.1080@28.0.1892.1080" timestamp="1598397947701" />
-    <state width="1846" height="402" key="GridCell.Tab.0.right" timestamp="1598397947702">
+    <state width="1846" height="282" key="GridCell.Tab.0.left/28.0.1892.1080@28.0.1892.1080" timestamp="1598749283540" />
+    <state width="1846" height="282" key="GridCell.Tab.0.right" timestamp="1598749283541">
       <screen x="28" y="0" width="1892" height="1080" />
     </state>
     <state width="1872" height="383" key="GridCell.Tab.0.right/0.27.1920.1053@0.27.1920.1053" timestamp="1595209257739" />
-    <state width="1846" height="402" key="GridCell.Tab.0.right/28.0.1892.1080@28.0.1892.1080" timestamp="1598397947702" />
+    <state width="1846" height="282" key="GridCell.Tab.0.right/28.0.1892.1080@28.0.1892.1080" timestamp="1598749283541" />
     <state x="463" y="175" key="SettingsEditor" timestamp="1595545972623">
       <screen x="28" y="0" width="1892" height="1080" />
     </state>
     <state x="463" y="175" key="SettingsEditor/28.0.1892.1080@28.0.1892.1080" timestamp="1595545972623" />
-    <state x="624" y="252" key="run.anything.popup" timestamp="1595197746189">
-      <screen x="0" y="27" width="1920" height="1053" />
+    <state x="626" y="279" width="696" height="522" key="find.popup" timestamp="1598659182566">
+      <screen x="28" y="0" width="1892" height="1080" />
+    </state>
+    <state x="626" y="279" width="696" height="522" key="find.popup/28.0.1892.1080@28.0.1892.1080" timestamp="1598659182566" />
+    <state x="643" y="231" key="run.anything.popup" timestamp="1598746407915">
+      <screen x="28" y="0" width="1892" height="1080" />
     </state>
     <state x="624" y="252" key="run.anything.popup/0.27.1920.1053@0.27.1920.1053" timestamp="1595197746189" />
+    <state x="643" y="231" key="run.anything.popup/28.0.1892.1080@28.0.1892.1080" timestamp="1598746407915" />
   </component>
 </project>

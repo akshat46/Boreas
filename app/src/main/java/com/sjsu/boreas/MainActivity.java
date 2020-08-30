@@ -6,6 +6,7 @@ import androidx.core.content.ContextCompat;
 import androidx.room.Room;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
@@ -16,6 +17,8 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.firebase.FirebaseApp;
+import com.sjsu.boreas.Database.DatabaseReference;
+import com.sjsu.boreas.HelperStuff.ContextHelper;
 import com.sjsu.boreas.OfflineConnectionHandlers.NearbyConnectionHandler;
 import com.sjsu.boreas.Database.AppDatabase;
 import com.sjsu.boreas.Database.Users.User;
@@ -33,9 +36,10 @@ public class MainActivity extends AppCompatActivity {
     private static final int FRIENDS_ACTIVTY_REQUEST_CODE = 2;
     private static final int EMERGENCY_ACTIVTY_REQUEST_CODE = 3;
 
-    public static AppDatabase database;
     public static User currentUser;
     public static NearbyConnectionHandler nearbyConnectionHandler;
+    private ContextHelper contextHelper = null;
+    private DatabaseReference databaseReference = null;
 
     private Button buttonRegister, buttonGroupchat, buttonFriends, buttonEmergency;
 
@@ -46,7 +50,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        database = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "mydatabase").build();
+        //Initialized the contexthelper singleton here
+        contextHelper = new ContextHelper(getApplicationContext());
+        databaseReference = DatabaseReference.getInstance(contextHelper.getApplicationContext());
+
 
 
         if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_WIFI_STATE) != PackageManager.PERMISSION_GRANTED)
@@ -84,15 +91,11 @@ public class MainActivity extends AppCompatActivity {
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
-                List<User> mes = database.userDao().getMe();
-                final int userSize = mes.size();
-                System.out.println("Users registered as me: "+userSize);
-                if(userSize > 0)
-                    currentUser = mes.get(0);
+                currentUser = databaseReference.getRegisteredUser();
                 MainActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        enableBasedOnRegistration(userSize > 0);
+                        enableBasedOnRegistration(currentUser != null);
                     }
                 });
 
