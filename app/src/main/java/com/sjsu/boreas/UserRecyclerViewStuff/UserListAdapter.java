@@ -1,5 +1,6 @@
 package com.sjsu.boreas.UserRecyclerViewStuff;
 
+import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,7 +10,10 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.sjsu.boreas.AddContactActivity;
+import com.sjsu.boreas.Database.DatabaseReference;
+import com.sjsu.boreas.HelperStuff.ContextHelper;
 import com.sjsu.boreas.MainActivity;
+import com.sjsu.boreas.OnlineConnectionHandlers.FirebaseDataRefAndInstance;
 import com.sjsu.boreas.R;
 import com.sjsu.boreas.UserRecyclerViewStuff.UsersViewHolder;
 import com.sjsu.boreas.Database.Users.User;
@@ -22,9 +26,11 @@ public class UserListAdapter extends RecyclerView.Adapter<UsersViewHolder>{
     private static String TAG = "BOREAS";
     private static String SUB_TAG = "------AdapterForFirebase-----";
     private List<User>userList;
+    private Context context;
 
-    public UserListAdapter(ArrayList<User> ul){
+    public UserListAdapter(ArrayList<User> ul, Context context){
         this.userList = ul;
+        this.context = context;
     }
 
     @NonNull
@@ -53,7 +59,10 @@ public class UserListAdapter extends RecyclerView.Adapter<UsersViewHolder>{
             public void onClick(View v) {
                 // Launch PostDetailActivity
                 Log.e(TAG, SUB_TAG+"999999999999999999999999 this is the selected user: " + model.getUid());
-                AddContactActivity.addContact(model);
+                FirebaseDataRefAndInstance.addContact(model);
+                ContextHelper contextHelper = ContextHelper.getContextHelper(null);
+                DatabaseReference databaseReference = DatabaseReference.getInstance(contextHelper.getApplicationContext());
+                databaseReference.addContact(model);
             }
         });
     }

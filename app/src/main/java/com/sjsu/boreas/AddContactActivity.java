@@ -1,5 +1,6 @@
 package com.sjsu.boreas;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -17,6 +18,8 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.material.tabs.TabLayout;
+import com.sjsu.boreas.Database.DatabaseReference;
+import com.sjsu.boreas.HelperStuff.ContextHelper;
 import com.sjsu.boreas.UserRecyclerViewStuff.UserListAdapter;
 import com.sjsu.boreas.ChatViewRelatedStuff.ViewPagerTabAdapter;
 import com.sjsu.boreas.OnlineConnectionHandlers.FirebaseDataRefAndInstance;
@@ -46,6 +49,8 @@ public class AddContactActivity extends AppCompatActivity {
     private FragmentTransaction mFragmentTransaction;
     private List<Fragment> mFragments;
 
+    private ContextHelper contextHelper = ContextHelper.getContextHelper(null);
+    private DatabaseReference databaseReference = DatabaseReference.getInstance(contextHelper.getApplicationContext());
 
 //    private DatabaseReference database_ref;
 
@@ -95,7 +100,7 @@ public class AddContactActivity extends AppCompatActivity {
         Log.e(TAG, SUB_TAG+"addContact");
 
         Map<String, Object> new_user = user.toMap();
-        Map<String, Object> firebase_child_update = new HashMap<>();
+        final Map<String, Object> firebase_child_update = new HashMap<>();
 
         //We are putting this data under the users branch of the firebase database
         firebase_child_update.put("/contacts/" + MainActivity.currentUser.getUid() + "/" + user.getUid(), new_user);
@@ -103,35 +108,6 @@ public class AddContactActivity extends AppCompatActivity {
 
         //Do the actual writing of the data onto firebase and locally
         FirebaseDataRefAndInstance.getDatabaseReference().updateChildren(firebase_child_update);
-        AsyncTask.execute(new Runnable() {
-            public Handler handler = new Handler(Looper.getMainLooper()) {
-                @Override
-                public void handleMessage(Message message) {
-                    // This is where you do your work in the UI thread.
-                    // Your worker tells you in the message what to do.
-                    Log.e(TAG, SUB_TAG+"&&&&&&&&&&&&&&&&&&&&&&: " + message.obj);
-//                Toast.makeText(getApplicationContext(), (Integer) message.obj, Toast.LENGTH_LONG).show();
-                }
-            };
 
-            @Override
-            public void run() {
-                Log.e(TAG, SUB_TAG+"Adding contact: " + user.getName());
-                if(MainActivity.database.userDao().getSpecificUser(user.getUid()).isEmpty()) {
-                    Log.e(TAG, SUB_TAG+"User doesn't already exist in the contacts");
-                    MainActivity.database.userDao().insertAll(user);
-                    Message mssg = new Message();
-                    mssg.obj = "This user with name: " + user.getName() + ", has been added locally (SUCESS!!!!)";
-                    handler.dispatchMessage(mssg);
-                }
-                else{
-                    Log.e(TAG, SUB_TAG+">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"+MainActivity.database.userDao().getUsers());
-                    Message mssg = new Message();
-                    mssg.obj = "This user with name: " + user.getName() + ", is already in the contacts (No success!!!!)";
-                    handler.dispatchMessage(mssg);
-                    Log.e(TAG, SUB_TAG+mssg.obj);
-                }
-            }
-        });
     }
 }
