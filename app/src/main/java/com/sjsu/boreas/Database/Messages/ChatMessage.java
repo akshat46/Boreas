@@ -7,7 +7,7 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
-import com.sjsu.boreas.DataChangeListeners.messageListener;
+import com.sjsu.boreas.Events.messageListener;
 
 import java.io.Serializable;
 import java.util.HashMap;
