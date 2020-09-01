@@ -1,12 +1,7 @@
 package com.sjsu.boreas;
 
-import android.content.Context;
 import android.graphics.Color;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
 import android.util.Log;
 import android.widget.SearchView;
 
@@ -49,8 +44,8 @@ public class AddContactActivity extends AppCompatActivity {
     private FragmentTransaction mFragmentTransaction;
     private List<Fragment> mFragments;
 
-    private ContextHelper contextHelper = ContextHelper.getContextHelper(null);
-    private DatabaseReference databaseReference = DatabaseReference.getInstance(contextHelper.getApplicationContext());
+    private ContextHelper contextHelper = ContextHelper.get(null);
+    private DatabaseReference databaseReference = DatabaseReference.get(contextHelper.getApplicationContext());
 
 //    private DatabaseReference database_ref;
 

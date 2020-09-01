@@ -38,7 +38,7 @@ public class ChatActivity2 extends AppCompatActivity implements messageListener 
     private User myChatPartner;
     private List<ChatMessage> mssgList;
 
-    public DatabaseReference databaseReference = DatabaseReference.getInstance(null);
+    public DatabaseReference databaseReference = DatabaseReference.get(null);
 
     private static String TAG = "BOREAS";
     private static String SUB_TAG = "----------------ChatActivity2 ";

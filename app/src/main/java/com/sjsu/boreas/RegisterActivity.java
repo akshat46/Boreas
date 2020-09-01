@@ -15,7 +15,6 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -55,8 +54,8 @@ public class RegisterActivity extends Activity implements LocationListener {
     
     private Button sign_up;
 
-    private ContextHelper contextHelper = ContextHelper.getContextHelper(null);
-    public DatabaseReference databaseReference = DatabaseReference.getInstance(contextHelper.getApplicationContext());
+    private ContextHelper contextHelper = ContextHelper.get(null);
+    public DatabaseReference databaseReference = DatabaseReference.get(contextHelper.getApplicationContext());
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
 
     public boolean checkLocationPermission() {

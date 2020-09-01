@@ -10,14 +10,21 @@ import androidx.room.Room;
 
 import com.sjsu.boreas.Database.Messages.ChatMessage;
 import com.sjsu.boreas.Database.Users.User;
+import com.sjsu.boreas.Events.Event;
+import com.sjsu.boreas.Events.EventEmitter;
 import com.sjsu.boreas.MainActivity;
 import com.sjsu.boreas.Messages.LongDistanceMessage;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.security.auth.Subject;
 
-public class DatabaseReference extends Application {
+public class DatabaseReference implements EventEmitter{
+
+    private Event event_chatmessage = Event.get("chatmessage");
+    private Event event_user = Event.get("user");
 
     private static String TAG = "BOREAS";
     private static String SUB_TAG = "------DatabaseReference----- ";
@@ -26,7 +33,7 @@ public class DatabaseReference extends Application {
     private AppDatabase database;
     private Context appContext = null;
 
-    public static DatabaseReference getInstance(Context context){
+    public static DatabaseReference get(Context context){
         Log.e(TAG, SUB_TAG+"getting instance");
         if(databaseReference == null){
             databaseReference = new DatabaseReference(context);
@@ -41,10 +48,18 @@ public class DatabaseReference extends Application {
         database = Room.databaseBuilder(context, AppDatabase.class, "mydatabase").build();
     }
 
-    public void saveChatMessageLocally(ChatMessage message){
+    public void saveChatMessageLocally(final ChatMessage message){
         Log.e(TAG, SUB_TAG+"saving chat message locally");
-        if(!isMessageAlreadyInDatabase(message))
-            database.chatMessageDao().insertAll(message);
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                Log.e(TAG, SUB_TAG+"Adding message to database" + message);
+                if(!isMessageAlreadyInDatabase(message))
+                    database.chatMessageDao().insertAll(message);
+            }
+        });
+        HashMap<String, Object> cm_map = (HashMap<String, Object>) message.toMap();
+        event_chatmessage.trigger(cm_map);
     }
 
     public void registerUser(final User user){
@@ -58,14 +73,14 @@ public class DatabaseReference extends Application {
         });
     }
 
-    //This function at the moment needs to be called inside a Asynch thread (a sperate thread)
+    //This function at the moment needs to be called inside a Async thread (a sperate thread)
     public List<ChatMessage> getLastTwentyMessagesForSpecificUser(User specificUser){
         Log.e(TAG, SUB_TAG+"get last 20 mssgs for a specific user");
         return database.chatMessageDao().getLastTwentyMessagesForUser(specificUser.getUid(),
                 ChatMessage.ChatTypes.ONEONONEONLINECHAT.getValue());
     }
 
-    //This function at the moment needs to be called inside a Asynch thread (a sperate thread)
+    //This function at the moment needs to be called inside a Async thread (a sperate thread)
     // like the way its being used in MainActivity
     public User getRegisteredUser(){
         Log.e(TAG, SUB_TAG+"getting the user of this app");

@@ -7,7 +7,6 @@ import java.util.List;
 public class Event {
     private static List<Event> events;
 
-    private EventEmitter emitter;
     private String event_id;
     private List<EventListener> listeners = new ArrayList<>();
 

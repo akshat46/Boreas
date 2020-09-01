@@ -11,7 +11,7 @@ public class ContextHelper {
     private static String TAG = "BOREAS";
     private static String SUB_TAG = "--------Context Helper-- ";
 
-    public static ContextHelper getContextHelper(Context context){
+    public static ContextHelper get(Context context){
         Log.e(TAG, SUB_TAG+"get context helper instance");
         if(contextHelper == null){
             contextHelper = new ContextHelper(context);
@@ -24,7 +24,7 @@ public class ContextHelper {
         return null;
     }
 
-    public ContextHelper(Context context){
+    private ContextHelper(Context context){
         Log.e(TAG, SUB_TAG+"Constructor for context helper");
         this.applicationContext = context;
     }

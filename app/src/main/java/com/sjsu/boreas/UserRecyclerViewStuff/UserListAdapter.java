@@ -9,13 +9,11 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.sjsu.boreas.AddContactActivity;
 import com.sjsu.boreas.Database.DatabaseReference;
 import com.sjsu.boreas.HelperStuff.ContextHelper;
 import com.sjsu.boreas.MainActivity;
 import com.sjsu.boreas.OnlineConnectionHandlers.FirebaseDataRefAndInstance;
 import com.sjsu.boreas.R;
-import com.sjsu.boreas.UserRecyclerViewStuff.UsersViewHolder;
 import com.sjsu.boreas.Database.Users.User;
 
 import java.util.ArrayList;
@@ -60,8 +58,8 @@ public class UserListAdapter extends RecyclerView.Adapter<UsersViewHolder>{
                 // Launch PostDetailActivity
                 Log.e(TAG, SUB_TAG+"999999999999999999999999 this is the selected user: " + model.getUid());
                 FirebaseDataRefAndInstance.addContact(model);
-                ContextHelper contextHelper = ContextHelper.getContextHelper(null);
-                DatabaseReference databaseReference = DatabaseReference.getInstance(contextHelper.getApplicationContext());
+                ContextHelper contextHelper = ContextHelper.get(null);
+                DatabaseReference databaseReference = DatabaseReference.get(contextHelper.getApplicationContext());
                 databaseReference.addContact(model);
             }
         });
