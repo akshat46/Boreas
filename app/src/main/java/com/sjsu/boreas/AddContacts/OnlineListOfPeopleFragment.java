@@ -108,7 +108,7 @@ public class OnlineListOfPeopleFragment extends Fragment {
             }
         }
 
-        UserListAdapter newAdapter = new UserListAdapter(filteredContacts);
+        UserListAdapter newAdapter = new UserListAdapter(filteredContacts, mContext);
         recyclerView.setAdapter(newAdapter);
     }
 
@@ -132,7 +132,7 @@ public class OnlineListOfPeopleFragment extends Fragment {
                         if(MainActivity.currentUser.uid != u.uid)
                             userArrayList.add(u);
                     }
-                    mAdapter2=new UserListAdapter(userArrayList);
+                    mAdapter2=new UserListAdapter(userArrayList, mContext);
                     recyclerView.setAdapter(mAdapter2);
                 }
             }
