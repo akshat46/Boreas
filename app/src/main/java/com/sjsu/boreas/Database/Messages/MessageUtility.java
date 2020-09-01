@@ -2,6 +2,8 @@ package com.sjsu.boreas.Database.Messages;
 
 import android.util.Log;
 
+import com.sjsu.boreas.Database.DatabaseReference;
+import com.sjsu.boreas.HelperStuff.ContextHelper;
 import com.sjsu.boreas.MainActivity;
 import com.sjsu.boreas.Database.Users.User;
 
@@ -49,13 +51,20 @@ public class MessageUtility {
                     latitude, longitude,
                     time, isMyMssg, mssgType);
 
-            //We check if the message is already in database, if it is, don't save
-            if(!messageAlreadyInDatabase(mssg))
-                MainActivity.database.chatMessageDao().insertAll(mssg); //Save chat message
+            ContextHelper contextHelper = ContextHelper.getContextHelper(null);
+            DatabaseReference databaseReference = DatabaseReference.getInstance(contextHelper.getApplicationContext());
+            databaseReference.saveChatMessageLocally(mssg); //Save chat message
 
             //Save the sender's info to the database
             User sender = new User(senderId, senderName, latitude, longitude, false);
-            MainActivity.database.userDao().insertNewUser(sender);
+            if(databaseReference.isUserAlreadyInContacts(sender)){
+                Log.e(TAG, SUB_TAG+"The user is already in contacts");
+            }else {
+                //TODO: this user shouldn't be added to contacts,
+                // the person should be added to a different table of potential contacts
+                // before he/she is verified as a contact by the app owner
+                databaseReference.addContact(sender);
+            }
 
             Log.e(TAG, SUB_TAG+"New mssg: "+ mssg.receiverName + ", mssgType: " + mssg.mssgType);
         } catch (JSONException e) {
@@ -66,14 +75,4 @@ public class MessageUtility {
         return mssg;
     }
 
-    private static boolean messageAlreadyInDatabase(ChatMessage mssg){
-        Log.e(TAG, SUB_TAG+"Checking if message is already received or not");
-
-        List<ChatMessage> mssgList = MainActivity.database.chatMessageDao().getSpecificMessage(mssg.mssgId);
-
-        if(mssgList.size() > 0)
-            return true;
-
-        return false;
-    }
 }

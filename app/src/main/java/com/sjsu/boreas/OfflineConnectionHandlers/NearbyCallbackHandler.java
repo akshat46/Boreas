@@ -10,6 +10,8 @@ import com.google.android.gms.nearby.connection.EndpointDiscoveryCallback;
 import com.google.android.gms.nearby.connection.Payload;
 import com.google.android.gms.nearby.connection.PayloadCallback;
 import com.google.android.gms.nearby.connection.PayloadTransferUpdate;
+import com.sjsu.boreas.Database.DatabaseReference;
+import com.sjsu.boreas.HelperStuff.ContextHelper;
 import com.sjsu.boreas.MainActivity;
 import com.sjsu.boreas.Database.Messages.ChatMessage;
 import com.sjsu.boreas.Database.Users.User;
@@ -34,7 +36,8 @@ public class NearbyCallbackHandler {
 
     private NearbyConnectionHandler connectionHandler;
     private HashMap<String, String> connectedUsers; //Map endpointId to userId
-
+    private ContextHelper contextHelper = ContextHelper.getContextHelper(null);
+    private DatabaseReference databaseReference = DatabaseReference.getInstance(contextHelper.getApplicationContext());
 
     public NearbyCallbackHandler(NearbyConnectionHandler act){
         connectionHandler = act;
@@ -56,7 +59,7 @@ public class NearbyCallbackHandler {
                 //Adjacency List
                 if(result instanceof AdjacencyListMessage){
                     AdjacencyListMessage message = (AdjacencyListMessage) result;
-                    MainActivity.database.userDao().insertNewUser(message.sender);
+                    databaseReference.addContact(message.sender);
                     //Check if received adjacency list overlaps current adjacency list
                     boolean isMeshMember = false;
                     HashSet<String> adjacencySet = createIdSet(connectionHandler.meshMembers);
@@ -77,10 +80,10 @@ public class NearbyCallbackHandler {
                 else if(result instanceof TextMessage){
                     TextMessage message = (TextMessage) result;
                     connectionHandler.receiveMessage(message);
-                    MainActivity.database.userDao().insertNewUser(message.sender);
-                    MainActivity.database.userDao().insertNewUser(message.forwarder);
+                    databaseReference.addContact(message.sender);
+                    databaseReference.addContact(message.forwarder);
 
-                    MainActivity.database.chatMessageDao().insertAll(
+                    databaseReference.saveChatMessageLocally(
                             new ChatMessage("", message.message, MainActivity.currentUser.uid, MainActivity.currentUser.name,
                                     message.sender.uid, message.sender.name, message.sender.latitude, message.sender.longitude,
                                     message.timestamp, false, ChatMessage.ChatTypes.OFFLINEGROUPCHAT.getValue())
@@ -91,13 +94,13 @@ public class NearbyCallbackHandler {
                 //Long distance chat message
                 else if(result instanceof LongDistanceMessage){
                     LongDistanceMessage message = (LongDistanceMessage) result;
-                    MainActivity.database.userDao().insertNewUser(message.recipient);
-                    MainActivity.database.userDao().insertNewUser(message.sender);
+                    databaseReference.addContact(message.recipient);
+                    databaseReference.addContact(message.sender);
                     User forwarder = message.forwarder;
                     message.forwarder = MainActivity.currentUser;
                     //Decide who to forward it to based on distances to recipient
                     int forwardCount = 0;
-                    List<User> nearestUsers = MainActivity.database.userDao().getClosestUsers(message.recipient.latitude, message.recipient.longitude);
+                    List<User> nearestUsers = databaseReference.getClosestUseres(message);
                     for(User user : nearestUsers){
                         //Complete message forwarding once messages have been sent to at most 3 users
                         if(forwardCount >= 3)
