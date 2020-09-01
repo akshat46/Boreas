@@ -1,4 +1,4 @@
-package com.sjsu.boreas.DataChangeListeners;
+package com.sjsu.boreas.Events;
 
 import com.sjsu.boreas.Database.Messages.ChatMessage;
 
