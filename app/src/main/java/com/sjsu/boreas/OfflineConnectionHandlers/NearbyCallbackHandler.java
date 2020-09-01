@@ -36,8 +36,8 @@ public class NearbyCallbackHandler {
 
     private NearbyConnectionHandler connectionHandler;
     private HashMap<String, String> connectedUsers; //Map endpointId to userId
-    private ContextHelper contextHelper = ContextHelper.getContextHelper(null);
-    private DatabaseReference databaseReference = DatabaseReference.getInstance(contextHelper.getApplicationContext());
+    private ContextHelper contextHelper = ContextHelper.get(null);
+    private DatabaseReference databaseReference = DatabaseReference.get(contextHelper.getApplicationContext());
 
     public NearbyCallbackHandler(NearbyConnectionHandler act){
         connectionHandler = act;

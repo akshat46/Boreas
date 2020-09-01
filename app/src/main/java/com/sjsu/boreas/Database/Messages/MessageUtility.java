@@ -4,13 +4,10 @@ import android.util.Log;
 
 import com.sjsu.boreas.Database.DatabaseReference;
 import com.sjsu.boreas.HelperStuff.ContextHelper;
-import com.sjsu.boreas.MainActivity;
 import com.sjsu.boreas.Database.Users.User;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.List;
 
 public class MessageUtility {
 
@@ -51,8 +48,8 @@ public class MessageUtility {
                     latitude, longitude,
                     time, isMyMssg, mssgType);
 
-            ContextHelper contextHelper = ContextHelper.getContextHelper(null);
-            DatabaseReference databaseReference = DatabaseReference.getInstance(contextHelper.getApplicationContext());
+            ContextHelper contextHelper = ContextHelper.get(null);
+            DatabaseReference databaseReference = DatabaseReference.get(contextHelper.getApplicationContext());
             databaseReference.saveChatMessageLocally(mssg); //Save chat message
 
             //Save the sender's info to the database

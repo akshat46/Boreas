@@ -3,10 +3,8 @@ package com.sjsu.boreas;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.room.Room;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
@@ -20,11 +18,8 @@ import com.google.firebase.FirebaseApp;
 import com.sjsu.boreas.Database.DatabaseReference;
 import com.sjsu.boreas.HelperStuff.ContextHelper;
 import com.sjsu.boreas.OfflineConnectionHandlers.NearbyConnectionHandler;
-import com.sjsu.boreas.Database.AppDatabase;
 import com.sjsu.boreas.Database.Users.User;
 import com.sjsu.boreas.pdel_messaging.ChatActivity;
-
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 	
@@ -38,8 +33,8 @@ public class MainActivity extends AppCompatActivity {
 
     public static User currentUser;
     public static NearbyConnectionHandler nearbyConnectionHandler;
-    private ContextHelper contextHelper = null;
-    private DatabaseReference databaseReference = null;
+    private ContextHelper contextHelper = ContextHelper.get(getApplicationContext());
+    private DatabaseReference databaseReference = DatabaseReference.get(contextHelper.getApplicationContext());
 
     private Button buttonRegister, buttonGroupchat, buttonFriends, buttonEmergency;
 
@@ -49,11 +44,6 @@ public class MainActivity extends AppCompatActivity {
         FirebaseApp.initializeApp(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        //Initialized the contexthelper singleton here
-        contextHelper = new ContextHelper(getApplicationContext());
-        databaseReference = DatabaseReference.getInstance(contextHelper.getApplicationContext());
-
 
 
         if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_WIFI_STATE) != PackageManager.PERMISSION_GRANTED)

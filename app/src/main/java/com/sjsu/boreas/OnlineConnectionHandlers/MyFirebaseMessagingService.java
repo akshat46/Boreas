@@ -4,6 +4,8 @@ import android.util.Log;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+import com.sjsu.boreas.Database.DatabaseReference;
+import com.sjsu.boreas.HelperStuff.ContextHelper;
 import com.sjsu.boreas.MainActivity;
 import com.sjsu.boreas.Database.Messages.ChatMessage;
 import com.sjsu.boreas.Database.Messages.MessageUtility;
@@ -15,6 +17,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     private static String TAG = "BOREAS";
     private static String SUB_TAG = "-----MyFirebaseMessagingService";
+    ContextHelper appContext = ContextHelper.get(null);
+    private DatabaseReference localDb = DatabaseReference.get(appContext.getApplicationContext());
 
     @Override
     public void onMessageReceived(RemoteMessage mssg) {

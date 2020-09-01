@@ -18,7 +18,6 @@ import com.sjsu.boreas.Database.DatabaseReference;
 import com.sjsu.boreas.HelperStuff.ContextHelper;
 import com.sjsu.boreas.UserRecyclerViewStuff.UserListAdapter;
 import com.sjsu.boreas.AddContactActivity;
-import com.sjsu.boreas.MainActivity;
 import com.sjsu.boreas.R;
 import com.sjsu.boreas.Database.Users.User;
 
@@ -114,8 +113,8 @@ public class OfflinePeopleContactedListFragment extends Fragment {
 //        mAdapter2.startListening();
         Log.e(TAG, SUB_TAG+"----intialize custom firebase");
 
-        ContextHelper contextHelper = ContextHelper.getContextHelper(null);
-        final DatabaseReference databaseReference = DatabaseReference.getInstance(contextHelper.getApplicationContext());
+        ContextHelper contextHelper = ContextHelper.get(null);
+        final DatabaseReference databaseReference = DatabaseReference.get(contextHelper.getApplicationContext());
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
