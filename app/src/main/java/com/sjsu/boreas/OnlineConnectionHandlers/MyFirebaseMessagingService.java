@@ -32,7 +32,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         }else{
             chatMssg = MessageUtility.convertJsonToMessage(mssg.getData().get("body"));
             if(chatMssg != null)
-                newMessageReceived(chatMssg);
+//                newMessageReceived(chatMssg);
+                localDb.saveChatMessageLocally(chatMssg);
         }
 
         Log.e(TAG, SUB_TAG+"<><><><><><><><><><> Leaving hera");

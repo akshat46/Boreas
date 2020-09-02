@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class Event {
-    private static List<Event> events;
+    private static List<Event> events = new ArrayList<>();
 
     private String event_id;
     private List<EventListener> listeners = new ArrayList<>();

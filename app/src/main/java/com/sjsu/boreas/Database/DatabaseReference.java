@@ -23,7 +23,7 @@ import javax.security.auth.Subject;
 
 public class DatabaseReference implements EventEmitter{
 
-    private Event event_chatmessage = Event.get("chatmessage");
+    private Event event_chatmessage = Event.get("chatmessages");
     private Event event_user = Event.get("user");
 
     private static String TAG = "BOREAS";

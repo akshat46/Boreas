@@ -20,6 +20,8 @@ import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.firebase.ui.database.SnapshotParser;
 import com.google.firebase.database.DataSnapshot;
 import com.sjsu.boreas.ChatViewRelatedStuff.ChatActivity2;
+import com.sjsu.boreas.Events.Event;
+import com.sjsu.boreas.Events.EventListener;
 import com.sjsu.boreas.OnlineConnectionHandlers.FirebaseDataRefAndInstance;
 import com.sjsu.boreas.LandingPage;
 import com.sjsu.boreas.MainActivity;
@@ -28,7 +30,9 @@ import com.sjsu.boreas.UserRecyclerViewStuff.UsersViewHolder;
 import com.sjsu.boreas.Database.AppDatabase;
 import com.sjsu.boreas.Database.Users.User;
 
-public class OneOnOneFragment extends Fragment {
+import java.util.HashMap;
+
+public class OneOnOneFragment extends Fragment implements EventListener {
     public static final String EXTRA_TAB_NAME = "tab_name";
     private String mTabName;
     private RecyclerView recyclerView;
@@ -48,6 +52,8 @@ public class OneOnOneFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        Event event = Event.get("chatmessages");
+        event.addListener(this);
         Log.e(TAG, SUB_TAG+"On create");
         super.onCreate(savedInstanceState);
         mParent = (LandingPage) getActivity();
@@ -157,6 +163,12 @@ public class OneOnOneFragment extends Fragment {
     public void onStop() {
         super.onStop();
         mAdapter.stopListening();
+    }
+
+    public void eventTriggered(HashMap<String, Object> packet){
+        Log.e(TAG, SUB_TAG+"I have received a message, my lord. It goes something like: "+ packet.toString());
+        // parse chatmessage from packet
+        // try catch for parsing user when new user (not in contact list) messages
     }
 
 }
