@@ -128,6 +128,10 @@ public class ChatMessage implements Serializable {
         return mssgStr;
     }
 
+    public void fromMap(HashMap<String, Object> chatMessage){
+
+    }
+
     public Map<String, Object> toMap(){
         HashMap<String, Object> result = new HashMap<>();
         result.put("mssgId", mssgId);
