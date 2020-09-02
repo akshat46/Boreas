@@ -13,16 +13,7 @@
   <component name="ChangeListManager">
     <list default="true" id="49f8b3d3-f678-438a-b6fb-ad25673b4b3a" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/AddContactActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/AddContactActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/AddContacts/OfflinePeopleContactedListFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/AddContacts/OfflinePeopleContactedListFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/AddContacts/OnlineListOfPeopleFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/AddContacts/OnlineListOfPeopleFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/ChatViewRelatedStuff/ChatActivity2.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/ChatViewRelatedStuff/ChatActivity2.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/Database/Messages/MessageUtility.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/Database/Messages/MessageUtility.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/MainActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/OfflineConnectionHandlers/NearbyCallbackHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/OfflineConnectionHandlers/NearbyCallbackHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/OnlineConnectionHandlers/FirebaseDataRefAndInstance.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/OnlineConnectionHandlers/FirebaseDataRefAndInstance.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/RegisterActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/RegisterActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/UserRecyclerViewStuff/UserListAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/UserRecyclerViewStuff/UserListAdapter.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -176,26 +167,26 @@
       <screen x="28" y="0" width="1892" height="1080" />
     </state>
     <state x="557" y="298" width="826" height="483" key="AndroidCreateResourceFileDialog/28.0.1892.1080@28.0.1892.1080" timestamp="1595368775443" />
-    <state width="1846" height="282" key="GridCell.Tab.0.bottom" timestamp="1598749283542">
+    <state width="1846" height="418" key="GridCell.Tab.0.bottom" timestamp="1598749375332">
       <screen x="28" y="0" width="1892" height="1080" />
     </state>
     <state width="1872" height="383" key="GridCell.Tab.0.bottom/0.27.1920.1053@0.27.1920.1053" timestamp="1595209257740" />
-    <state width="1846" height="282" key="GridCell.Tab.0.bottom/28.0.1892.1080@28.0.1892.1080" timestamp="1598749283542" />
-    <state width="1846" height="282" key="GridCell.Tab.0.center" timestamp="1598749283541">
+    <state width="1846" height="418" key="GridCell.Tab.0.bottom/28.0.1892.1080@28.0.1892.1080" timestamp="1598749375332" />
+    <state width="1846" height="418" key="GridCell.Tab.0.center" timestamp="1598749375331">
       <screen x="28" y="0" width="1892" height="1080" />
     </state>
     <state width="1872" height="383" key="GridCell.Tab.0.center/0.27.1920.1053@0.27.1920.1053" timestamp="1595209257739" />
-    <state width="1846" height="282" key="GridCell.Tab.0.center/28.0.1892.1080@28.0.1892.1080" timestamp="1598749283541" />
-    <state width="1846" height="282" key="GridCell.Tab.0.left" timestamp="1598749283540">
+    <state width="1846" height="418" key="GridCell.Tab.0.center/28.0.1892.1080@28.0.1892.1080" timestamp="1598749375331" />
+    <state width="1846" height="418" key="GridCell.Tab.0.left" timestamp="1598749375330">
       <screen x="28" y="0" width="1892" height="1080" />
     </state>
     <state width="1872" height="383" key="GridCell.Tab.0.left/0.27.1920.1053@0.27.1920.1053" timestamp="1595209257738" />
-    <state width="1846" height="282" key="GridCell.Tab.0.left/28.0.1892.1080@28.0.1892.1080" timestamp="1598749283540" />
-    <state width="1846" height="282" key="GridCell.Tab.0.right" timestamp="1598749283541">
+    <state width="1846" height="418" key="GridCell.Tab.0.left/28.0.1892.1080@28.0.1892.1080" timestamp="1598749375330" />
+    <state width="1846" height="418" key="GridCell.Tab.0.right" timestamp="1598749375331">
       <screen x="28" y="0" width="1892" height="1080" />
     </state>
     <state width="1872" height="383" key="GridCell.Tab.0.right/0.27.1920.1053@0.27.1920.1053" timestamp="1595209257739" />
-    <state width="1846" height="282" key="GridCell.Tab.0.right/28.0.1892.1080@28.0.1892.1080" timestamp="1598749283541" />
+    <state width="1846" height="418" key="GridCell.Tab.0.right/28.0.1892.1080@28.0.1892.1080" timestamp="1598749375331" />
     <state x="463" y="175" key="SettingsEditor" timestamp="1595545972623">
       <screen x="28" y="0" width="1892" height="1080" />
     </state>

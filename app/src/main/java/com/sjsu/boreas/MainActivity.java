@@ -33,8 +33,8 @@ public class MainActivity extends AppCompatActivity {
 
     public static User currentUser;
     public static NearbyConnectionHandler nearbyConnectionHandler;
-    private ContextHelper contextHelper = ContextHelper.get(getApplicationContext());
-    private DatabaseReference databaseReference = DatabaseReference.get(contextHelper.getApplicationContext());
+    private ContextHelper contextHelper = null;
+    private DatabaseReference databaseReference = null;
 
     private Button buttonRegister, buttonGroupchat, buttonFriends, buttonEmergency;
 
@@ -45,6 +45,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        contextHelper = ContextHelper.get(getApplicationContext());
+        databaseReference = DatabaseReference.get(contextHelper.getApplicationContext());
 
         if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_WIFI_STATE) != PackageManager.PERMISSION_GRANTED)
             Toast.makeText(this, "Permission not granted!", Toast.LENGTH_SHORT).show();
