@@ -16,14 +16,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.sjsu.boreas.Database.DatabaseReference;
 import com.sjsu.boreas.HelperStuff.ContextHelper;
+import com.sjsu.boreas.OnlineConnectionHandlers.FirebaseDataRefAndInstance;
 import com.sjsu.boreas.UserRecyclerViewStuff.UserListAdapter;
 import com.sjsu.boreas.AddContactActivity;
 import com.sjsu.boreas.R;
 import com.sjsu.boreas.Database.Users.User;
+import com.sjsu.boreas.UserRecyclerViewStuff.UserListItemClickAction;
 
 import java.util.ArrayList;
 
-public class OfflinePeopleContactedListFragment extends Fragment {
+public class OfflinePeopleContactedListFragment extends Fragment implements UserListItemClickAction {
 
     private static final String EXTRA_TAB_NAME = "tab_name";
     private String mTabName;
@@ -38,6 +40,7 @@ public class OfflinePeopleContactedListFragment extends Fragment {
     private ArrayList<User> userArrayList;
     private UserListAdapter mAdapter;
     private Context mContext;
+    private UserListItemClickAction userListItemClickAction;
 
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -104,7 +107,7 @@ public class OfflinePeopleContactedListFragment extends Fragment {
             }
         }
 
-        UserListAdapter newAdapter = new UserListAdapter(filteredContacts, mContext);
+        UserListAdapter newAdapter = new UserListAdapter(filteredContacts, mContext, userListItemClickAction);
         recyclerView.setAdapter(newAdapter);
     }
 
@@ -119,7 +122,7 @@ public class OfflinePeopleContactedListFragment extends Fragment {
             @Override
             public void run() {
                 userArrayList = new ArrayList<User>(databaseReference.getContacts());
-                mAdapter=new UserListAdapter(userArrayList, mContext);
+                mAdapter=new UserListAdapter(userArrayList, mContext, userListItemClickAction);
                 recyclerView.setAdapter(mAdapter);
             }
         });
@@ -150,5 +153,14 @@ public class OfflinePeopleContactedListFragment extends Fragment {
     private void manageMessageFromWorkerThread(){
         Log.e(TAG, SUB_TAG+"***********************Manage messg from worker thread");
 
+    }
+
+    @Override
+    public void onItemClicked(User model) {
+        Log.e(TAG, SUB_TAG+"on item clicked");
+        FirebaseDataRefAndInstance.addContact(model);
+        ContextHelper contextHelper = ContextHelper.get(null);
+        com.sjsu.boreas.Database.DatabaseReference databaseReference = com.sjsu.boreas.Database.DatabaseReference.get(contextHelper.getApplicationContext());
+        databaseReference.addContact(model);
     }
 }

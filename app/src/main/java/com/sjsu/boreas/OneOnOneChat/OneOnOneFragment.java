@@ -2,6 +2,7 @@ package com.sjsu.boreas.OneOnOneChat;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,34 +15,34 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.database.Query;
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.firebase.ui.database.FirebaseRecyclerOptions;
-import com.firebase.ui.database.SnapshotParser;
-import com.google.firebase.database.DataSnapshot;
 import com.sjsu.boreas.ChatViewRelatedStuff.ChatActivity2;
+import com.sjsu.boreas.Database.DatabaseReference;
 import com.sjsu.boreas.Events.Event;
 import com.sjsu.boreas.Events.EventListener;
-import com.sjsu.boreas.OnlineConnectionHandlers.FirebaseDataRefAndInstance;
+import com.sjsu.boreas.HelperStuff.ContextHelper;
 import com.sjsu.boreas.LandingPage;
-import com.sjsu.boreas.MainActivity;
 import com.sjsu.boreas.R;
+import com.sjsu.boreas.UserRecyclerViewStuff.UserListAdapter;
+import com.sjsu.boreas.UserRecyclerViewStuff.UserListItemClickAction;
 import com.sjsu.boreas.UserRecyclerViewStuff.UsersViewHolder;
 import com.sjsu.boreas.Database.AppDatabase;
 import com.sjsu.boreas.Database.Users.User;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
-public class OneOnOneFragment extends Fragment implements EventListener {
+public class OneOnOneFragment extends Fragment implements EventListener, UserListItemClickAction {
     public static final String EXTRA_TAB_NAME = "tab_name";
     private String mTabName;
     private RecyclerView recyclerView;
-    private FirebaseRecyclerAdapter<User, UsersViewHolder> mAdapter;
+    private UserListAdapter mAdapter;
     private RecyclerView.LayoutManager layoutManager;
     private LandingPage mParent;
     private View rootView;
     private Context mContext;
     public static AppDatabase database;
+    private ArrayList<User> contactArrayList;
+    private UserListItemClickAction userListItemClickAction = this;
 
     private static String TAG = "BOREAS";
     private static String SUB_TAG = "---OneOnOne___Frag ";
@@ -98,71 +99,87 @@ public class OneOnOneFragment extends Fragment implements EventListener {
         layoutManager = new LinearLayoutManager(mParent);
         recyclerView.setLayoutManager(layoutManager);
 
-        initializeFirebaseAdapter();
+        initializeAdapter();
 
         recyclerView.setAdapter(mAdapter);
     }
 
-    public void initializeFirebaseAdapter(){
-        Log.e(TAG, SUB_TAG+"InitializeFirebase adapter");
-
-        Query query = FirebaseDataRefAndInstance.getDatabaseReference().child("contacts").child(MainActivity.currentUser.getUid());
-
-        FirebaseRecyclerOptions<User> options = new FirebaseRecyclerOptions.Builder<User>()
-                .setQuery(query, new SnapshotParser<User>() {
-                    @NonNull
-                    @Override
-                    public User parseSnapshot(@NonNull DataSnapshot snapshot) {
-                        Log.e(TAG, SUB_TAG+"Parse snapshot");
-                        return new User(snapshot.child("uid").getValue().toString(),
-                                snapshot.child("name").getValue().toString(),
-                                Double.parseDouble(snapshot.child("latitude").getValue().toString()),
-                                Double.parseDouble(snapshot.child("longitude").getValue().toString()),
-                                false);
-                    }
-                })
-                .build();
-
-        mAdapter = new FirebaseRecyclerAdapter<User, UsersViewHolder>(options) {
-            @NonNull
-            @Override
-            public UsersViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-                Log.e(TAG, SUB_TAG+"onCreateViewHolder");
-                View view = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.item_chat, parent, false);
-
-                return new UsersViewHolder(view);
-            }
-
-            @Override
-            protected void onBindViewHolder(@NonNull UsersViewHolder holder, int position, @NonNull final User model) {
-                Log.e(TAG, SUB_TAG+"onBindViewHolder");
-                holder.bindToListItemView(model);
-
-                holder.itemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        // Launch PostDetailActivity
-                        Intent intent = new Intent(getActivity(), ChatActivity2.class);
-                        //Passing the user object using intent
-                        intent.putExtra("ReceiverObj", model);
-                        startActivity(intent);
-                    }
-                });
-            }
-        };
-    }
-
-    @Override
-    public void onStart() {
+    private void initializeAdapter() {
         super.onStart();
-        mAdapter.startListening();
+        Log.e(TAG, SUB_TAG+"---- custom local list adapter");
+
+        ContextHelper contextHelper = ContextHelper.get(null);
+        final DatabaseReference databaseReference = DatabaseReference.get(contextHelper.getApplicationContext());
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                contactArrayList = new ArrayList<User>(databaseReference.getContacts());
+                mAdapter=new UserListAdapter(contactArrayList, mContext, userListItemClickAction);
+                recyclerView.setAdapter(mAdapter);
+            }
+        });
     }
+
+//    public void initializeFirebaseAdapter(){
+//        Log.e(TAG, SUB_TAG+"InitializeFirebase adapter");
+//
+//        Query query = FirebaseDataRefAndInstance.getDatabaseReference().child("contacts").child(MainActivity.currentUser.getUid());
+//
+//        FirebaseRecyclerOptions<User> options = new FirebaseRecyclerOptions.Builder<User>()
+//                .setQuery(query, new SnapshotParser<User>() {
+//                    @NonNull
+//                    @Override
+//                    public User parseSnapshot(@NonNull DataSnapshot snapshot) {
+//                        Log.e(TAG, SUB_TAG+"Parse snapshot");
+//                        return new User(snapshot.child("uid").getValue().toString(),
+//                                snapshot.child("name").getValue().toString(),
+//                                Double.parseDouble(snapshot.child("latitude").getValue().toString()),
+//                                Double.parseDouble(snapshot.child("longitude").getValue().toString()),
+//                                false);
+//                    }
+//                })
+//                .build();
+//
+//        mAdapter = new FirebaseRecyclerAdapter<User, UsersViewHolder>(options) {
+//            @NonNull
+//            @Override
+//            public UsersViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+//                Log.e(TAG, SUB_TAG+"onCreateViewHolder");
+//                View view = LayoutInflater.from(parent.getContext())
+//                        .inflate(R.layout.item_chat, parent, false);
+//
+//                return new UsersViewHolder(view);
+//            }
+//
+//            @Override
+//            protected void onBindViewHolder(@NonNull UsersViewHolder holder, int position, @NonNull final User model) {
+//                Log.e(TAG, SUB_TAG+"onBindViewHolder");
+//                holder.bindToListItemView(model);
+//
+//                holder.itemView.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        // Launch PostDetailActivity
+//                        Intent intent = new Intent(getActivity(), ChatActivity2.class);
+//                        //Passing the user object using intent
+//                        intent.putExtra("ReceiverObj", model);
+//                        startActivity(intent);
+//                    }
+//                });
+//            }
+//        };
+//    }
+
+//    @Override
+//    public void onStart() {
+//        super.onStart();
+//        mAdapter.startListening();
+//    }
 
     @Override
     public void onStop() {
         super.onStop();
-        mAdapter.stopListening();
+//        mAdapter.stopListening();
     }
 
     public void eventTriggered(HashMap<String, Object> packet){
@@ -171,4 +188,13 @@ public class OneOnOneFragment extends Fragment implements EventListener {
         // try catch for parsing user when new user (not in contact list) messages
     }
 
+    //The UserListItemClick implemented function
+    @Override
+    public void onItemClicked(User model) {
+        Log.e(TAG, SUB_TAG+"on item clicked");
+        Intent intent = new Intent(getActivity(), ChatActivity2.class);
+        //Passing the user object using intent
+        intent.putExtra("ReceiverObj", model);
+        startActivity(intent);
+    }
 }
