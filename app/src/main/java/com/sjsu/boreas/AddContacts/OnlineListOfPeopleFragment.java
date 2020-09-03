@@ -19,16 +19,19 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.sjsu.boreas.HelperStuff.ContextHelper;
+import com.sjsu.boreas.OnlineConnectionHandlers.FirebaseDataRefAndInstance;
 import com.sjsu.boreas.UserRecyclerViewStuff.UserListAdapter;
 import com.sjsu.boreas.AddContactActivity;
 import com.sjsu.boreas.MainActivity;
 import com.sjsu.boreas.R;
+import com.sjsu.boreas.UserRecyclerViewStuff.UserListItemClickAction;
 import com.sjsu.boreas.UserRecyclerViewStuff.UsersViewHolder;
 import com.sjsu.boreas.Database.Users.User;
 
 import java.util.ArrayList;
 
-public class OnlineListOfPeopleFragment extends Fragment {
+public class OnlineListOfPeopleFragment extends Fragment implements UserListItemClickAction {
     private static final String EXTRA_TAB_NAME = "tab_name";
     private String mTabName;
     private static String TAG = "BOREAS";
@@ -43,7 +46,7 @@ public class OnlineListOfPeopleFragment extends Fragment {
     private SearchView searchBar;
     private UserListAdapter mAdapter2;
     private Context mContext;
-
+    private UserListItemClickAction userListItemClickAction = this;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -108,7 +111,7 @@ public class OnlineListOfPeopleFragment extends Fragment {
             }
         }
 
-        UserListAdapter newAdapter = new UserListAdapter(filteredContacts, mContext);
+        UserListAdapter newAdapter = new UserListAdapter(filteredContacts, mContext, userListItemClickAction);
         recyclerView.setAdapter(newAdapter);
     }
 
@@ -132,7 +135,7 @@ public class OnlineListOfPeopleFragment extends Fragment {
                         if(MainActivity.currentUser.uid != u.uid)
                             userArrayList.add(u);
                     }
-                    mAdapter2=new UserListAdapter(userArrayList, mContext);
+                    mAdapter2=new UserListAdapter(userArrayList, mContext, userListItemClickAction);
                     recyclerView.setAdapter(mAdapter2);
                 }
             }
@@ -169,5 +172,14 @@ public class OnlineListOfPeopleFragment extends Fragment {
     private void manageMessageFromWorkerThread(){
         Log.e(TAG, SUB_TAG+"***********************Manage messg from worker thread");
 
+    }
+
+    @Override
+    public void onItemClicked(User model) {
+        Log.e(TAG, SUB_TAG+"on item clicked");
+        FirebaseDataRefAndInstance.addContact(model);
+        ContextHelper contextHelper = ContextHelper.get(null);
+        com.sjsu.boreas.Database.DatabaseReference databaseReference = com.sjsu.boreas.Database.DatabaseReference.get(contextHelper.getApplicationContext());
+        databaseReference.addContact(model);
     }
 }

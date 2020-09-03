@@ -25,10 +25,12 @@ public class UserListAdapter extends RecyclerView.Adapter<UsersViewHolder>{
     private static String SUB_TAG = "------AdapterForFirebase-----";
     private List<User>userList;
     private Context context;
+    private UserListItemClickAction userListItemClickAction;
 
-    public UserListAdapter(ArrayList<User> ul, Context context){
+    public UserListAdapter(ArrayList<User> ul, Context context, UserListItemClickAction userListItemClickAction){
         this.userList = ul;
         this.context = context;
+        this.userListItemClickAction = userListItemClickAction;
     }
 
     @NonNull
@@ -57,10 +59,7 @@ public class UserListAdapter extends RecyclerView.Adapter<UsersViewHolder>{
             public void onClick(View v) {
                 // Launch PostDetailActivity
                 Log.e(TAG, SUB_TAG+"999999999999999999999999 this is the selected user: " + model.getUid());
-                FirebaseDataRefAndInstance.addContact(model);
-                ContextHelper contextHelper = ContextHelper.get(null);
-                DatabaseReference databaseReference = DatabaseReference.get(contextHelper.getApplicationContext());
-                databaseReference.addContact(model);
+                userListItemClickAction.onItemClicked(model);
             }
         });
     }
