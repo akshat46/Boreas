@@ -28,8 +28,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.sjsu.boreas.Database.DatabaseReference;
-import com.sjsu.boreas.HelperStuff.ContextHelper;
+import com.sjsu.boreas.Database.LocalDatabaseReference;
 import com.sjsu.boreas.OnlineConnectionHandlers.FirebaseDataRefAndInstance;
 import com.sjsu.boreas.Database.Users.User;
 
@@ -54,8 +53,7 @@ public class RegisterActivity extends Activity implements LocationListener {
     
     private Button sign_up;
 
-    private ContextHelper contextHelper = ContextHelper.get(null);
-    public DatabaseReference databaseReference = DatabaseReference.get(contextHelper.getApplicationContext());
+    public LocalDatabaseReference localDatabaseReference = LocalDatabaseReference.get();
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
 
     public boolean checkLocationPermission() {
@@ -236,7 +234,7 @@ public class RegisterActivity extends Activity implements LocationListener {
         String uniqueId = generateUniqueUserId(name + "\n" + location.getLatitude() + "\n" + location.getLongitude());
         final User myUser = new User(uniqueId, name, location.getLatitude(), location.getLongitude(), true);
 
-        databaseReference.registerUser(myUser);
+        localDatabaseReference.registerUser(myUser);
 
         Log.e(TAG, SUB_TAG+"User: " + myUser);
         System.out.println(myUser);

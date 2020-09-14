@@ -13,8 +13,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.material.tabs.TabLayout;
-import com.sjsu.boreas.Database.DatabaseReference;
-import com.sjsu.boreas.HelperStuff.ContextHelper;
+import com.sjsu.boreas.Database.LocalDatabaseReference;
 import com.sjsu.boreas.UserRecyclerViewStuff.UserListAdapter;
 import com.sjsu.boreas.ChatViewRelatedStuff.ViewPagerTabAdapter;
 import com.sjsu.boreas.OnlineConnectionHandlers.FirebaseDataRefAndInstance;
@@ -44,8 +43,7 @@ public class AddContactActivity extends AppCompatActivity {
     private FragmentTransaction mFragmentTransaction;
     private List<Fragment> mFragments;
 
-    private ContextHelper contextHelper = ContextHelper.get(null);
-    private DatabaseReference databaseReference = DatabaseReference.get(contextHelper.getApplicationContext());
+    private LocalDatabaseReference localDatabaseReference = LocalDatabaseReference.get();
 
 //    private DatabaseReference database_ref;
 

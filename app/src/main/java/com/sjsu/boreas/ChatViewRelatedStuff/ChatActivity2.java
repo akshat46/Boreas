@@ -13,7 +13,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.sjsu.boreas.Events.messageListener;
-import com.sjsu.boreas.Database.DatabaseReference;
+import com.sjsu.boreas.Database.LocalDatabaseReference;
 import com.sjsu.boreas.OnlineConnectionHandlers.FirebaseDataRefAndInstance;
 import com.sjsu.boreas.MainActivity;
 import com.sjsu.boreas.PhoneBluetoothRadio.BlueTerm;
@@ -38,7 +38,7 @@ public class ChatActivity2 extends AppCompatActivity implements messageListener 
     private User myChatPartner;
     private List<ChatMessage> mssgList;
 
-    public DatabaseReference databaseReference = DatabaseReference.get(null);
+    public LocalDatabaseReference localDatabaseReference = LocalDatabaseReference.get();
 
     private static String TAG = "BOREAS";
     private static String SUB_TAG = "----------------ChatActivity2 ";
@@ -89,7 +89,7 @@ public class ChatActivity2 extends AppCompatActivity implements messageListener 
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
-                mssgList = databaseReference.getLastTwentyMessagesForSpecificUser(myChatPartner);
+                mssgList = localDatabaseReference.getLastTwentyMessagesForSpecificUser(myChatPartner);
                 if(!(mssgList.isEmpty())){
                     for(int i = 0; i < mssgList.size(); i++){
                         chatBubbles.add(new ChatBubble(mssgList.get(i).mssgText, mssgList.get(i).isMyMssg));
@@ -119,7 +119,7 @@ public class ChatActivity2 extends AppCompatActivity implements messageListener 
         pushMessageToFirebase(chatMessage);
         saveMessageLocally(chatMessage);
 
-        sendMessageThruRadio(chatMessage);
+//        sendMessageThruRadio(chatMessage);
 
         chatBubbles.add(ChatBubble);
         adapter.notifyDataSetChanged();
@@ -160,7 +160,7 @@ public class ChatActivity2 extends AppCompatActivity implements messageListener 
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
-                databaseReference.saveChatMessageLocally(chatMessage);
+                localDatabaseReference.saveChatMessageLocally(chatMessage);
             }
         });
     }
