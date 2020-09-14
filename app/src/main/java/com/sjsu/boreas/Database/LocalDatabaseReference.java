@@ -1,27 +1,22 @@
 package com.sjsu.boreas.Database;
 
-import android.app.Application;
 import android.content.Context;
 import android.os.AsyncTask;
-import android.os.Message;
 import android.util.Log;
 
 import androidx.room.Room;
 
 import com.sjsu.boreas.Database.Messages.ChatMessage;
+import com.sjsu.boreas.Database.PotentialContacts.PotentialContacts;
 import com.sjsu.boreas.Database.Users.User;
 import com.sjsu.boreas.Events.Event;
 import com.sjsu.boreas.Events.EventEmitter;
-import com.sjsu.boreas.MainActivity;
 import com.sjsu.boreas.Messages.LongDistanceMessage;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import javax.security.auth.Subject;
-
-public class DatabaseReference implements EventEmitter{
+public class LocalDatabaseReference implements EventEmitter{
 
     private Event event_chatmessage = Event.get("chatmessages");
     private Event event_user = Event.get("user");
@@ -29,23 +24,28 @@ public class DatabaseReference implements EventEmitter{
     private static String TAG = "BOREAS";
     private static String SUB_TAG = "------DatabaseReference----- ";
 
-    private static DatabaseReference databaseReference = null;
+    private static LocalDatabaseReference localDatabaseReference = null;
     private AppDatabase database;
     private Context appContext = null;
 
-    public static DatabaseReference get(Context context){
+    public static LocalDatabaseReference initialize(Context context){
         Log.e(TAG, SUB_TAG+"getting instance");
-        if(databaseReference == null){
-            databaseReference = new DatabaseReference(context);
-            return databaseReference;
+        if(localDatabaseReference == null){
+            localDatabaseReference = new LocalDatabaseReference(context);
+            return localDatabaseReference;
         }else {
-            return databaseReference;
+            return localDatabaseReference;
         }
     }
 
-    private DatabaseReference(Context context){
+    private LocalDatabaseReference(Context context){
         Log.e(TAG, SUB_TAG+"Constructor");
         database = Room.databaseBuilder(context, AppDatabase.class, "mydatabase").build();
+    }
+
+    public static LocalDatabaseReference get(){
+        Log.e(TAG, SUB_TAG+"getting the instance");
+        return localDatabaseReference;
     }
 
     public void saveChatMessageLocally(final ChatMessage message){
@@ -54,12 +54,14 @@ public class DatabaseReference implements EventEmitter{
             @Override
             public void run() {
                 Log.e(TAG, SUB_TAG+"Adding message to database" + message);
-                if(!isMessageAlreadyInDatabase(message))
+                if(!isMessageAlreadyInDatabase(message)) {
                     database.chatMessageDao().insertAll(message);
+                    HashMap<String, Object> cm_map = (HashMap<String, Object>) message.toMap();
+                    event_chatmessage.trigger(cm_map);
+                }
             }
         });
-        HashMap<String, Object> cm_map = (HashMap<String, Object>) message.toMap();
-        event_chatmessage.trigger(cm_map);
+
     }
 
     public void registerUser(final User user){
@@ -114,6 +116,32 @@ public class DatabaseReference implements EventEmitter{
     public boolean isUserAlreadyInContacts(User user){
         Log.e(TAG, SUB_TAG+"Checking if user is already in contacts");
         if(!database.userDao().getSpecificUser(user.getUid()).isEmpty()){
+            return true;
+        }
+        return false;
+    }
+
+    public List<User> getPotentialContacts(){
+        Log.e(TAG, SUB_TAG+"get potential contacts");
+        return database.potentialContactsDao().getUsers();
+    }
+
+    public void addPotentialContact(final PotentialContacts user){
+        Log.e(TAG, SUB_TAG+"Saving the given user to the potential contact table");
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                if (!isUserAlreadyInPotentialContacts(user)) {
+                    Log.e(TAG, SUB_TAG + "------User doesn't already exist in the potential contacts and is being added now");
+                    database.potentialContactsDao().insertAll(user);
+                }
+            }
+        });
+    }
+
+    public boolean isUserAlreadyInPotentialContacts(PotentialContacts user){
+        Log.e(TAG, SUB_TAG+"Checking if user is already in potential contacts");
+        if(!database.potentialContactsDao().getSpecificUser(user.getUid()).isEmpty()){
             return true;
         }
         return false;

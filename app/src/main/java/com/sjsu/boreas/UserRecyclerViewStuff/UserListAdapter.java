@@ -9,10 +9,8 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.sjsu.boreas.Database.DatabaseReference;
-import com.sjsu.boreas.HelperStuff.ContextHelper;
+import com.sjsu.boreas.Database.PotentialContacts.PotentialContacts;
 import com.sjsu.boreas.MainActivity;
-import com.sjsu.boreas.OnlineConnectionHandlers.FirebaseDataRefAndInstance;
 import com.sjsu.boreas.R;
 import com.sjsu.boreas.Database.Users.User;
 
@@ -62,6 +60,11 @@ public class UserListAdapter extends RecyclerView.Adapter<UsersViewHolder>{
                 userListItemClickAction.onItemClicked(model);
             }
         });
+
+        if(!(model instanceof PotentialContacts)){
+            Log.e(TAG, SUB_TAG+"This is the item for the non contact user, changin color");
+            holder.itemView.findViewById(R.id.userName).setBackgroundColor(500109); //green color i think
+        }
     }
 
     @Override

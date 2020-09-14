@@ -14,8 +14,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.sjsu.boreas.Database.DatabaseReference;
-import com.sjsu.boreas.HelperStuff.ContextHelper;
+import com.sjsu.boreas.Database.LocalDatabaseReference;
 import com.sjsu.boreas.OnlineConnectionHandlers.FirebaseDataRefAndInstance;
 import com.sjsu.boreas.UserRecyclerViewStuff.UserListAdapter;
 import com.sjsu.boreas.AddContactActivity;
@@ -116,12 +115,11 @@ public class OfflinePeopleContactedListFragment extends Fragment implements User
 //        mAdapter2.startListening();
         Log.e(TAG, SUB_TAG+"----intialize custom firebase");
 
-        ContextHelper contextHelper = ContextHelper.get(null);
-        final DatabaseReference databaseReference = DatabaseReference.get(contextHelper.getApplicationContext());
+        final LocalDatabaseReference localDatabaseReference = LocalDatabaseReference.get();
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
-                userArrayList = new ArrayList<User>(databaseReference.getContacts());
+                userArrayList = new ArrayList<User>(localDatabaseReference.getContacts());
                 mAdapter=new UserListAdapter(userArrayList, mContext, userListItemClickAction);
                 recyclerView.setAdapter(mAdapter);
             }
@@ -159,8 +157,7 @@ public class OfflinePeopleContactedListFragment extends Fragment implements User
     public void onItemClicked(User model) {
         Log.e(TAG, SUB_TAG+"on item clicked");
         FirebaseDataRefAndInstance.addContact(model);
-        ContextHelper contextHelper = ContextHelper.get(null);
-        com.sjsu.boreas.Database.DatabaseReference databaseReference = com.sjsu.boreas.Database.DatabaseReference.get(contextHelper.getApplicationContext());
-        databaseReference.addContact(model);
+        LocalDatabaseReference localDatabaseReference = LocalDatabaseReference.get();
+        localDatabaseReference.addContact(model);
     }
 }

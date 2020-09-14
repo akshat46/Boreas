@@ -2,17 +2,15 @@ package com.sjsu.boreas.Database.Messages;
 
 import android.util.Log;
 
-import com.sjsu.boreas.Database.DatabaseReference;
-import com.sjsu.boreas.HelperStuff.ContextHelper;
-import com.sjsu.boreas.Database.Users.User;
-
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.HashMap;
 
 public class MessageUtility {
 
     private static String TAG = "BOREAS";
-    private static String SUB_TAG = "------MessageHandler ";
+    private static String SUB_TAG = "------MessageUtility ";
 
     public static ChatMessage convertJsonToMessage(String jsonStringMssg){
         ChatMessage mssg = null;
@@ -48,20 +46,20 @@ public class MessageUtility {
                     latitude, longitude,
                     time, isMyMssg, mssgType);
 
-            ContextHelper contextHelper = ContextHelper.get(null);
-            DatabaseReference databaseReference = DatabaseReference.get(contextHelper.getApplicationContext());
-            databaseReference.saveChatMessageLocally(mssg); //Save chat message
-
-            //Save the sender's info to the database
-            User sender = new User(senderId, senderName, latitude, longitude, false);
-            if(databaseReference.isUserAlreadyInContacts(sender)){
-                Log.e(TAG, SUB_TAG+"The user is already in contacts");
-            }else {
-                //TODO: this user shouldn't be added to contacts,
-                // the person should be added to a different table of potential contacts
-                // before he/she is verified as a contact by the app owner
-                databaseReference.addContact(sender);
-            }
+//            ContextHelper contextHelper = ContextHelper.get(null);
+//            DatabaseReference databaseReference = DatabaseReference.get(contextHelper.getApplicationContext());
+//            databaseReference.saveChatMessageLocally(mssg); //Save chat message
+//
+//            //Save the sender's info to the database
+//            User sender = new User(senderId, senderName, latitude, longitude, false);
+//            if(databaseReference.isUserAlreadyInContacts(sender)){
+//                Log.e(TAG, SUB_TAG+"The user is already in contacts");
+//            }else {
+//                //TODO: this user shouldn't be added to contacts,
+//                // the person should be added to a different table of potential contacts
+//                // before he/she is verified as a contact by the app owner
+//                databaseReference.addContact(sender);
+//            }
 
             Log.e(TAG, SUB_TAG+"New mssg: "+ mssg.receiverName + ", mssgType: " + mssg.mssgType);
         } catch (JSONException e) {
@@ -70,6 +68,27 @@ public class MessageUtility {
         }
 
         return mssg;
+    }
+
+    public static ChatMessage convertHashMapToChatMessage(HashMap<String, Object> mssg){
+        Log.e(TAG, SUB_TAG+"converting a hash map to ChatMessage object.");
+
+        ChatMessage mssgObj = new ChatMessage();
+
+        mssgObj.isMyMssg = (boolean) mssg.get("isMyMssg");
+        mssgObj.latitude = (double) mssg.get("latitude");
+        mssgObj.longitude = (double) mssg.get("longitude");
+        mssgObj.mssgId = (String) mssg.get("mssgId");
+        mssgObj.receiverId = (String) mssg.get("receiverId");
+        mssgObj.senderId = (String) mssg.get("senderId");
+        mssgObj.receiverName = (String) mssg.get("receiverName");
+        mssgObj.senderName = (String) mssg.get("senderName");
+        mssgObj.time = (long) mssg.get("time");
+        mssgObj.mssgType = (int) mssg.get("mssgType");
+        mssgObj.mssgText = (String) mssg.get("mssgText");
+
+        return mssgObj;
+
     }
 
 }

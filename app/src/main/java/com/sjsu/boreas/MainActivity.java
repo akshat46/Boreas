@@ -15,7 +15,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.firebase.FirebaseApp;
-import com.sjsu.boreas.Database.DatabaseReference;
+import com.sjsu.boreas.Database.LocalDatabaseReference;
 import com.sjsu.boreas.HelperStuff.ContextHelper;
 import com.sjsu.boreas.OfflineConnectionHandlers.NearbyConnectionHandler;
 import com.sjsu.boreas.Database.Users.User;
@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
     public static User currentUser;
     public static NearbyConnectionHandler nearbyConnectionHandler;
     private ContextHelper contextHelper = null;
-    private DatabaseReference databaseReference = null;
+    private LocalDatabaseReference localDatabaseReference = null;
 
     private Button buttonRegister, buttonGroupchat, buttonFriends, buttonEmergency;
 
@@ -45,8 +45,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        contextHelper = ContextHelper.get(getApplicationContext());
-        databaseReference = DatabaseReference.get(contextHelper.getApplicationContext());
+        contextHelper = ContextHelper.initialize(getApplicationContext());
+        localDatabaseReference = LocalDatabaseReference.initialize(contextHelper.getApplicationContext());
 
         if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_WIFI_STATE) != PackageManager.PERMISSION_GRANTED)
             Toast.makeText(this, "Permission not granted!", Toast.LENGTH_SHORT).show();
@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
-                currentUser = databaseReference.getRegisteredUser();
+                currentUser = localDatabaseReference.getRegisteredUser();
                 MainActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {

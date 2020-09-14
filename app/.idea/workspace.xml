@@ -14,9 +14,20 @@
     <list default="true" id="49f8b3d3-f678-438a-b6fb-ad25673b4b3a" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/AddContactActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/AddContactActivity.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/AddContacts/OfflinePeopleContactedListFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/AddContacts/OfflinePeopleContactedListFragment.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/AddContacts/OnlineListOfPeopleFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/AddContacts/OnlineListOfPeopleFragment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/ChatViewRelatedStuff/ChatActivity2.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/ChatViewRelatedStuff/ChatActivity2.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/Database/AppDatabase.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/Database/AppDatabase.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/Database/DatabaseReference.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/Database/LocalDatabaseReference.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/Database/Messages/MessageUtility.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/Database/Messages/MessageUtility.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/Events/Event.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/Events/Event.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/HelperStuff/ContextHelper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/HelperStuff/ContextHelper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/MainActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/OfflineConnectionHandlers/NearbyCallbackHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/OfflineConnectionHandlers/NearbyCallbackHandler.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/OneOnOneChat/OneOnOneFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/OneOnOneChat/OneOnOneFragment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/OnlineConnectionHandlers/MyFirebaseMessagingService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/OnlineConnectionHandlers/MyFirebaseMessagingService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/RegisterActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/RegisterActivity.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/UserRecyclerViewStuff/UserListAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/sjsu/boreas/UserRecyclerViewStuff/UserListAdapter.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -24,7 +35,7 @@
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="HZAL1670JAJ61202568" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="Pixel_API_27" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -68,12 +79,13 @@
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
-    <property name="DeviceAndSnapshotComboBoxAction.selectedDevice" value="Pixel_API_27" />
-    <property name="DeviceAndSnapshotComboBoxAction.selectionTime" value="2020-04-26T00:37:03.532Z" />
+    <property name="DeviceAndSnapshotComboBoxAction.selectedDevice" value="HZAL1670JAJ61202568" />
+    <property name="DeviceAndSnapshotComboBoxAction.selectionTime" value="2020-09-13T22:52:11.670Z" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="android.sdk.path" value="$USER_HOME$/Android/Sdk" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/../../../kalayanWork/app-debug (2).apk" />
+    <property name="settings.editor.selected.configurable" value="preferences.keymap" />
   </component>
   <component name="RecentsManager">
     <key name="android.template.packageName">
@@ -164,10 +176,10 @@
       <screen x="28" y="0" width="1892" height="1080" />
     </state>
     <state x="393" y="468" key="#com.intellij.refactoring.move.MoveHandler.SelectRefactoringDialog/28.0.1892.1080@28.0.1892.1080" timestamp="1598398127920" />
-    <state x="347" y="0" width="1237" height="1079" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog" timestamp="1599169418648">
+    <state x="347" y="0" width="1237" height="1079" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog" timestamp="1599879008722">
       <screen x="28" y="0" width="1892" height="1080" />
     </state>
-    <state x="347" y="0" width="1237" height="1079" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog/28.0.1892.1080@28.0.1892.1080" timestamp="1599169418648" />
+    <state x="347" y="0" width="1237" height="1079" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog/28.0.1892.1080@28.0.1892.1080" timestamp="1599879008722" />
     <state x="707" y="289" width="526" height="501" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1598396030809">
       <screen x="28" y="0" width="1892" height="1080" />
     </state>
@@ -176,38 +188,46 @@
       <screen x="28" y="0" width="1892" height="1080" />
     </state>
     <state x="557" y="298" width="826" height="483" key="AndroidCreateResourceFileDialog/28.0.1892.1080@28.0.1892.1080" timestamp="1595368775443" />
-    <state width="1892" height="319" key="GridCell.Tab.0.bottom" timestamp="1599169411588">
+    <state width="1846" height="356" key="GridCell.Tab.0.bottom" timestamp="1600039931373">
       <screen x="28" y="0" width="1892" height="1080" />
     </state>
     <state width="1872" height="383" key="GridCell.Tab.0.bottom/0.27.1920.1053@0.27.1920.1053" timestamp="1595209257740" />
-    <state width="1892" height="319" key="GridCell.Tab.0.bottom/28.0.1892.1080@28.0.1892.1080" timestamp="1599169411588" />
-    <state width="1892" height="319" key="GridCell.Tab.0.center" timestamp="1599169411588">
+    <state width="1846" height="356" key="GridCell.Tab.0.bottom/28.0.1892.1080@28.0.1892.1080" timestamp="1600039931373" />
+    <state width="1846" height="356" key="GridCell.Tab.0.center" timestamp="1600039931372">
       <screen x="28" y="0" width="1892" height="1080" />
     </state>
     <state width="1872" height="383" key="GridCell.Tab.0.center/0.27.1920.1053@0.27.1920.1053" timestamp="1595209257739" />
-    <state width="1892" height="319" key="GridCell.Tab.0.center/28.0.1892.1080@28.0.1892.1080" timestamp="1599169411588" />
-    <state width="1892" height="319" key="GridCell.Tab.0.left" timestamp="1599169411587">
+    <state width="1846" height="356" key="GridCell.Tab.0.center/28.0.1892.1080@28.0.1892.1080" timestamp="1600039931372" />
+    <state width="1846" height="356" key="GridCell.Tab.0.left" timestamp="1600039931371">
       <screen x="28" y="0" width="1892" height="1080" />
     </state>
     <state width="1872" height="383" key="GridCell.Tab.0.left/0.27.1920.1053@0.27.1920.1053" timestamp="1595209257738" />
-    <state width="1892" height="319" key="GridCell.Tab.0.left/28.0.1892.1080@28.0.1892.1080" timestamp="1599169411587" />
-    <state width="1892" height="319" key="GridCell.Tab.0.right" timestamp="1599169411588">
+    <state width="1846" height="356" key="GridCell.Tab.0.left/28.0.1892.1080@28.0.1892.1080" timestamp="1600039931371" />
+    <state width="1846" height="356" key="GridCell.Tab.0.right" timestamp="1600039931373">
       <screen x="28" y="0" width="1892" height="1080" />
     </state>
     <state width="1872" height="383" key="GridCell.Tab.0.right/0.27.1920.1053@0.27.1920.1053" timestamp="1595209257739" />
-    <state width="1892" height="319" key="GridCell.Tab.0.right/28.0.1892.1080@28.0.1892.1080" timestamp="1599169411588" />
-    <state x="463" y="175" key="SettingsEditor" timestamp="1595545972623">
+    <state width="1846" height="356" key="GridCell.Tab.0.right/28.0.1892.1080@28.0.1892.1080" timestamp="1600039931373" />
+    <state x="463" y="175" key="SettingsEditor" timestamp="1599352439775">
       <screen x="28" y="0" width="1892" height="1080" />
     </state>
-    <state x="463" y="175" key="SettingsEditor/28.0.1892.1080@28.0.1892.1080" timestamp="1595545972623" />
-    <state x="626" y="279" width="696" height="522" key="find.popup" timestamp="1598659182566">
+    <state x="463" y="175" key="SettingsEditor/28.0.1892.1080@28.0.1892.1080" timestamp="1599352439775" />
+    <state x="626" y="279" width="696" height="522" key="find.popup" timestamp="1599352703992">
       <screen x="28" y="0" width="1892" height="1080" />
     </state>
-    <state x="626" y="279" width="696" height="522" key="find.popup/28.0.1892.1080@28.0.1892.1080" timestamp="1598659182566" />
+    <state x="626" y="279" width="696" height="522" key="find.popup/28.0.1892.1080@28.0.1892.1080" timestamp="1599352703992" />
+    <state x="719" y="169" width="502" height="742" key="refactoring.ChangeSignatureDialog" timestamp="1599952997871">
+      <screen x="28" y="0" width="1892" height="1080" />
+    </state>
+    <state x="719" y="169" width="502" height="742" key="refactoring.ChangeSignatureDialog/28.0.1892.1080@28.0.1892.1080" timestamp="1599952997871" />
     <state x="643" y="231" key="run.anything.popup" timestamp="1598746407915">
       <screen x="28" y="0" width="1892" height="1080" />
     </state>
     <state x="624" y="252" key="run.anything.popup/0.27.1920.1053@0.27.1920.1053" timestamp="1595197746189" />
     <state x="643" y="231" key="run.anything.popup/28.0.1892.1080@28.0.1892.1080" timestamp="1598746407915" />
+    <state x="637" y="239" width="672" height="678" key="search.everywhere.popup" timestamp="1599433841295">
+      <screen x="28" y="0" width="1892" height="1080" />
+    </state>
+    <state x="637" y="239" width="672" height="678" key="search.everywhere.popup/28.0.1892.1080@28.0.1892.1080" timestamp="1599433841295" />
   </component>
 </project>

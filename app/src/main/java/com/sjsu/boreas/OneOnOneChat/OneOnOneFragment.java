@@ -9,26 +9,28 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.database.DatabaseReference;
 import com.sjsu.boreas.ChatViewRelatedStuff.ChatActivity2;
-import com.sjsu.boreas.Database.DatabaseReference;
+import com.sjsu.boreas.Database.LocalDatabaseReference;
+import com.sjsu.boreas.Database.Messages.ChatMessage;
+import com.sjsu.boreas.Database.PotentialContacts.PotentialContacts;
 import com.sjsu.boreas.Events.Event;
 import com.sjsu.boreas.Events.EventListener;
-import com.sjsu.boreas.HelperStuff.ContextHelper;
 import com.sjsu.boreas.LandingPage;
+import com.sjsu.boreas.Database.Messages.MessageUtility;
 import com.sjsu.boreas.R;
 import com.sjsu.boreas.UserRecyclerViewStuff.UserListAdapter;
 import com.sjsu.boreas.UserRecyclerViewStuff.UserListItemClickAction;
-import com.sjsu.boreas.UserRecyclerViewStuff.UsersViewHolder;
 import com.sjsu.boreas.Database.AppDatabase;
 import com.sjsu.boreas.Database.Users.User;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 
 public class OneOnOneFragment extends Fragment implements EventListener, UserListItemClickAction {
@@ -43,6 +45,7 @@ public class OneOnOneFragment extends Fragment implements EventListener, UserLis
     public static AppDatabase database;
     private ArrayList<User> contactArrayList;
     private UserListItemClickAction userListItemClickAction = this;
+    private LocalDatabaseReference localDatabaseReference = LocalDatabaseReference.get();
 
     private static String TAG = "BOREAS";
     private static String SUB_TAG = "---OneOnOne___Frag ";
@@ -108,16 +111,75 @@ public class OneOnOneFragment extends Fragment implements EventListener, UserLis
         super.onStart();
         Log.e(TAG, SUB_TAG+"---- custom local list adapter");
 
-        ContextHelper contextHelper = ContextHelper.get(null);
-        final DatabaseReference databaseReference = DatabaseReference.get(contextHelper.getApplicationContext());
+        final LocalDatabaseReference localDatabaseReference = LocalDatabaseReference.get();
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
-                contactArrayList = new ArrayList<User>(databaseReference.getContacts());
+                contactArrayList = new ArrayList<User>(localDatabaseReference.getContacts());
+                //Also add any potential contacts chats
+                contactArrayList.addAll(localDatabaseReference.getPotentialContacts());
                 mAdapter=new UserListAdapter(contactArrayList, mContext, userListItemClickAction);
                 recyclerView.setAdapter(mAdapter);
             }
         });
+    }
+
+    private void manageMessage(ChatMessage mssg){
+        Log.e(TAG, SUB_TAG+"Managing what to do with the received mssg");
+
+        User user = new User(mssg.senderId, mssg.senderName, mssg.latitude, mssg.longitude, false);
+
+        //First check if the user is even in our contacts or not?
+        if(localDatabaseReference.isUserAlreadyInContacts(user)){
+            Log.e(TAG, SUB_TAG+"The user is already in contacts, so start that management of stuff here");
+            sendMssgToCorrectChatInstance(mssg, user);
+        }
+        else{
+            PotentialContacts potentialContact = new PotentialContacts(user.uid, user.name, user.latitude, user.longitude, false);
+            localDatabaseReference.addPotentialContact(potentialContact);
+            Log.e(TAG, SUB_TAG+"The sender of the mssg: " + mssg.mssgText + ", is not in the contacts");
+            sendMssgToCorrectChatInstance(mssg, potentialContact);
+        }
+    }
+
+    private void addItemToOneOnOneListAdapter(User user){
+        Log.e(TAG, SUB_TAG+"Adding an item to the adapter list: " + user);
+
+        contactArrayList.add(user);
+        mParent.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mAdapter.notifyDataSetChanged();
+            }
+        });
+    }
+
+    private void sendMssgToCorrectChatInstance(ChatMessage mssg, User user){
+        Log.e(TAG, SUB_TAG+"Send mssg to the correct chat instance");
+
+        int userIndex = indexOfUserInContactArray(user);
+        //First check if a chat instance is already open
+        if(userIndex >= 0){
+            Log.e(TAG, SUB_TAG+"user is already in the adapter list");
+            //Update the that list element here
+        }
+        else{
+            Log.e(TAG, SUB_TAG+"Add a new list element for this user");
+            addItemToOneOnOneListAdapter(user);
+        }
+    }
+
+    private int indexOfUserInContactArray(User user){
+        Log.e(TAG, SUB_TAG+"Finding the index of the given user/chat instance");
+
+        for(int i = 0; i < contactArrayList.size(); i++){
+            if(contactArrayList.get(i).getUid().equals(user.getUid())){
+                Log.e(TAG, SUB_TAG+"The given user is found in the arraylist");
+                return i;
+            }
+        }
+
+        return -1;
     }
 
 //    public void initializeFirebaseAdapter(){
@@ -186,10 +248,12 @@ public class OneOnOneFragment extends Fragment implements EventListener, UserLis
         Log.e(TAG, SUB_TAG+"I have received a message, my lord. It goes something like: "+ packet.toString());
         // parse chatmessage from packet
         // try catch for parsing user when new user (not in contact list) messages
+        ChatMessage mssg = MessageUtility.convertHashMapToChatMessage(packet);
+
+        manageMessage(mssg);
     }
 
     //The UserListItemClick implemented function
-    @Override
     public void onItemClicked(User model) {
         Log.e(TAG, SUB_TAG+"on item clicked");
         Intent intent = new Intent(getActivity(), ChatActivity2.class);

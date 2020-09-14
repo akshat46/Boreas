@@ -19,6 +19,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.sjsu.boreas.Database.LocalDatabaseReference;
 import com.sjsu.boreas.HelperStuff.ContextHelper;
 import com.sjsu.boreas.OnlineConnectionHandlers.FirebaseDataRefAndInstance;
 import com.sjsu.boreas.UserRecyclerViewStuff.UserListAdapter;
@@ -47,6 +48,7 @@ public class OnlineListOfPeopleFragment extends Fragment implements UserListItem
     private UserListAdapter mAdapter2;
     private Context mContext;
     private UserListItemClickAction userListItemClickAction = this;
+    private LocalDatabaseReference localDatabaseReference = LocalDatabaseReference.get();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -178,8 +180,6 @@ public class OnlineListOfPeopleFragment extends Fragment implements UserListItem
     public void onItemClicked(User model) {
         Log.e(TAG, SUB_TAG+"on item clicked");
         FirebaseDataRefAndInstance.addContact(model);
-        ContextHelper contextHelper = ContextHelper.get(null);
-        com.sjsu.boreas.Database.DatabaseReference databaseReference = com.sjsu.boreas.Database.DatabaseReference.get(contextHelper.getApplicationContext());
-        databaseReference.addContact(model);
+        localDatabaseReference.addContact(model);
     }
 }
