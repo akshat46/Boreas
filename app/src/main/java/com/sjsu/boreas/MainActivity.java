@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.google.firebase.FirebaseApp;
 import com.sjsu.boreas.Database.LocalDatabaseReference;
 import com.sjsu.boreas.HelperStuff.ContextHelper;
+import com.sjsu.boreas.Notifications.CustomNotification;
 import com.sjsu.boreas.OfflineConnectionHandlers.NearbyConnectionHandler;
 import com.sjsu.boreas.Database.Users.User;
 import com.sjsu.boreas.pdel_messaging.ChatActivity;
@@ -35,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
     public static NearbyConnectionHandler nearbyConnectionHandler;
     private ContextHelper contextHelper = null;
     private LocalDatabaseReference localDatabaseReference = null;
+    private CustomNotification customNotification = null;
 
     private Button buttonRegister, buttonGroupchat, buttonFriends, buttonEmergency;
 
@@ -45,7 +47,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //The order of these initializations matter here
         contextHelper = ContextHelper.initialize(getApplicationContext());
+        customNotification = CustomNotification.initialize(contextHelper.getApplicationContext());
         localDatabaseReference = LocalDatabaseReference.initialize(contextHelper.getApplicationContext());
 
         if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_WIFI_STATE) != PackageManager.PERMISSION_GRANTED)

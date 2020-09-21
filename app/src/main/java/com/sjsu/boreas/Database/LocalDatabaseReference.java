@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import androidx.core.app.NotificationCompat;
 import androidx.room.Room;
 
 import com.sjsu.boreas.Database.Messages.ChatMessage;
@@ -12,6 +13,7 @@ import com.sjsu.boreas.Database.Users.User;
 import com.sjsu.boreas.Events.Event;
 import com.sjsu.boreas.Events.EventEmitter;
 import com.sjsu.boreas.Messages.LongDistanceMessage;
+import com.sjsu.boreas.Notifications.CustomNotification;
 
 import java.util.HashMap;
 import java.util.List;
@@ -27,6 +29,8 @@ public class LocalDatabaseReference implements EventEmitter{
     private static LocalDatabaseReference localDatabaseReference = null;
     private AppDatabase database;
     private Context appContext = null;
+
+    private CustomNotification customNotification = CustomNotification.get();
 
     public static LocalDatabaseReference initialize(Context context){
         Log.e(TAG, SUB_TAG+"getting instance");
@@ -58,6 +62,7 @@ public class LocalDatabaseReference implements EventEmitter{
                     database.chatMessageDao().insertAll(message);
                     HashMap<String, Object> cm_map = (HashMap<String, Object>) message.toMap();
                     event_chatmessage.trigger(cm_map);
+                    customNotification.sendMssgRecvdNotification(message);
                 }
             }
         });
