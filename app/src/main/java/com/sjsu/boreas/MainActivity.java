@@ -112,6 +112,7 @@ public class MainActivity extends AppCompatActivity {
             if(nearbyConnectionHandler == null)
                 nearbyConnectionHandler = new NearbyConnectionHandler(this);
 			Intent intent = new Intent(this, LandingPage.class);
+			intent.putExtra("currentUser", currentUser);
 			startActivity(intent);
         }
     }

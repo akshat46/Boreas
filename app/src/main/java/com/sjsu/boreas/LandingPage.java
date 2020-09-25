@@ -33,6 +33,7 @@ public class LandingPage extends AppCompatActivity{
     private static String SUB_TAG = "-----Landing Page";
     private NavigationView mNavigationView;
     private FragmentTransaction mFragmentTransaction;
+    private User currentUser = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +42,9 @@ public class LandingPage extends AppCompatActivity{
         setContentView(R.layout.activity_landing_page);
 
 		//~ setUpNavigationDrawer();
+
+        Intent intent = getIntent();
+        currentUser = (User) intent.getSerializableExtra("currentUser");
 		
 		init();
 		makeADummyUserForFirebase();
@@ -60,7 +64,8 @@ public class LandingPage extends AppCompatActivity{
     private void initViews() {
 		Log.e(TAG, SUB_TAG+"InitViews");
         initToolbar();
-        initNewMessageFloatingButton();
+        initAddContactFloatingButton();
+        initSettingsFloatingButtons();
         initViewPager();
         initTabLayout();
     }
@@ -71,7 +76,7 @@ public class LandingPage extends AppCompatActivity{
         setSupportActionBar(toolbar);
     }
 
-    private void initNewMessageFloatingButton() {
+    private void initAddContactFloatingButton() {
 		Log.e(TAG, SUB_TAG+"InitNewMessageFloatingButton");
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -84,6 +89,19 @@ public class LandingPage extends AppCompatActivity{
         });
     }
 
+    private void initSettingsFloatingButtons(){
+        Log.e(TAG, SUB_TAG+"Initializing settings floating button");
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.settings_button);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.e(TAG, SUB_TAG+"On click settings button");
+                Intent intent = new Intent(v.getContext(), SettingsActivity.class);
+                intent.putExtra("currentUser", currentUser);
+                startActivity(intent);
+            }
+        });
+    }
 
     private ViewPager mViewPager;
 
