@@ -55,11 +55,12 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     private void sendRegistrationToServer(String token) {
         Map<String, Object> firebase_child_update = new HashMap<>();
 
-        //We are putting this data under the users branch of the firebase database
-        firebase_child_update.put("/users/" + MainActivity.currentUser.getUid() + "/tokenFCM/", token);
-
-        //Do the actual writing of the data onto firebase
-        FirebaseDataRefAndInstance.getDatabaseReference().updateChildren(firebase_child_update);
+        if(MainActivity.currentUser != null) {
+            //We are putting this data under the users branch of the firebase database
+            firebase_child_update.put("/users/" + MainActivity.currentUser.getUid() + "/tokenFCM/", token);
+            //Do the actual writing of the data onto firebase
+            FirebaseDataRefAndInstance.getDatabaseReference().updateChildren(firebase_child_update);
+        }
     }
 
     private void newMessageReceived(ChatMessage mssg){
