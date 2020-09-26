@@ -2,7 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/-1479743520/.projects-Boreas.iml" filepath="$PROJECT_DIR$/.idea/modules/-1479743520/.projects-Boreas.iml" group="Boreas" />
       <module fileurl="file://$PROJECT_DIR$/../Boreas.iml" filepath="$PROJECT_DIR$/../Boreas.iml" group="Boreas" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Boreas-app.iml" filepath="$PROJECT_DIR$/.idea/modules/Boreas-app.iml" group="Boreas/app" />
       <module fileurl="file://$PROJECT_DIR$/app.iml" filepath="$PROJECT_DIR$/app.iml" group="Boreas/app" />
     </modules>
   </component>
