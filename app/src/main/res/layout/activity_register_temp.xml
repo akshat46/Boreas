@@ -58,10 +58,10 @@ android:orientation="vertical">
     </LinearLayout>
 
     <EditText
-        android:id="@+id/register_name"
+        android:id="@+id/register_username"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Full Name"
+        android:hint="Username"
         android:paddingBottom="15dp"
         android:paddingTop="15dp"
         android:textSize="18sp"
