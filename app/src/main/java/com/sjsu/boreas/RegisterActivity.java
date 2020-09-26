@@ -8,6 +8,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
@@ -114,7 +115,7 @@ public class RegisterActivity extends Activity implements LocationListener {
         ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) registerLayout.getLayoutParams();
         params.setMargins(margin,0,0,0);
 
-        fullNameEditor = findViewById(R.id.register_name);
+        fullNameEditor = findViewById(R.id.register_username);
         locationLabel = findViewById(R.id.permission_text);
 
         sign_up = findViewById(R.id.signup);
@@ -158,6 +159,8 @@ public class RegisterActivity extends Activity implements LocationListener {
         criteria = new Criteria();
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 		bestProvider = String.valueOf(locationManager.getBestProvider(criteria, true)).toString();
+
+		//TODO: Request Location Update and implement callback onLocationChanged function
         if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
             if(location == null){
@@ -239,6 +242,10 @@ public class RegisterActivity extends Activity implements LocationListener {
         Log.e(TAG, SUB_TAG+"User: " + myUser);
         System.out.println(myUser);
         pushNewUserToFIrebase(myUser);
+
+        Intent intent = new Intent(this, LandingPage.class);
+        intent.putExtra("currentUser", myUser);
+        startActivity(intent);
     }
 
     public void pushNewUserToFIrebase(User myUser){

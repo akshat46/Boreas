@@ -101,10 +101,10 @@ public class MainActivity extends AppCompatActivity {
 
     public void enableBasedOnRegistration(boolean isRegistered){
 		Log.e(TAG, SUB_TAG+"Enable based on registration");
-        buttonRegister.setEnabled(!isRegistered);
-        buttonGroupchat.setEnabled(isRegistered);
-        buttonFriends.setEnabled(isRegistered);
-        buttonEmergency.setEnabled(isRegistered);
+//        buttonRegister.setEnabled(!isRegistered);
+//        buttonGroupchat.setEnabled(isRegistered);
+//        buttonFriends.setEnabled(isRegistered);
+//        buttonEmergency.setEnabled(isRegistered);
         if(!isRegistered)
             openRegistration(null);
         else{
