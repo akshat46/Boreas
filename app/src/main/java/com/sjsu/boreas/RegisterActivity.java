@@ -51,7 +51,8 @@ public class RegisterActivity extends Activity implements LocationListener {
     private Criteria criteria;
 
     Location location;
-    
+    LocationManager locationManager;
+
     private Button sign_up;
 
     public LocalDatabaseReference localDatabaseReference = LocalDatabaseReference.get();
@@ -137,14 +138,14 @@ public class RegisterActivity extends Activity implements LocationListener {
      */
     public boolean addLocation(View view){
 		Log.e(TAG, SUB_TAG+"AddLocation");
+		// TODO: either replace with checklocation function or remove altogether
         if(ContextCompat.checkSelfPermission(this, "android.permission.ACCESS_FINE_LOCATION") == PackageManager.PERMISSION_DENIED){
+            Log.e(TAG, SUB_TAG+"addLocation(): Don't have permission for Location");
             ActivityCompat.requestPermissions(this, new String[]{
                     "Manifest.permission.ACCESS_FINE_LOCATION"
             }, 0);
         }else {
-            if(obtainLocation()){
-                return true;
-            }
+            return obtainLocation();
         }
         return false;
     }
@@ -153,28 +154,41 @@ public class RegisterActivity extends Activity implements LocationListener {
 		Log.e(TAG, SUB_TAG+"Obtain Location");
         checkLocationPermission();
         if(ContextCompat.checkSelfPermission(this, "android.permission.ACCESS_FINE_LOCATION") == PackageManager.PERMISSION_DENIED){
-			Log.e(TAG, SUB_TAG+"Don't have permission for Location");
+			Log.e(TAG, SUB_TAG+"obtainLocation(): Don't have permission for Location");
             return false;
 		}
-        criteria = new Criteria();
-        LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-		bestProvider = String.valueOf(locationManager.getBestProvider(criteria, true)).toString();
-
+        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 		//TODO: Request Location Update and implement callback onLocationChanged function
         if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            Log.e(TAG, SUB_TAG+"location enabled");
+            criteria = new Criteria();
+            bestProvider = String.valueOf(locationManager.getBestProvider(criteria, true)).toString();
             location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
             if(location == null){
-				 //This is what you need:
+                Log.e(TAG, SUB_TAG+"location is null");
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, this);
-                if(location == null){
-					Log.e(TAG, SUB_TAG+"Location is still null");
-				}
 			}
-            locationLabel.setText(location.getLatitude()+" , "+location.getLongitude());
-            Log.e(TAG, SUB_TAG+"Location found: " + locationLabel.getText());
+
+            else{
+                Toast.makeText(RegisterActivity.this, "latitude:" + location.getLatitude() + " longitude:" + location.getLongitude(), Toast.LENGTH_SHORT).show();
+                Log.e(TAG, SUB_TAG+"Location found: " + locationLabel.getText());
+            }
+
             return true;
         }
         return false;
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        Log.e(TAG, SUB_TAG+"onLocationChanged()");
+        //remove location callback:
+        locationManager.removeUpdates(this);
+
+        //open the map:
+        this.location = location;
+        Toast.makeText(RegisterActivity.this, "latitude:" + location.getLatitude() + " longitude:" + location.getLongitude(), Toast.LENGTH_SHORT).show();
     }
 
     public void onRequestPermissionsResult(int requestCode,
@@ -267,12 +281,6 @@ public class RegisterActivity extends Activity implements LocationListener {
                 = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
-    }
-
-    @Override
-    public void onLocationChanged(Location location) {
-        Log.e(TAG, SUB_TAG+"OnLocationChanged");
-        Log.e(TAG, "Latitude:" + location.getLatitude() + ", Longitude:" + location.getLongitude());
     }
 
     @Override
