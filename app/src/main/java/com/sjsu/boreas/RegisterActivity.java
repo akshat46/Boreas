@@ -125,6 +125,7 @@ public class RegisterActivity extends Activity implements LocationListener {
             @Override
             public void onClick(View v) {
                 Log.e(TAG, SUB_TAG + "On click for signUp.");
+                //TODO: check if location is on
                 if(addLocation(v)){
                     completeRegistration(v);
                 }
@@ -249,6 +250,7 @@ public class RegisterActivity extends Activity implements LocationListener {
         if(location==null){
             Toast.makeText(getApplicationContext(), "Could not get your location. Please try again in a while.", Toast.LENGTH_LONG);
             Log.e(TAG, SUB_TAG+"Something not right with the info provided: " + fullNameEditor.getText() + ", " + "location: " + location);
+            return;
         }
 
         String name = fullNameEditor.getText().toString();
