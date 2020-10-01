@@ -241,10 +241,14 @@ public class RegisterActivity extends Activity implements LocationListener {
     public void completeRegistration(View view){
 		Log.e(TAG, SUB_TAG+"Complete Registration");
         //Check if all fields are filled
-        if(fullNameEditor.getText().toString().equals("") || location == null){
-			Log.e(TAG, SUB_TAG+"Something not right with the info provided: " + fullNameEditor.getText() + ", " + "location: " + location);
+        if(fullNameEditor.getText().toString().equals("")){
             Toast.makeText(getApplicationContext(), R.string.reg_error_unfilled, Toast.LENGTH_LONG);
             return;
+        }
+
+        if(location==null){
+            Toast.makeText(getApplicationContext(), "Could not get your location. Please try again in a while.", Toast.LENGTH_LONG);
+            Log.e(TAG, SUB_TAG+"Something not right with the info provided: " + fullNameEditor.getText() + ", " + "location: " + location);
         }
 
         String name = fullNameEditor.getText().toString();
@@ -257,9 +261,10 @@ public class RegisterActivity extends Activity implements LocationListener {
         System.out.println(myUser);
         pushNewUserToFIrebase(myUser);
 
-        Intent intent = new Intent(this, LandingPage.class);
-        intent.putExtra("currentUser", myUser);
-        startActivity(intent);
+//        Intent intent = new Intent(this, LandingPage.class);
+//        intent.putExtra("currentUser", myUser);
+//        startActivity(intent);
+        MainActivity.context.checkRegistration();
     }
 
     public void pushNewUserToFIrebase(User myUser){

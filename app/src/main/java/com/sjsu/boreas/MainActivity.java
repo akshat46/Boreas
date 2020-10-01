@@ -33,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int EMERGENCY_ACTIVTY_REQUEST_CODE = 3;
 
     public static User currentUser;
+    public static MainActivity context;
     public static NearbyConnectionHandler nearbyConnectionHandler;
     private ContextHelper contextHelper = null;
     private LocalDatabaseReference localDatabaseReference = null;
@@ -46,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
         FirebaseApp.initializeApp(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        context = this;
 
         //The order of these initializations matter here
         contextHelper = ContextHelper.initialize(getApplicationContext());
@@ -82,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
      * Checks if the user has registered yet and enable/disable buttons based on that
      * @return Whether user has registered yet
      */
-    private void checkRegistration(){
+    public void checkRegistration(){
 		Log.e(TAG, SUB_TAG+"Checking registration");
         AsyncTask.execute(new Runnable() {
             @Override
