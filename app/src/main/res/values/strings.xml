@@ -11,6 +11,7 @@
     <string name="reg_error">Error in registering...</string>
     <string name="reg_error_unfilled">All fields must be filled</string>
     <string name="reg_error_passwords_dont_match">Provided passwords do not match</string>
+    <string name="reg_error_hashing_password">Error with the password or something</string>>
 
     <string name="chat_menutitle">Chat Menu</string>
     <string name="title_activity_wdtest">WDTest</string>

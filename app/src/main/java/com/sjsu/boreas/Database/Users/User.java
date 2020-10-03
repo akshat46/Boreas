@@ -12,6 +12,15 @@ import java.util.Map;
 @Entity
 public class User implements Serializable {
 
+    public User(String uid, String name, double latitude, double longitude, boolean isMe, String hashedPassword){
+        this.uid = uid;
+        this.name = name;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.isMe = isMe;
+        this.password = hashedPassword;
+    }
+
     public User(String uid, String name, double latitude, double longitude, boolean isMe){
         this.uid = uid;
         this.name = name;
@@ -38,6 +47,10 @@ public class User implements Serializable {
     @ColumnInfo(name = "longitude")
     public double longitude;
 
+    //This is the hashed password
+    @ColumnInfo(name = "password")
+    public String password;
+
     public String toString(){
         return name+": "+uid+"\n"+latitude + " , " + longitude+"\n" + (isMe ? "IS" : "NOT") + " me";
     }
@@ -48,6 +61,8 @@ public class User implements Serializable {
         result.put("name", name);
         result.put("latitude", latitude);
         result.put("longitude", longitude);
+        if(password !=null)
+            result.put("password", password);
         return result;
     }
 
