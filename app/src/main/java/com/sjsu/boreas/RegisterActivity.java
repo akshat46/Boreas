@@ -53,6 +53,8 @@ public class RegisterActivity extends Activity implements LocationListener {
     Location location;
     LocationManager locationManager;
 
+    private EditText password;
+    private EditText confirmPassword;
     private Button sign_up;
 
     public LocalDatabaseReference localDatabaseReference = LocalDatabaseReference.get();
@@ -119,6 +121,8 @@ public class RegisterActivity extends Activity implements LocationListener {
         fullNameEditor = findViewById(R.id.register_username);
         locationLabel = findViewById(R.id.permission_text);
 
+        password = findViewById(R.id.register_password);
+        confirmPassword = findViewById(R.id.register_confirm_password);
         sign_up = findViewById(R.id.signup);
 
         sign_up.setOnClickListener(new View.OnClickListener() {
@@ -241,9 +245,19 @@ public class RegisterActivity extends Activity implements LocationListener {
      */
     public void completeRegistration(View view){
 		Log.e(TAG, SUB_TAG+"Complete Registration");
+		String passwordStr = password.getText().toString();
+		String confirmPasswordStr = confirmPassword.getText().toString();
+
         //Check if all fields are filled
-        if(fullNameEditor.getText().toString().equals("")){
+        if(fullNameEditor.getText().toString().equals("") || passwordStr.equals("") || confirmPasswordStr.equals("")){
+            Log.e(TAG, SUB_TAG+"One of the fields isn't filled");
             Toast.makeText(getApplicationContext(), R.string.reg_error_unfilled, Toast.LENGTH_LONG);
+            return;
+        }
+
+        if(!passwordStr.equals(confirmPasswordStr)){
+            Log.e(TAG, SUB_TAG+"The 2 provided passwords don't match.");
+            Toast.makeText(getApplicationContext(), R.string.reg_error_passwords_dont_match, Toast.LENGTH_LONG);
             return;
         }
 
