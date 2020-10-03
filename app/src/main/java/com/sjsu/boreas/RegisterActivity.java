@@ -35,6 +35,7 @@ import com.sjsu.boreas.Database.Users.User;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.MessageDigest;
 
 public class RegisterActivity extends Activity implements LocationListener {
 
@@ -239,6 +240,16 @@ public class RegisterActivity extends Activity implements LocationListener {
         }
     }
 
+    private String hashThePassword(String password) throws NoSuchAlgorithmException {
+        Log.e(TAG, SUB_TAG+"Hashing the provided password");
+
+        MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
+        messageDigest.update(password.getBytes());
+        String encryptedString = new String(messageDigest.digest());
+
+        return encryptedString;
+    }
+
     /**
      * Called by REGISTER button
      * @param view The register button itself
@@ -269,7 +280,19 @@ public class RegisterActivity extends Activity implements LocationListener {
 
         String name = fullNameEditor.getText().toString();
         String uniqueId = generateUniqueUserId(name + "\n" + location.getLatitude() + "\n" + location.getLongitude());
-        final User myUser = new User(uniqueId, name, location.getLatitude(), location.getLongitude(), true);
+
+        String hashedPassword = null;
+        try {
+            Log.e(TAG, SUB_TAG+"trying to hash the password");
+            hashedPassword = hashThePassword(passwordStr);
+        } catch (NoSuchAlgorithmException e) {
+            Log.e(TAG, SUB_TAG+"Caught error while trying to hash the password");
+            e.printStackTrace();
+            Toast.makeText(getApplicationContext(), R.string.reg_error_passwords_dont_match, Toast.LENGTH_LONG);
+            return;
+        }
+
+        final User myUser = new User(uniqueId, name, location.getLatitude(), location.getLongitude(), true, hashedPassword);
 
         localDatabaseReference.registerUser(myUser);
 
