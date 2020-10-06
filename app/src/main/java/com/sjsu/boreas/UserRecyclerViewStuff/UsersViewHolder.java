@@ -19,12 +19,14 @@ public class UsersViewHolder extends RecyclerView.ViewHolder {
     public TextView name;
     public TextView txtDesc;
     private String uid;
+    private View newMessage;
 
     public UsersViewHolder(@NonNull View itemView) {
         super(itemView);
         Log.e(TAG, SUB_TAG+"UsersViewHolder");
         this.rootView = itemView;
         this.name = itemView.findViewById(R.id.userName);
+        this.newMessage = itemView.findViewById(R.id.newMessage);
     }
 
     public void bindToListItemView(User user) {
@@ -34,6 +36,16 @@ public class UsersViewHolder extends RecyclerView.ViewHolder {
         this.uid = user.getUid();
     }
 
+    public void setNewMessage(boolean visible){
+        if(visible){
+            newMessage.setVisibility(View.VISIBLE);
+        }
+        else{
+            newMessage.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    // what is this for?
     public void hideThisView(){
         rootView.setVisibility(View.GONE);
         rootView.setLayoutParams(new RecyclerView.LayoutParams(0, 0));
