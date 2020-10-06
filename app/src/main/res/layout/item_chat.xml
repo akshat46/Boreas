@@ -44,7 +44,7 @@
         android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/messageTV"
+        android:id="@+id/lastMessage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/userName"
@@ -54,7 +54,7 @@
         android:text="hello" />
 
     <TextView
-        android:id="@+id/lastMessageTimeTV"
+        android:id="@+id/lastMessageTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
@@ -68,14 +68,15 @@
 
     -->
     <View
-        android:id="@+id/unreadMessageCountTV"
+        android:id="@+id/newMessage"
         android:layout_width="15dp"
         android:layout_height="15dp"
-        android:layout_below="@id/lastMessageTimeTV"
+        android:layout_below="@id/lastMessageTime"
         android:layout_alignParentRight="true"
         android:layout_marginRight="10dp"
         android:layout_marginTop="15dp"
         android:background="@drawable/bg_newmessage"
-        android:gravity="center" />
+        android:gravity="center"
+        android:visibility="invisible"/>
 
 </RelativeLayout>

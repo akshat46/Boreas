@@ -14,7 +14,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.database.DatabaseReference;
 import com.sjsu.boreas.ChatViewRelatedStuff.ChatActivity2;
 import com.sjsu.boreas.Database.LocalDatabaseReference;
 import com.sjsu.boreas.Database.Messages.ChatMessage;
@@ -30,7 +29,6 @@ import com.sjsu.boreas.Database.AppDatabase;
 import com.sjsu.boreas.Database.Users.User;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 
 public class OneOnOneFragment extends Fragment implements EventListener, UserListItemClickAction {
@@ -125,51 +123,32 @@ public class OneOnOneFragment extends Fragment implements EventListener, UserLis
     }
 
     private void manageMessage(ChatMessage mssg){
-        Log.e(TAG, SUB_TAG+"Managing what to do with the received mssg");
+        Log.e(TAG, SUB_TAG+"Handling new message event");
 
         User user = new User(mssg.senderId, mssg.senderName, mssg.latitude, mssg.longitude, false);
-
+        int i = indexInContact(user);
         //First check if the user is even in our contacts or not?
-        if(localDatabaseReference.isUserAlreadyInContacts(user)){
-            Log.e(TAG, SUB_TAG+"The user is already in contacts, so start that management of stuff here");
-            sendMssgToCorrectChatInstance(mssg, user);
+        if(i>=0){
+            Log.e(TAG, SUB_TAG+"User found in contacts ");
+            // change adapter at i
         }
         else{
+            Log.e(TAG, SUB_TAG+"The sender (" + user.name + ") of the mssg: " + mssg.mssgText + ", is not in the contacts");
             PotentialContacts potentialContact = new PotentialContacts(user.uid, user.name, user.latitude, user.longitude, false);
             localDatabaseReference.addPotentialContact(potentialContact);
-            Log.e(TAG, SUB_TAG+"The sender of the mssg: " + mssg.mssgText + ", is not in the contacts");
-            sendMssgToCorrectChatInstance(mssg, potentialContact);
+            // add new "potential contact" to list
         }
     }
 
-    private void addItemToOneOnOneListAdapter(User user){
-        Log.e(TAG, SUB_TAG+"Adding an item to the adapter list: " + user);
+//    mParent.runOnUiThread(new Runnable() {
+//        @Override
+//        public void run() {
+//            mAdapter.notifyDataSetChanged();
+//        }
+//    });
 
-        contactArrayList.add(user);
-        mParent.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mAdapter.notifyDataSetChanged();
-            }
-        });
-    }
-
-    private void sendMssgToCorrectChatInstance(ChatMessage mssg, User user){
-        Log.e(TAG, SUB_TAG+"Send mssg to the correct chat instance");
-
-        int userIndex = indexOfUserInContactArray(user);
-        //First check if a chat instance is already open
-        if(userIndex >= 0){
-            Log.e(TAG, SUB_TAG+"user is already in the adapter list");
-            //Update the that list element here
-        }
-        else{
-            Log.e(TAG, SUB_TAG+"Add a new list element for this user");
-            addItemToOneOnOneListAdapter(user);
-        }
-    }
-
-    private int indexOfUserInContactArray(User user){
+    // index: of user in Contact list / -1 if user not in Contact
+    private int indexInContact(User user){
         Log.e(TAG, SUB_TAG+"Finding the index of the given user/chat instance");
 
         for(int i = 0; i < contactArrayList.size(); i++){
