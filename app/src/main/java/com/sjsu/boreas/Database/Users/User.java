@@ -18,6 +18,7 @@ public class User implements Serializable {
         this.latitude = latitude;
         this.longitude = longitude;
         this.isMe = isMe;
+        // need to set lastmessagetime
     }
 
     public String getName(){    return name;}
@@ -28,6 +29,12 @@ public class User implements Serializable {
 
     @ColumnInfo(name = "me")
     public boolean isMe;
+
+    @ColumnInfo(name = "newMessage")
+    public boolean newMessage = false;
+
+    @ColumnInfo(name = "time")
+    public long lastMessageTime = -1;
 
     @ColumnInfo(name = "name")
     public String name;

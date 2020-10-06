@@ -67,14 +67,6 @@ public class UserListAdapter extends RecyclerView.Adapter<UsersViewHolder>{
         }
     }
 
-    public UsersViewHolder getHolderByID(String id){
-        UsersViewHolder result = null;
-        for(int i=0; i<this.getItemCount(); i++){
-            //result = this.
-        }
-        return result;
-    }
-
     @Override
     public int getItemCount() {
         return userList.size();
