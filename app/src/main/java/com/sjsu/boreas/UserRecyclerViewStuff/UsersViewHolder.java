@@ -19,14 +19,14 @@ public class UsersViewHolder extends RecyclerView.ViewHolder {
     public TextView name;
     public TextView txtDesc;
     private String uid;
-    private View newMessage;
+    private View newMessageIndicator;
 
     public UsersViewHolder(@NonNull View itemView) {
         super(itemView);
         Log.e(TAG, SUB_TAG+"UsersViewHolder");
         this.rootView = itemView;
         this.name = itemView.findViewById(R.id.userName);
-        this.newMessage = itemView.findViewById(R.id.newMessage);
+        this.newMessageIndicator = itemView.findViewById(R.id.newMessage);
     }
 
     public void bindToListItemView(User user) {
@@ -34,14 +34,12 @@ public class UsersViewHolder extends RecyclerView.ViewHolder {
         Log.e(TAG, SUB_TAG+"User passed: "+ user.getUid());
         this.name.setText(user.getName());
         this.uid = user.getUid();
-    }
 
-    public void setNewMessage(boolean visible){
-        if(visible){
-            newMessage.setVisibility(View.VISIBLE);
+        if(user.newMessage){
+            newMessageIndicator.setVisibility(View.VISIBLE);
         }
         else{
-            newMessage.setVisibility(View.INVISIBLE);
+            newMessageIndicator.setVisibility(View.INVISIBLE);
         }
     }
 

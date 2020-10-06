@@ -126,11 +126,17 @@ public class OneOnOneFragment extends Fragment implements EventListener, UserLis
         Log.e(TAG, SUB_TAG+"Handling new message event");
 
         User user = new User(mssg.senderId, mssg.senderName, mssg.latitude, mssg.longitude, false);
-        int i = indexInContact(user);
+        final int i = indexInContact(user);
         //First check if the user is even in our contacts or not?
         if(i>=0){
             Log.e(TAG, SUB_TAG+"User found in contacts ");
-            // change adapter at i
+            contactArrayList.get(i).newMessage = true;
+            mParent.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mAdapter.notifyItemChanged(i);
+                }
+            });
         }
         else{
             Log.e(TAG, SUB_TAG+"The sender (" + user.name + ") of the mssg: " + mssg.mssgText + ", is not in the contacts");
