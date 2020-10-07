@@ -20,7 +20,7 @@ import com.sjsu.boreas.OnlineConnectionHandlers.FirebaseDataRefAndInstance;
 import com.sjsu.boreas.AddContacts.OfflinePeopleContactedListFragment;
 import com.sjsu.boreas.AddContacts.OnlineListOfPeopleFragment;
 import com.sjsu.boreas.UserRecyclerViewStuff.UsersViewHolder;
-import com.sjsu.boreas.Database.Users.User;
+import com.sjsu.boreas.Database.Contacts.User;
 
 import java.util.ArrayList;
 import java.util.HashMap;

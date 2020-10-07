@@ -4,12 +4,13 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import androidx.core.app.NotificationCompat;
+import androidx.appcompat.view.menu.SubMenuBuilder;
 import androidx.room.Room;
 
+import com.sjsu.boreas.Database.LoggedInUser.LoggedInUser;
 import com.sjsu.boreas.Database.Messages.ChatMessage;
 import com.sjsu.boreas.Database.PotentialContacts.PotentialContacts;
-import com.sjsu.boreas.Database.Users.User;
+import com.sjsu.boreas.Database.Contacts.User;
 import com.sjsu.boreas.Events.Event;
 import com.sjsu.boreas.Events.EventEmitter;
 import com.sjsu.boreas.Messages.LongDistanceMessage;
@@ -69,15 +70,36 @@ public class LocalDatabaseReference implements EventEmitter{
 
     }
 
-    public void registerUser(final User user){
+    public void registerUser(final LoggedInUser user){
         Log.e(TAG, SUB_TAG+"save users locally");
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
                 Log.e(TAG, SUB_TAG+"Adding user to database" + user);
-                database.userDao().insertAll(user);
+                //Delete the previous registered user (if there is one)
+                if(userAlreadyIsRegistered(user)){
+                    Log.e(TAG, SUB_TAG+"User is already registered");
+                    return;
+                }
+                database.loggedInUserDao().clearLoggedInUserTable();
+                database.loggedInUserDao().insertNewUser(user);
             }
         });
+    }
+
+    //Check if the given user is already registered or not
+    private boolean userAlreadyIsRegistered(LoggedInUser user){
+        Log.e(TAG, SUB_TAG+"check if user is already registered");
+
+        LoggedInUser previousUser = null;
+        previousUser = database.loggedInUserDao().checkIfUserIsAlreadyRegistered(user.getUid());
+
+        if(previousUser != null){
+            Log.e(TAG, SUB_TAG+"The user with the provided id is already registered");
+            return true;
+        }
+
+        return false;
     }
 
     //This function at the moment needs to be called inside a Async thread (a sperate thread)
@@ -89,15 +111,38 @@ public class LocalDatabaseReference implements EventEmitter{
 
     //This function at the moment needs to be called inside a Async thread (a sperate thread)
     // like the way its being used in MainActivity
-    public User getRegisteredUser(){
+    public LoggedInUser getRegisteredUser(){
         Log.e(TAG, SUB_TAG+"getting the user of this app");
-        List<User> users = database.userDao().getMe();
-        final int userSize = users.size();
-        System.out.println("Users registered as me: "+userSize);
-        if(userSize > 0)
-            return users.get(0);
+        LoggedInUser user = null;
+        user = database.loggedInUserDao().getRegisteredUser();
+        return user;
+    }
 
-        return null;
+    //The functions below gets the logged in user
+    public LoggedInUser getLoggedInUser(){
+        Log.e(TAG, SUB_TAG+"Get the logged in user");
+        LoggedInUser loggedInUsers = null;
+        loggedInUsers = database.loggedInUserDao().getLoggedInUser();
+        return loggedInUsers;
+    }
+
+    public void logUserIn(String userID, String password){
+        Log.e(TAG, SUB_TAG+"Login");
+        LoggedInUser user = null;
+
+        user = database.loggedInUserDao().getUserWithGivenCredentials(userID, password);
+        if(user != null){
+            Log.e(TAG, SUB_TAG+"The provided credentials are correct");
+            user.logUserIn();
+            Log.e(TAG, SUB_TAG+"--------------"+user);
+            database.loggedInUserDao().logUserIn(user);
+        }
+    }
+
+    public void logUserOut(LoggedInUser user){
+        Log.e(TAG, SUB_TAG+"Loggin user out");
+        user.logUserOut();
+        database.loggedInUserDao().logUserOut(user);
     }
 
     public List<User> getContacts(){

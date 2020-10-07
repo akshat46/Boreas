@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.sjsu.boreas.Database.PotentialContacts.PotentialContacts;
 import com.sjsu.boreas.MainActivity;
 import com.sjsu.boreas.R;
-import com.sjsu.boreas.Database.Users.User;
+import com.sjsu.boreas.Database.Contacts.User;
 
 import java.util.ArrayList;
 import java.util.List;

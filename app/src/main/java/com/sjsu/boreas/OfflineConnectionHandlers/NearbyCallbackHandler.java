@@ -11,10 +11,9 @@ import com.google.android.gms.nearby.connection.Payload;
 import com.google.android.gms.nearby.connection.PayloadCallback;
 import com.google.android.gms.nearby.connection.PayloadTransferUpdate;
 import com.sjsu.boreas.Database.LocalDatabaseReference;
-import com.sjsu.boreas.HelperStuff.ContextHelper;
 import com.sjsu.boreas.MainActivity;
 import com.sjsu.boreas.Database.Messages.ChatMessage;
-import com.sjsu.boreas.Database.Users.User;
+import com.sjsu.boreas.Database.Contacts.User;
 import com.sjsu.boreas.Messages.AdjacencyListMessage;
 import com.sjsu.boreas.Messages.LongDistanceMessage;
 import com.sjsu.boreas.Messages.TextMessage;
@@ -105,7 +104,7 @@ public class NearbyCallbackHandler {
                         if(forwardCount >= 3)
                             break;
                         if(connectionHandler.neighbors.containsKey(user.uid)){
-                            if(!user.isMe && user.uid != forwarder.uid){
+                            if(user.uid != forwarder.uid){
                                 //Send message to user and increment
                                 forwardCount++;
                                 Payload forwardPayload = Payload.fromStream(constructStreamFromSerializable(message));

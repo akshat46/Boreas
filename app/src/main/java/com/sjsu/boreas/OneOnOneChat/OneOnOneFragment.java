@@ -14,7 +14,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.database.DatabaseReference;
 import com.sjsu.boreas.ChatViewRelatedStuff.ChatActivity2;
 import com.sjsu.boreas.Database.LocalDatabaseReference;
 import com.sjsu.boreas.Database.Messages.ChatMessage;
@@ -27,10 +26,9 @@ import com.sjsu.boreas.R;
 import com.sjsu.boreas.UserRecyclerViewStuff.UserListAdapter;
 import com.sjsu.boreas.UserRecyclerViewStuff.UserListItemClickAction;
 import com.sjsu.boreas.Database.AppDatabase;
-import com.sjsu.boreas.Database.Users.User;
+import com.sjsu.boreas.Database.Contacts.User;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 
 public class OneOnOneFragment extends Fragment implements EventListener, UserListItemClickAction {
@@ -127,7 +125,7 @@ public class OneOnOneFragment extends Fragment implements EventListener, UserLis
     private void manageMessage(ChatMessage mssg){
         Log.e(TAG, SUB_TAG+"Managing what to do with the received mssg");
 
-        User user = new User(mssg.senderId, mssg.senderName, mssg.latitude, mssg.longitude, false);
+        User user = new User(mssg.senderId, mssg.senderName, mssg.latitude, mssg.longitude);
 
         //First check if the user is even in our contacts or not?
         if(localDatabaseReference.isUserAlreadyInContacts(user)){
@@ -135,7 +133,7 @@ public class OneOnOneFragment extends Fragment implements EventListener, UserLis
             sendMssgToCorrectChatInstance(mssg, user);
         }
         else{
-            PotentialContacts potentialContact = new PotentialContacts(user.uid, user.name, user.latitude, user.longitude, false);
+            PotentialContacts potentialContact = new PotentialContacts(user.uid, user.name, user.latitude, user.longitude);
             localDatabaseReference.addPotentialContact(potentialContact);
             Log.e(TAG, SUB_TAG+"The sender of the mssg: " + mssg.mssgText + ", is not in the contacts");
             sendMssgToCorrectChatInstance(mssg, potentialContact);
