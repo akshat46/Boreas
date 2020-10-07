@@ -241,6 +241,8 @@ public class OneOnOneFragment extends Fragment implements EventListener, UserLis
     //The UserListItemClick implemented function
     public void onItemClicked(User model) {
         Log.e(TAG, SUB_TAG+"on item clicked");
+        model.newMessage = false;
+        // TODO: if dot doesn't go away then notifyItemChanged()
         Intent intent = new Intent(getActivity(), ChatActivity2.class);
         //Passing the user object using intent
         intent.putExtra("ReceiverObj", model);
