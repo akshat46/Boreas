@@ -26,7 +26,7 @@ import com.sjsu.boreas.R;
 import com.sjsu.boreas.UserRecyclerViewStuff.UserListAdapter;
 import com.sjsu.boreas.UserRecyclerViewStuff.UserListItemClickAction;
 import com.sjsu.boreas.Database.AppDatabase;
-import com.sjsu.boreas.Database.Users.User;
+import com.sjsu.boreas.Database.Contacts.User;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -125,8 +125,9 @@ public class OneOnOneFragment extends Fragment implements EventListener, UserLis
     private void manageMessage(ChatMessage mssg){
         Log.e(TAG, SUB_TAG+"Handling new message event");
 
-        User user = new User(mssg.senderId, mssg.senderName, mssg.latitude, mssg.longitude, false);
+        User user = new User(mssg.senderId, mssg.senderName, mssg.latitude, mssg.longitude);
         final int i = indexInContact(user);
+
         //First check if the user is even in our contacts or not?
         if(i>=0){
             Log.e(TAG, SUB_TAG+"User found in contacts ");
@@ -140,7 +141,7 @@ public class OneOnOneFragment extends Fragment implements EventListener, UserLis
         }
         else{
             Log.e(TAG, SUB_TAG+"The sender (" + user.name + ") of the mssg: " + mssg.mssgText + ", is not in the contacts");
-            PotentialContacts potentialContact = new PotentialContacts(user.uid, user.name, user.latitude, user.longitude, false);
+            PotentialContacts potentialContact = new PotentialContacts(user.uid, user.name, user.latitude, user.longitude);
             localDatabaseReference.addPotentialContact(potentialContact);
             // add new "potential contact" to list
         }

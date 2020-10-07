@@ -19,7 +19,7 @@ import com.sjsu.boreas.OnlineConnectionHandlers.FirebaseDataRefAndInstance;
 import com.sjsu.boreas.UserRecyclerViewStuff.UserListAdapter;
 import com.sjsu.boreas.AddContactActivity;
 import com.sjsu.boreas.R;
-import com.sjsu.boreas.Database.Users.User;
+import com.sjsu.boreas.Database.Contacts.User;
 import com.sjsu.boreas.UserRecyclerViewStuff.UserListItemClickAction;
 
 import java.util.ArrayList;

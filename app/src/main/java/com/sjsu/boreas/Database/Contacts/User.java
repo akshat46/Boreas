@@ -1,4 +1,4 @@
-package com.sjsu.boreas.Database.Users;
+package com.sjsu.boreas.Database.Contacts;
 
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
@@ -12,13 +12,11 @@ import java.util.Map;
 @Entity
 public class User implements Serializable {
 
-    public User(String uid, String name, double latitude, double longitude, boolean isMe){
+    public User(String uid, String name, double latitude, double longitude){
         this.uid = uid;
         this.name = name;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.isMe = isMe;
-        // need to set lastmessagetime
     }
 
     public String getName(){    return name;}
@@ -26,9 +24,6 @@ public class User implements Serializable {
     @NonNull
     @PrimaryKey
     public String uid;
-
-    @ColumnInfo(name = "me")
-    public boolean isMe;
 
     @ColumnInfo(name = "newMessage")
     public boolean newMessage = false;
@@ -46,7 +41,7 @@ public class User implements Serializable {
     public double longitude;
 
     public String toString(){
-        return name+": "+uid+"\n"+latitude + " , " + longitude+"\n" + (isMe ? "IS" : "NOT") + " me";
+        return name+": "+uid+"\n"+latitude + " , " + longitude+"\n";
     }
 
     public Map<String, Object> toMap(){
