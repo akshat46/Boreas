@@ -8,7 +8,7 @@ import android.widget.RelativeLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.sjsu.boreas.R;
-import com.sjsu.boreas.Database.Users.User;
+import com.sjsu.boreas.Database.Contacts.User;
 
 public class OneOnOneChatViewAdapter extends RecyclerView.Adapter<OneOnOneChatViewAdapter.MyViewHolder> {
 

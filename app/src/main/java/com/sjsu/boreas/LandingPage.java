@@ -19,9 +19,10 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.sjsu.boreas.ChatViewRelatedStuff.ViewPagerTabAdapter;
+import com.sjsu.boreas.Database.LoggedInUser.LoggedInUser;
 import com.sjsu.boreas.GroupChats.OfflineGroupFragment;
 import com.sjsu.boreas.OneOnOneChat.OneOnOneFragment;
-import com.sjsu.boreas.Database.Users.User;
+import com.sjsu.boreas.Database.Contacts.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +34,7 @@ public class LandingPage extends AppCompatActivity{
     private static String SUB_TAG = "-----Landing Page";
     private NavigationView mNavigationView;
     private FragmentTransaction mFragmentTransaction;
-    private User currentUser = null;
+    private LoggedInUser currentUser = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +45,7 @@ public class LandingPage extends AppCompatActivity{
 		//~ setUpNavigationDrawer();
 
         Intent intent = getIntent();
-        currentUser = (User) intent.getSerializableExtra("currentUser");
+        currentUser = (LoggedInUser) intent.getSerializableExtra("currentUser");
 		
 		init();
 		makeADummyUserForFirebase();
@@ -53,7 +54,7 @@ public class LandingPage extends AppCompatActivity{
 
     private void makeADummyUserForFirebase(){
         Log.e(TAG, SUB_TAG+"makeADummyUserForFirebase");
-        User u = new User("23", "name of", 123.4, -123.4, false);
+        User u = new User("23", "name of", 123.4, -123.4);
     }
 
     private void init() {
