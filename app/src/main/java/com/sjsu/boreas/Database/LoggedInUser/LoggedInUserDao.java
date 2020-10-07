@@ -27,6 +27,9 @@ public interface LoggedInUserDao {
     @Query("SELECT * FROM loggedinuser WHERE uid is :uid")
     LoggedInUser checkIfUserIsAlreadyRegistered(String uid);
 
+    @Query("SELECT * FROM loggedinuser")
+    List<LoggedInUser> getAllRegisteredUser();
+
     @Query("DELETE FROM loggedinuser")
     void clearLoggedInUserTable();
 

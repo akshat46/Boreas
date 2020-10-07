@@ -91,6 +91,10 @@ public class LocalDatabaseReference implements EventEmitter{
     private boolean userAlreadyIsRegistered(LoggedInUser user){
         Log.e(TAG, SUB_TAG+"check if user is already registered");
 
+        List<LoggedInUser> allUsers = database.loggedInUserDao().getAllRegisteredUser();
+
+        Log.e(TAG, SUB_TAG+"\n\t\tThese are all the registered users on the device: " + allUsers);
+
         LoggedInUser previousUser = null;
         previousUser = database.loggedInUserDao().checkIfUserIsAlreadyRegistered(user.getUid());
 

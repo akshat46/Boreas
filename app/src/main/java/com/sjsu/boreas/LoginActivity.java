@@ -95,9 +95,15 @@ public class LoginActivity extends AppCompatActivity {
         loggedInUser = FirebaseDataRefAndInstance.checkLogInInfo(userID, password);
         if(loggedInUser != null) {
             //TODO: gotta replace the currently registered user with this new user from Firebase
+            saveLoggedInUserLocally();
             success();
         }
         failed();
+    }
+
+    private void saveLoggedInUserLocally(){
+        Log.e(TAG, SUB_TAG+"Save the user gotten from firebase locally as well");
+        localDatabaseReference.registerUser(loggedInUser);
     }
 
     private void success(){
