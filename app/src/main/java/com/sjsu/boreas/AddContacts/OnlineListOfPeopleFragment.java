@@ -20,7 +20,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.sjsu.boreas.Database.LocalDatabaseReference;
-import com.sjsu.boreas.HelperStuff.ContextHelper;
 import com.sjsu.boreas.OnlineConnectionHandlers.FirebaseDataRefAndInstance;
 import com.sjsu.boreas.UserRecyclerViewStuff.UserListAdapter;
 import com.sjsu.boreas.AddContactActivity;
@@ -28,7 +27,7 @@ import com.sjsu.boreas.MainActivity;
 import com.sjsu.boreas.R;
 import com.sjsu.boreas.UserRecyclerViewStuff.UserListItemClickAction;
 import com.sjsu.boreas.UserRecyclerViewStuff.UsersViewHolder;
-import com.sjsu.boreas.Database.Users.User;
+import com.sjsu.boreas.Database.Contacts.User;
 
 import java.util.ArrayList;
 
@@ -132,8 +131,7 @@ public class OnlineListOfPeopleFragment extends Fragment implements UserListItem
                         User u = new User(npsnapshot.child("uid").getValue().toString(),
                                 npsnapshot.child("name").getValue().toString(),
                                 Double.parseDouble(npsnapshot.child("latitude").getValue().toString()),
-                                Double.parseDouble(npsnapshot.child("longitude").getValue().toString()),
-                                false);
+                                Double.parseDouble(npsnapshot.child("longitude").getValue().toString()));
                         if(MainActivity.currentUser.uid != u.uid)
                             userArrayList.add(u);
                     }

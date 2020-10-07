@@ -1,6 +1,6 @@
 package com.sjsu.boreas.Messages;
 
-import com.sjsu.boreas.Database.Users.User;
+import com.sjsu.boreas.Database.Contacts.User;
 
 import java.io.Serializable;
 

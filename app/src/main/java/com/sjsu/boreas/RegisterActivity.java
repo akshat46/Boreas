@@ -8,7 +8,6 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
@@ -30,12 +29,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sjsu.boreas.Database.LocalDatabaseReference;
+import com.sjsu.boreas.Database.LoggedInUser.LoggedInUser;
 import com.sjsu.boreas.OnlineConnectionHandlers.FirebaseDataRefAndInstance;
-import com.sjsu.boreas.Database.Users.User;
+import com.sjsu.boreas.Database.Contacts.User;
+import com.sjsu.boreas.SecurityRelatedStuff.SecurityStuff;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.security.MessageDigest;
 
 public class RegisterActivity extends Activity implements LocationListener {
 
@@ -240,16 +240,6 @@ public class RegisterActivity extends Activity implements LocationListener {
         }
     }
 
-    private String hashThePassword(String password) throws NoSuchAlgorithmException {
-        Log.e(TAG, SUB_TAG+"Hashing the provided password");
-
-        MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
-        messageDigest.update(password.getBytes());
-        String encryptedString = new String(messageDigest.digest());
-
-        return encryptedString;
-    }
-
     /**
      * Called by REGISTER button
      * @param view The register button itself
@@ -282,27 +272,20 @@ public class RegisterActivity extends Activity implements LocationListener {
         String uniqueId = generateUniqueUserId(name + "\n" + location.getLatitude() + "\n" + location.getLongitude());
 
         String hashedPassword = null;
-        try {
-            Log.e(TAG, SUB_TAG+"trying to hash the password");
-            hashedPassword = hashThePassword(passwordStr);
-        } catch (NoSuchAlgorithmException e) {
-            Log.e(TAG, SUB_TAG+"Caught error while trying to hash the password");
-            e.printStackTrace();
-            Toast.makeText(getApplicationContext(), R.string.reg_error_passwords_dont_match, Toast.LENGTH_LONG);
-            return;
+        hashedPassword = SecurityStuff.hashThePassword(passwordStr);
+
+        if(hashedPassword == null){
+            Log.e(TAG, SUB_TAG+"Something went wrong with the hash yo");
+            Toast.makeText(getApplicationContext(),"Something went wrong with the password provided yo", Toast.LENGTH_LONG);
         }
 
-        final User myUser = new User(uniqueId, name, location.getLatitude(), location.getLongitude(), true, hashedPassword);
-
+        final LoggedInUser myUser = new LoggedInUser(uniqueId, name, location.getLatitude(), location.getLongitude(), hashedPassword);
         localDatabaseReference.registerUser(myUser);
 
         Log.e(TAG, SUB_TAG+"User: " + myUser);
         System.out.println(myUser);
         pushNewUserToFIrebase(myUser);
 
-//        Intent intent = new Intent(this, LandingPage.class);
-//        intent.putExtra("currentUser", myUser);
-//        startActivity(intent);
         MainActivity.context.checkRegistration();
     }
 

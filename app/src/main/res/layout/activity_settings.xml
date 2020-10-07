@@ -13,4 +13,10 @@
         android:text="TextView"
         tools:layout_editor_absoluteX="20dp"
         tools:layout_editor_absoluteY="110dp" />
+
+    <Button
+        android:id="@+id/logout_button"
+        android:layout_width="40dp"
+        android:layout_height="20dp"
+        android:gravity="bottom"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
