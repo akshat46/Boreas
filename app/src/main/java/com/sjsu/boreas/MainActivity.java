@@ -3,7 +3,6 @@ package com.sjsu.boreas;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.room.Room;
 
 import android.Manifest;
 import android.content.Intent;
@@ -15,38 +14,46 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.sjsu.boreas.connection_handlers.NearbyConnectionHandler;
-import com.sjsu.boreas.database.AppDatabase;
-import com.sjsu.boreas.database.User;
-import com.sjsu.boreas.messaging.ChatActivity;
-import com.sjsu.boreas.wifidirecttest.WDTestActivity;
-
-import java.util.List;
+import com.google.firebase.FirebaseApp;
+import com.sjsu.boreas.Database.LocalDatabaseReference;
+import com.sjsu.boreas.Database.LoggedInUser.LoggedInUser;
+import com.sjsu.boreas.HelperStuff.ContextHelper;
+import com.sjsu.boreas.Notifications.CustomNotification;
+import com.sjsu.boreas.OfflineConnectionHandlers.NearbyConnectionHandler;
+import com.sjsu.boreas.Database.Contacts.User;
+import com.sjsu.boreas.pdel_messaging.ChatActivity;
 
 public class MainActivity extends AppCompatActivity {
 	
 	private static String TAG = "Boreas";
 	private static String SUB_TAG = "---MainActivity ";
 
-    private static final int REGISTER_ACTIVTY_REQUEST_CODE = 0;
+    public static final int REGISTER_ACTIVTY_REQUEST_CODE = 0;
     private static final int GROUPCHAT_ACTIVTY_REQUEST_CODE = 1;
     private static final int FRIENDS_ACTIVTY_REQUEST_CODE = 2;
     private static final int EMERGENCY_ACTIVTY_REQUEST_CODE = 3;
 
-    public static AppDatabase database;
-    public static User currentUser;
+    public static LoggedInUser currentUser;
+    public static MainActivity context;
     public static NearbyConnectionHandler nearbyConnectionHandler;
+    private ContextHelper contextHelper = null;
+    private LocalDatabaseReference localDatabaseReference = null;
+    private CustomNotification customNotification = null;
 
     private Button buttonRegister, buttonGroupchat, buttonFriends, buttonEmergency;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 		Log.e(TAG, SUB_TAG+"On create");
+        FirebaseApp.initializeApp(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        context = this;
 
-        database = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "mydatabase").build();
-
+        //The order of these initializations matter here
+        contextHelper = ContextHelper.initialize(getApplicationContext());
+        customNotification = CustomNotification.initialize(contextHelper.getApplicationContext());
+        localDatabaseReference = LocalDatabaseReference.initialize(contextHelper.getApplicationContext());
 
         if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_WIFI_STATE) != PackageManager.PERMISSION_GRANTED)
             Toast.makeText(this, "Permission not granted!", Toast.LENGTH_SHORT).show();
@@ -75,23 +82,22 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Checks if the user has registered yet and enable/disable buttons based on that
-     * @return Whether user has registered yet
+     * Checking if user is logged in
      */
-    private void checkRegistration(){
-		Log.e(TAG, SUB_TAG+"Checking registration");
+    public void checkRegistration(){
+		Log.e(TAG, SUB_TAG+"Checking if user is logged in");
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
-                List<User> mes = database.userDao().getMe();
-                final int userSize = mes.size();
-                System.out.println("Users registered as me: "+userSize);
-                if(userSize > 0)
-                    currentUser = mes.get(0);
+                currentUser = localDatabaseReference.getRegisteredUser();
+                Log.e(TAG, SUB_TAG+"-----------------"+currentUser);
                 MainActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        enableBasedOnRegistration(userSize > 0);
+                        if(currentUser == null)
+                            openRegistration(null);
+                        else
+                            enableBasedOnLogIn();
                     }
                 });
 
@@ -99,20 +105,20 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public void enableBasedOnRegistration(boolean isRegistered){
-		Log.e(TAG, SUB_TAG+"Enable based on registration");
-        buttonRegister.setEnabled(!isRegistered);
-        buttonGroupchat.setEnabled(isRegistered);
-        buttonFriends.setEnabled(isRegistered);
-        buttonEmergency.setEnabled(isRegistered);
-        if(!isRegistered)
-            openRegistration(null);
-        else{
-			Log.e(TAG, SUB_TAG+"User is registered");
-            if(nearbyConnectionHandler == null)
+    //This function checks registration and login
+    public void enableBasedOnLogIn(){
+        Log.e(TAG, SUB_TAG+"Enable based on registration");
+        if(currentUser.isLoggedIn()) {
+            Log.e(TAG, SUB_TAG+"User is logged in");
+            if (nearbyConnectionHandler == null)
                 nearbyConnectionHandler = new NearbyConnectionHandler(this);
-			Intent intent = new Intent(this, LandingPage.class);
-			startActivity(intent);
+            Intent intent = new Intent(this, LandingPage.class);
+            intent.putExtra("currentUser", currentUser);
+            startActivity(intent);
+        }
+        else{
+            Log.e(TAG, SUB_TAG+"User is not logged in");
+            openLogIn();
         }
     }
 
@@ -122,10 +128,26 @@ public class MainActivity extends AppCompatActivity {
         startActivityForResult(intent, REGISTER_ACTIVTY_REQUEST_CODE);
     }
 
+    public void openLogIn(){
+        Log.e(TAG, SUB_TAG+"Opening login activity");
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
+    }
+
     public void openGroupchat(View v){
 		Log.e(TAG, SUB_TAG+"Opening group chat");
         Intent intent = new Intent(this, ChatActivity.class);
         startActivity(intent);
+    }
+
+    //This function is for other classes, where session related action are taken (logout, login and registration)
+    public void comingFromOtherClasses(LoggedInUser user){
+        Log.e(TAG, SUB_TAG+"coming from other classes");
+        if(user.isLoggedIn()){
+            Log.e(TAG, SUB_TAG+"User is logged in");
+        }
+        currentUser = user;
+        checkRegistration();
     }
 
     public void openFriends(View v){
