@@ -48,10 +48,16 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/userName"
+        android:layout_marginTop="5dp"
+        android:layout_marginStart="10dp"
         android:layout_marginLeft="10dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginRight="20dp"
         android:layout_toRightOf="@id/profilePhoto"
         android:textColor="@color/colorText"
-        android:text="hello" />
+        android:text="This is a sample message"
+        android:maxLines="1"
+        android:ellipsize="end"/>
 
     <TextView
         android:id="@+id/lastMessageTime"
