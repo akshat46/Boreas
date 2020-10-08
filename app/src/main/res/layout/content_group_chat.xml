@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".ViewFragments.OfflineGroupFragment"
+    tools:context=".GroupChats.OfflineGroupFragment"
     tools:showIn="@layout/activity_chat"
     android:orientation="vertical">
 
@@ -48,7 +48,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
-    <!-- Message text area and send button -->
+    <!-- ChatMessage text area and send button -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

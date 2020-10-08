@@ -1,36 +1,43 @@
 package com.sjsu.boreas;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.AsyncTask;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.sjsu.boreas.database.User;
+import com.sjsu.boreas.Database.LocalDatabaseReference;
+import com.sjsu.boreas.Database.LoggedInUser.LoggedInUser;
+import com.sjsu.boreas.OnlineConnectionHandlers.FirebaseDataRefAndInstance;
+import com.sjsu.boreas.Database.Contacts.User;
+import com.sjsu.boreas.SecurityRelatedStuff.SecurityStuff;
 
-import java.io.FileOutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-public class RegisterActivity extends AppCompatActivity implements LocationListener {
+public class RegisterActivity extends Activity implements LocationListener {
 
     String KEY = "AIzaSyDyGjh3NUYPVNdxlbRdZD38FDrX-bOf5B4";
 
@@ -39,12 +46,19 @@ public class RegisterActivity extends AppCompatActivity implements LocationListe
 	
     EditText fullNameEditor;
     TextView locationLabel;
+    private LinearLayout registerLayout;
 
     private String bestProvider;
     private Criteria criteria;
 
     Location location;
+    LocationManager locationManager;
 
+    private EditText password;
+    private EditText confirmPassword;
+    private Button sign_up;
+
+    public LocalDatabaseReference localDatabaseReference = LocalDatabaseReference.get();
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
 
     public boolean checkLocationPermission() {
@@ -91,50 +105,96 @@ public class RegisterActivity extends AppCompatActivity implements LocationListe
     protected void onCreate(Bundle savedInstanceState) {
 		Log.e(TAG, SUB_TAG+"On Create");
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_register);
+        //Remove title bar
+        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
-        fullNameEditor = findViewById(R.id.regitem_name);
-        locationLabel = findViewById(R.id.regitem_locationlabel);
+        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
+        setContentView(R.layout.activity_register_temp);
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        int width = displayMetrics.widthPixels;
+        int margin = (width/6);
+        registerLayout = (LinearLayout) findViewById(R.id.login_layout);
+        ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) registerLayout.getLayoutParams();
+        params.setMargins(margin,0,0,0);
+
+        fullNameEditor = findViewById(R.id.register_username);
+        locationLabel = findViewById(R.id.permission_text);
+
+        password = findViewById(R.id.register_password);
+        confirmPassword = findViewById(R.id.register_confirm_password);
+        sign_up = findViewById(R.id.signup);
+
+        sign_up.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.e(TAG, SUB_TAG + "On click for signUp.");
+                //TODO: check if location is on at all.
+                if(addLocation(v)){
+                    completeRegistration(v);
+                }
+            }
+        });
     }
 
     /**
      * Called by add location button
      * @param view The location button itself
      */
-    public void addLocation(View view){
+    public boolean addLocation(View view){
 		Log.e(TAG, SUB_TAG+"AddLocation");
+		// TODO: either replace with checklocation function or remove altogether
         if(ContextCompat.checkSelfPermission(this, "android.permission.ACCESS_FINE_LOCATION") == PackageManager.PERMISSION_DENIED){
+            Log.e(TAG, SUB_TAG+"addLocation(): Don't have permission for Location");
             ActivityCompat.requestPermissions(this, new String[]{
                     "Manifest.permission.ACCESS_FINE_LOCATION"
             }, 0);
         }else {
-            obtainLocation();
+            return obtainLocation();
         }
+        return false;
     }
 
-    private void obtainLocation(){
+    private boolean obtainLocation(){
 		Log.e(TAG, SUB_TAG+"Obtain Location");
         checkLocationPermission();
         if(ContextCompat.checkSelfPermission(this, "android.permission.ACCESS_FINE_LOCATION") == PackageManager.PERMISSION_DENIED){
-			Log.e(TAG, SUB_TAG+"Don't have permission for Location");
-            return;
+			Log.e(TAG, SUB_TAG+"obtainLocation(): Don't have permission for Location");
+            return false;
 		}
-        criteria = new Criteria();
-        LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-		bestProvider = String.valueOf(locationManager.getBestProvider(criteria, true)).toString();
+        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+		//TODO: Request Location Update and implement callback onLocationChanged function
         if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            Log.e(TAG, SUB_TAG+"location enabled");
+            criteria = new Criteria();
+            bestProvider = String.valueOf(locationManager.getBestProvider(criteria, true)).toString();
             location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
             if(location == null){
-				 //This is what you need:
+                Log.e(TAG, SUB_TAG+"location is null");
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, this);
-                if(location == null){
-					Log.e(TAG, SUB_TAG+"Location is still null");
-				}
 			}
-            locationLabel.setText(location.getLatitude()+" , "+location.getLongitude());
-            Log.e(TAG, SUB_TAG+"Location found: " + locationLabel.getText());
+
+            else{
+                Toast.makeText(RegisterActivity.this, "latitude:" + location.getLatitude() + " longitude:" + location.getLongitude(), Toast.LENGTH_SHORT).show();
+                Log.e(TAG, SUB_TAG+"Location found: " + locationLabel.getText());
+            }
+
+            return true;
         }
+        return false;
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        Log.e(TAG, SUB_TAG+"onLocationChanged()");
+        //remove location callback:
+        locationManager.removeUpdates(this);
+
+        //open the map:
+        this.location = location;
+        Toast.makeText(RegisterActivity.this, "latitude:" + location.getLatitude() + " longitude:" + location.getLongitude(), Toast.LENGTH_SHORT).show();
     }
 
     public void onRequestPermissionsResult(int requestCode,
@@ -144,8 +204,11 @@ public class RegisterActivity extends AppCompatActivity implements LocationListe
         switch(requestCode){
             case 0: //Location permission to add current location
                 Log.e(TAG, SUB_TAG+"Location permission to add");
-                if(grantResults[0] == PackageManager.PERMISSION_GRANTED)
-                    obtainLocation();
+                obtainLocation();
+//                if(grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                    Log.e(TAG, SUB_TAG+"Permission Granted");
+//                    obtainLocation();
+//                }
                 break;
         }
     }
@@ -183,33 +246,68 @@ public class RegisterActivity extends AppCompatActivity implements LocationListe
      */
     public void completeRegistration(View view){
 		Log.e(TAG, SUB_TAG+"Complete Registration");
+		String passwordStr = password.getText().toString();
+		String confirmPasswordStr = confirmPassword.getText().toString();
+
         //Check if all fields are filled
-        if(fullNameEditor.getText().toString().equals("") || location == null){
-			Log.e(TAG, SUB_TAG+"Something not right with the info provided: " + fullNameEditor.getText() + ", " + "location: " + location);
+        if(fullNameEditor.getText().toString().equals("") || passwordStr.equals("") || confirmPasswordStr.equals("")){
+            Log.e(TAG, SUB_TAG+"One of the fields isn't filled");
             Toast.makeText(getApplicationContext(), R.string.reg_error_unfilled, Toast.LENGTH_LONG);
+            return;
+        }
+
+        if(!passwordStr.equals(confirmPasswordStr)){
+            Log.e(TAG, SUB_TAG+"The 2 provided passwords don't match.");
+            Toast.makeText(getApplicationContext(), R.string.reg_error_passwords_dont_match, Toast.LENGTH_LONG);
+            return;
+        }
+
+        if(location==null){
+            Toast.makeText(getApplicationContext(), "Could not get your location. Please try again in a while.", Toast.LENGTH_LONG);
+            Log.e(TAG, SUB_TAG+"Something not right with the info provided: " + fullNameEditor.getText() + ", " + "location: " + location);
             return;
         }
 
         String name = fullNameEditor.getText().toString();
         String uniqueId = generateUniqueUserId(name + "\n" + location.getLatitude() + "\n" + location.getLongitude());
-        final User myUser = new User(uniqueId, name, location.getLatitude(), location.getLongitude(), true);
-        AsyncTask.execute(new Runnable() {
-            @Override
-            public void run() {
-				Log.e(TAG, SUB_TAG+"Adding user to database" + myUser);
-                MainActivity.database.userDao().insertAll(myUser);
-                finish();
-            }
-        });
-		
-		Log.e(TAG, SUB_TAG+"User: " + myUser);
+
+        String hashedPassword = null;
+        hashedPassword = SecurityStuff.hashThePassword(passwordStr);
+
+        if(hashedPassword == null){
+            Log.e(TAG, SUB_TAG+"Something went wrong with the hash yo");
+            Toast.makeText(getApplicationContext(),"Something went wrong with the password provided yo", Toast.LENGTH_LONG);
+        }
+
+        final LoggedInUser myUser = new LoggedInUser(uniqueId, name, location.getLatitude(), location.getLongitude(), hashedPassword);
+        localDatabaseReference.registerUser(myUser);
+
+        Log.e(TAG, SUB_TAG+"User: " + myUser);
         System.out.println(myUser);
+        pushNewUserToFIrebase(myUser);
+
+        MainActivity.context.checkRegistration();
     }
 
-    @Override
-    public void onLocationChanged(Location location) {
-        Log.e(TAG, SUB_TAG+"OnLocationChanged");
-        Log.e(TAG, "Latitude:" + location.getLatitude() + ", Longitude:" + location.getLongitude());
+    public void pushNewUserToFIrebase(User myUser){
+        Log.e(TAG, SUB_TAG+"Push new user to firebase");
+        boolean connected = false;
+
+        if(networkIsAvailable()) {
+            Log.e(TAG, SUB_TAG+"Network is available: so pushing to firebase");
+            FirebaseDataRefAndInstance.RegisterUserOnFirebase(myUser);
+        }
+        else{
+            Log.e(TAG, SUB_TAG+"NEtwork isn't available");
+        }
+    }
+
+    public boolean networkIsAvailable(){
+        Log.e(TAG, SUB_TAG+"inside function networkIsAvailable");
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
     @Override

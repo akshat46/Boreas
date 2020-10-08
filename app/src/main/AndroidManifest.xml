@@ -27,16 +27,23 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".GroupChatActivity"></activity>
-        <activity android:name=".LandingPage"
-            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name=".LoginActivity"></activity>
+        <activity android:name=".SettingsActivity" />
+        <activity android:name=".AddContactActivity" />
+        <activity android:name=".GroupChatActivity" />
         <activity
-            android:name=".messaging.ChatActivity"
+            android:name=".LandingPage"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".pdel_messaging.ChatActivity"
             android:label="@string/title_activity_group_chat"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".wifidirecttest.WDTestActivity" />
         <activity android:name=".ChatMenuActivity" />
-        <activity android:name=".RegisterActivity" />
+        <activity android:name=".ChatViewRelatedStuff.ChatActivity2" />
+        <activity
+            android:name=".RegisterActivity"
+            android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -44,6 +51,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <service
+            android:name=".OnlineConnectionHandlers.MyFirebaseMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>

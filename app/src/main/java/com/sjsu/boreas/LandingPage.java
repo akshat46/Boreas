@@ -8,10 +8,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -21,9 +19,10 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.sjsu.boreas.ChatViewRelatedStuff.ViewPagerTabAdapter;
-import com.sjsu.boreas.ViewFragments.OfflineGroupFragment;
-import com.sjsu.boreas.ViewFragments.OneOnOneFragment;
-import com.sjsu.boreas.ViewFragments.OnlineGroupFragment;
+import com.sjsu.boreas.Database.LoggedInUser.LoggedInUser;
+import com.sjsu.boreas.GroupChats.OfflineGroupFragment;
+import com.sjsu.boreas.OneOnOneChat.OneOnOneFragment;
+import com.sjsu.boreas.Database.Contacts.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +34,7 @@ public class LandingPage extends AppCompatActivity{
     private static String SUB_TAG = "-----Landing Page";
     private NavigationView mNavigationView;
     private FragmentTransaction mFragmentTransaction;
+    private LoggedInUser currentUser = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,11 +43,20 @@ public class LandingPage extends AppCompatActivity{
         setContentView(R.layout.activity_landing_page);
 
 		//~ setUpNavigationDrawer();
+
+        Intent intent = getIntent();
+        currentUser = (LoggedInUser) intent.getSerializableExtra("currentUser");
 		
 		init();
+		makeADummyUserForFirebase();
 
     }
-    
+
+    private void makeADummyUserForFirebase(){
+        Log.e(TAG, SUB_TAG+"makeADummyUserForFirebase");
+        User u = new User("23", "name of", 123.4, -123.4);
+    }
+
     private void init() {
 		Log.e(TAG, SUB_TAG+"Init");
         initViews();
@@ -56,7 +65,8 @@ public class LandingPage extends AppCompatActivity{
     private void initViews() {
 		Log.e(TAG, SUB_TAG+"InitViews");
         initToolbar();
-        initNewMessageFloatingButton();
+        initAddContactFloatingButton();
+        initSettingsFloatingButtons();
         initViewPager();
         initTabLayout();
     }
@@ -67,19 +77,32 @@ public class LandingPage extends AppCompatActivity{
         setSupportActionBar(toolbar);
     }
 
-    private void initNewMessageFloatingButton() {
+    private void initAddContactFloatingButton() {
 		Log.e(TAG, SUB_TAG+"InitNewMessageFloatingButton");
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Log.e(TAG, SUB_TAG+"onClick of initNewMessageFloatingButton");
-//                Intent intent = new Intent(LandingPage.this, .class);
-//                startActivity(intent);
+                Intent intent = new Intent(view.getContext(), AddContactActivity.class);
+                startActivity(intent);
             }
         });
     }
 
+    private void initSettingsFloatingButtons(){
+        Log.e(TAG, SUB_TAG+"Initializing settings floating button");
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.settings_button);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.e(TAG, SUB_TAG+"On click settings button");
+                Intent intent = new Intent(v.getContext(), SettingsActivity.class);
+                intent.putExtra("currentUser", currentUser);
+                startActivity(intent);
+            }
+        });
+    }
 
     private ViewPager mViewPager;
 
@@ -94,11 +117,13 @@ public class LandingPage extends AppCompatActivity{
         mViewPager.setAdapter(viewPagerTabAdapter);
     }
 
-
     private void initTabLayout() {
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
         tabLayout.setSelectedTabIndicatorColor(Color.parseColor("#FFFFFF"));
+        tabLayout.getTabAt(0).setIcon(R.drawable.ic_contacts_white_24dp);
+        tabLayout.getTabAt(1).setIcon(R.drawable.ic_location_city_white_24dp);
+        tabLayout.getTabAt(2).setIcon(R.drawable.ic_cloud_white_24dp);
     }
 
     @Override
