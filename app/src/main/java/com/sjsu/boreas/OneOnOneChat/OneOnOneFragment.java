@@ -84,12 +84,17 @@ public class OneOnOneFragment extends Fragment implements EventListener, UserLis
         rootView = inflater.inflate(R.layout.fragment_one_on_one, container, false);
         mTabName = getArguments().getString(EXTRA_TAB_NAME);
         mContext = container.getContext();
-        mParent.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mAdapter.notifyDataSetChanged();
-            }
-        });
+        try {
+            mParent.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mAdapter.notifyDataSetChanged();
+                }
+            });
+        }
+        catch (NullPointerException er){
+            Log.e(TAG, SUB_TAG+" Tried to redraw adapter, but adapter is null point.\n"+er);
+        }
         return rootView;
     }
 

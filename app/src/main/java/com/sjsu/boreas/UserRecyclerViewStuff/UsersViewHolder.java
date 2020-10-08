@@ -40,10 +40,13 @@ public class UsersViewHolder extends RecyclerView.ViewHolder {
         this.name.setText(user.getName());
         this.uid = user.getUid();
 
-        if(user.lastMessage != null && !user.lastMessage.trim().isEmpty()){
+        if(user.lastMessage != null){
             this.lastMessage.setText(user.lastMessage);
+            Log.e(TAG, SUB_TAG+"User passed LAST MESSAGE: "+ user.lastMessage);
         }
-        else this.lastMessage.setVisibility(View.INVISIBLE);
+        else{
+            this.lastMessage.setVisibility(View.INVISIBLE);
+        }
 
         if(user.newMessage){
             newMessageIndicator.setVisibility(View.VISIBLE);
