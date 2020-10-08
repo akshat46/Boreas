@@ -84,6 +84,12 @@ public class OneOnOneFragment extends Fragment implements EventListener, UserLis
         rootView = inflater.inflate(R.layout.fragment_one_on_one, container, false);
         mTabName = getArguments().getString(EXTRA_TAB_NAME);
         mContext = container.getContext();
+        mParent.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mAdapter.notifyDataSetChanged();
+            }
+        });
         return rootView;
     }
 
@@ -132,6 +138,7 @@ public class OneOnOneFragment extends Fragment implements EventListener, UserLis
         if(i>=0){
             Log.e(TAG, SUB_TAG+"User found in contacts ");
             contactArrayList.get(i).newMessage = true;
+            contactArrayList.get(i).lastMessage = mssg.mssgText;
             mParent.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -243,7 +250,6 @@ public class OneOnOneFragment extends Fragment implements EventListener, UserLis
     public void onItemClicked(User model) {
         Log.e(TAG, SUB_TAG+"on item clicked");
         model.newMessage = false;
-        // TODO: if dot doesn't go away then notifyItemChanged()
         Intent intent = new Intent(getActivity(), ChatActivity2.class);
         //Passing the user object using intent
         intent.putExtra("ReceiverObj", model);

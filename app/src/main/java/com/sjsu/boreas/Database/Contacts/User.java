@@ -31,6 +31,9 @@ public class User implements Serializable {
     @ColumnInfo(name = "time")
     public long lastMessageTime = -1;
 
+    @ColumnInfo(name = "lastMessage")
+    public String lastMessage;
+
     @ColumnInfo(name = "name")
     public String name;
 
