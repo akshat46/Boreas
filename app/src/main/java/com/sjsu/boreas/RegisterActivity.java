@@ -57,6 +57,7 @@ public class RegisterActivity extends Activity implements LocationListener {
     private EditText password;
     private EditText confirmPassword;
     private Button sign_up;
+    private Button log_in;
 
     public LocalDatabaseReference localDatabaseReference = LocalDatabaseReference.get();
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
@@ -125,6 +126,15 @@ public class RegisterActivity extends Activity implements LocationListener {
         password = findViewById(R.id.register_password);
         confirmPassword = findViewById(R.id.register_confirm_password);
         sign_up = findViewById(R.id.signup);
+        log_in = findViewById(R.id.login_register_act);
+
+        log_in.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.e(TAG, SUB_TAG+"CLicked login in register activity");
+                MainActivity.context.onActivityResult(0, MainActivity.LOGIN_ACTIVITY_REQUEST_CODE, null);
+            }
+        });
 
         sign_up.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -286,7 +296,7 @@ public class RegisterActivity extends Activity implements LocationListener {
         System.out.println(myUser);
         pushNewUserToFIrebase(myUser);
 
-        MainActivity.context.checkRegistration();
+        MainActivity.context.onActivityResult(0, MainActivity.REGISTER_ACTIVITY_DONE_CODE, null);
     }
 
     public void pushNewUserToFIrebase(User myUser){

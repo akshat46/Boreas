@@ -105,6 +105,19 @@ android:orientation="vertical">
         android:layout_marginTop="20dp"
         android:layout_gravity="left"/>
 
+    <Button
+        android:id="@+id/login_register_act"
+        android:layout_width="100dp"
+        android:layout_height="40dp"
+        android:text="Log In*"
+        android:textAllCaps="false"
+        android:fontFamily="@font/worksans_medium"
+        android:textColor="@color/background"
+        android:background="@drawable/bg_button"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_marginTop="20dp"
+        android:layout_gravity="left"/>
+
     <TextView
         android:id="@+id/permission_text"
         android:layout_width="wrap_content"
