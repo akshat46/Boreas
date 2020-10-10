@@ -10,13 +10,29 @@
         android:id="@+id/settings_user_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginLeft="20dp"
         android:text="TextView"
-        tools:layout_editor_absoluteX="20dp"
+        app:layout_constraintStart_toStartOf="parent"
         tools:layout_editor_absoluteY="110dp" />
 
     <Button
         android:id="@+id/logout_button"
-        android:layout_width="40dp"
-        android:layout_height="20dp"
-        android:gravity="bottom"/>
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="36dp"
+        android:layout_marginRight="36dp"
+        android:text="Log Out"
+        android:gravity="bottom"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:layout_editor_absoluteY="102dp" />
+
+    <TextView
+        android:id="@+id/user_token"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="524dp"
+        android:text="User ID Token"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:layout_editor_absoluteX="16dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>

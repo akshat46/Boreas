@@ -23,6 +23,7 @@ public class SettingsActivity extends AppCompatActivity {
     private TextView userNameLabel;
     private Button logoutButton;
     private LocalDatabaseReference localDatabaseReference;
+    private TextView userToken;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,8 +44,11 @@ public class SettingsActivity extends AppCompatActivity {
         Log.e(TAG, SUB_TAG+"Initializing view");
         userNameLabel = findViewById(R.id.settings_user_name);
         logoutButton = findViewById(R.id.logout_button);
+        userToken = findViewById(R.id.user_token);
 
         userNameLabel.setText(currentUser.name);
+        userToken.setText(currentUser.getUid());
+
         logoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -69,7 +73,5 @@ public class SettingsActivity extends AppCompatActivity {
                 });
             }
         });
-
-
     }
 }

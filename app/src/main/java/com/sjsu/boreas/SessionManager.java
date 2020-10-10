@@ -78,6 +78,6 @@ public class SessionManager {
     private void openRegistration(View v){
         Log.e(TAG, SUB_TAG+"Opening registration activity");
         Intent intent = new Intent(MainActivity.context, RegisterActivity.class);
-        MainActivity.context.startActivityForResult(intent, MainActivity.REGISTER_ACTIVTY_REQUEST_CODE);
+        MainActivity.context.startActivityForResult(intent, MainActivity.REGISTER_ACTIVTY_START_CODE);
     }
 }

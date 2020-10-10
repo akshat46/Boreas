@@ -1,10 +1,12 @@
 package com.sjsu.boreas;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
@@ -28,10 +30,12 @@ public class MainActivity extends AppCompatActivity {
 	private static String TAG = "Boreas";
 	private static String SUB_TAG = "---MainActivity ";
 
-    public static final int REGISTER_ACTIVTY_REQUEST_CODE = 0;
+    public static final int REGISTER_ACTIVTY_START_CODE = 0;
     private static final int GROUPCHAT_ACTIVTY_REQUEST_CODE = 1;
     private static final int FRIENDS_ACTIVTY_REQUEST_CODE = 2;
     private static final int EMERGENCY_ACTIVTY_REQUEST_CODE = 3;
+    public static final int LOGIN_ACTIVITY_REQUEST_CODE = 4;
+    public static final int REGISTER_ACTIVITY_DONE_CODE = 5;
 
     public static LoggedInUser currentUser;
     public static MainActivity context;
@@ -39,8 +43,10 @@ public class MainActivity extends AppCompatActivity {
     private ContextHelper contextHelper = null;
     private LocalDatabaseReference localDatabaseReference = null;
     private CustomNotification customNotification = null;
+    private static boolean newAcct = false;
 
     private Button buttonRegister, buttonGroupchat, buttonFriends, buttonEmergency;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,6 +118,10 @@ public class MainActivity extends AppCompatActivity {
             Log.e(TAG, SUB_TAG+"User is logged in");
             if (nearbyConnectionHandler == null)
                 nearbyConnectionHandler = new NearbyConnectionHandler(this);
+
+            if(newAcct)
+                showTokenDialogBox();
+
             Intent intent = new Intent(this, LandingPage.class);
             intent.putExtra("currentUser", currentUser);
             startActivity(intent);
@@ -122,13 +132,33 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void openRegistration(View v){
-		Log.e(TAG, SUB_TAG+"Opening registration activity");
-        Intent intent = new Intent(this, RegisterActivity.class);
-        startActivityForResult(intent, REGISTER_ACTIVTY_REQUEST_CODE);
+    private void showTokenDialogBox(){
+        Log.e(TAG, SUB_TAG+"Showing the token dialog box");
+        newAcct = false;
+        Log.e(TAG, SUB_TAG+"new acct got created");
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        dialog.setMessage("Your USER Id token is: " + currentUser.getUid() +
+                "\nPlease save this in a secure location, you need this to access your account in-case you get logged out.");
+        dialog.setTitle("User ID");
+        dialog.setCancelable(true);
+        dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Log.e(TAG, SUB_TAG+"Clicked the ok button in dialog box");
+                dialog.dismiss();
+            }
+        });
+
+        dialog.create().show();
     }
 
-    public void openLogIn(){
+    private void openRegistration(View v){
+		Log.e(TAG, SUB_TAG+"Opening registration activity");
+        Intent intent = new Intent(this, RegisterActivity.class);
+        startActivityForResult(intent, REGISTER_ACTIVTY_START_CODE);
+    }
+
+    private void openLogIn(){
         Log.e(TAG, SUB_TAG+"Opening login activity");
         Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
@@ -138,16 +168,6 @@ public class MainActivity extends AppCompatActivity {
 		Log.e(TAG, SUB_TAG+"Opening group chat");
         Intent intent = new Intent(this, ChatActivity.class);
         startActivity(intent);
-    }
-
-    //This function is for other classes, where session related action are taken (logout, login and registration)
-    public void comingFromOtherClasses(LoggedInUser user){
-        Log.e(TAG, SUB_TAG+"coming from other classes");
-        if(user.isLoggedIn()){
-            Log.e(TAG, SUB_TAG+"User is logged in");
-        }
-        currentUser = user;
-        checkRegistration();
     }
 
     public void openFriends(View v){
@@ -162,8 +182,15 @@ public class MainActivity extends AppCompatActivity {
 		Log.e(TAG, SUB_TAG+"On activity result");
         super.onActivityResult(requestCode, resultCode, data);
         switch(resultCode){
-            case REGISTER_ACTIVTY_REQUEST_CODE:
+            case REGISTER_ACTIVTY_START_CODE:
+                openRegistration(null);
+                break;
+            case REGISTER_ACTIVITY_DONE_CODE:
+                newAcct = true;
                 checkRegistration();
+                break;
+            case LOGIN_ACTIVITY_REQUEST_CODE:
+                openLogIn();
                 break;
         }
     }

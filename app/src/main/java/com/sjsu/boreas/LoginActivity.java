@@ -51,6 +51,14 @@ public class LoginActivity extends AppCompatActivity {
                 tryLoggingIn();
             }
         });
+
+        signupButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.e(TAG, SUB_TAG+"clicking on the sign up button");
+                MainActivity.context.onActivityResult(0, MainActivity.REGISTER_ACTIVTY_START_CODE, null);
+            }
+        });
     }
 
     private void tryLoggingIn(){
