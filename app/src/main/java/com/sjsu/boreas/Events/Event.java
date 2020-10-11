@@ -13,6 +13,9 @@ public class Event {
     private static String TAG = "BOREAS";
     private static String SUB_TAG = "-----Event class-- ";
 
+    public static final String chatMssgEventID = "chatmessages";
+    public static final String usersEventID = "user";
+
     private String event_id;
     private List<EventListener> listeners = new ArrayList<>();
 
@@ -51,7 +54,7 @@ public class Event {
         int i = 0;
         for(EventListener l : listeners){
             Log.e(TAG, SUB_TAG+"In the loop, listener: " + l  + ", " + i++);
-            l.eventTriggered(packet);
+            l.eventTriggered(packet, event_id);
         }
     }
 }

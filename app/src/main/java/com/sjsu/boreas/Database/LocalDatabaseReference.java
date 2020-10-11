@@ -162,6 +162,8 @@ public class LocalDatabaseReference implements EventEmitter{
                 if (!isUserAlreadyInContacts(user)) {
                     Log.e(TAG, SUB_TAG + "User doesn't already exist in the contacts and is being added now");
                     database.userDao().insertAll(user);
+                    HashMap<String, Object> contact_map = (HashMap<String, Object>) user.toMap();
+                    event_user.trigger(contact_map);
                 }
             }
         });
@@ -217,5 +219,15 @@ public class LocalDatabaseReference implements EventEmitter{
     public List<User> getClosestUseres(LongDistanceMessage message){
         Log.e(TAG, SUB_TAG+"get the closest users based on location");
         return database.userDao().getClosestUsers(message.recipient.latitude, message.recipient.longitude);
+    }
+
+    public void clearContactsTable(){
+        Log.e(TAG, SUB_TAG+"Wiping the contacts/users table");
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                database.userDao().clearUserTable();
+            }
+        });
     }
 }

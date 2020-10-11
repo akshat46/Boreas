@@ -116,6 +116,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void success(){
         Log.e(TAG, SUB_TAG+"success");
+        localDatabaseReference.clearContactsTable();
         MainActivity.context.checkRegistration();
     }
 

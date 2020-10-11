@@ -54,8 +54,10 @@ public class OneOnOneFragment extends Fragment implements EventListener, UserLis
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        Event event = Event.get("chatmessages");
+        Event event = Event.get(Event.chatMssgEventID);
+        Event event_users = Event.get(Event.usersEventID);
         event.addListener(this);
+        event_users.addListener(this);
         Log.e(TAG, SUB_TAG+"On create");
         super.onCreate(savedInstanceState);
         mParent = (LandingPage) getActivity();
@@ -84,17 +86,17 @@ public class OneOnOneFragment extends Fragment implements EventListener, UserLis
         rootView = inflater.inflate(R.layout.fragment_one_on_one, container, false);
         mTabName = getArguments().getString(EXTRA_TAB_NAME);
         mContext = container.getContext();
-        try {
-            mParent.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    mAdapter.notifyDataSetChanged();
-                }
-            });
-        }
-        catch (NullPointerException er){
-            Log.e(TAG, SUB_TAG+" Tried to redraw adapter, but adapter is null point.\n"+er);
-        }
+//        try {
+//            mParent.runOnUiThread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    mAdapter.notifyDataSetChanged();
+//                }
+//            });
+//        }
+//        catch (NullPointerException er){
+//            Log.e(TAG, SUB_TAG+" Tried to redraw adapter, but adapter is null point.\n"+er);
+//        }
         return rootView;
     }
 
@@ -180,6 +182,17 @@ public class OneOnOneFragment extends Fragment implements EventListener, UserLis
         return -1;
     }
 
+    private void newContactAdded(User contact){
+        Log.e(TAG, SUB_TAG+"new contact added");
+        contactArrayList.add(contact);
+        mParent.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mAdapter.notifyDataSetChanged();
+            }
+        });
+    }
+
 //    public void initializeFirebaseAdapter(){
 //        Log.e(TAG, SUB_TAG+"InitializeFirebase adapter");
 //
@@ -242,17 +255,23 @@ public class OneOnOneFragment extends Fragment implements EventListener, UserLis
 //        mAdapter.stopListening();
     }
 
-    public void eventTriggered(HashMap<String, Object> packet){
+    public void eventTriggered(HashMap<String, Object> packet, String type){
         Log.e(TAG, SUB_TAG+"I have received a message, my lord. It goes something like: "+ packet.toString());
         // parse chatmessage from packet
         // try catch for parsing user when new user (not in contact list) messages
-        ChatMessage mssg = MessageUtility.convertHashMapToChatMessage(packet);
-
-        manageMessage(mssg);
+        if(type.equals(Event.chatMssgEventID)) {
+            Log.e(TAG, SUB_TAG+"this is a chat message event");
+            ChatMessage mssg = MessageUtility.convertHashMapToChatMessage(packet);
+            manageMessage(mssg);
+        }else if(type.equals(Event.usersEventID)){
+            Log.e(TAG, SUB_TAG+"this is a new user event");
+            User user = User.convertHashMapToUser(packet);
+            newContactAdded(user);
+        }
     }
 
     //The UserListItemClick implemented function
-    public void onItemClicked(User model) {
+    public void onItemClicked(User model, int position) {
         Log.e(TAG, SUB_TAG+"on item clicked");
         model.newMessage = false;
         Intent intent = new Intent(getActivity(), ChatActivity2.class);

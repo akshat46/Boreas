@@ -20,6 +20,9 @@ public interface UserDao {
     @Query("SELECT * FROM user ORDER BY abs(SQUARE(latitude) + SQUARE(longitude) - SQUARE(:lat) - SQUARE(:lon)) ASC")
     List<User> getClosestUsers(double lat, double lon);
 
+    @Query("DELETE FROM user")
+    void clearUserTable();
+
     @Insert
     void insertAll(User... users);
 
