@@ -1,5 +1,6 @@
 package com.sjsu.boreas;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -8,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
@@ -69,6 +71,28 @@ public class LandingPage extends AppCompatActivity{
         initSettingsFloatingButtons();
         initViewPager();
         initTabLayout();
+        if(MainActivity.newAcct)
+            showTokenDialogBox();
+    }
+
+    private void showTokenDialogBox(){
+        Log.e(TAG, SUB_TAG+"Showing the token dialog box");
+        MainActivity.newAcct = false;
+        Log.e(TAG, SUB_TAG+"new acct got created");
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        dialog.setMessage("Your USER Id token is: " + currentUser.getUid() +
+                "\nPlease save this in a secure location, you need this to access your account in-case you get logged out.");
+        dialog.setTitle("User ID");
+        dialog.setCancelable(true);
+        dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Log.e(TAG, SUB_TAG+"Clicked the ok button in dialog box");
+                dialog.dismiss();
+            }
+        });
+
+        dialog.create().show();
     }
 
     private void initToolbar() {
