@@ -42,7 +42,7 @@ public class UserListAdapter extends RecyclerView.Adapter<UsersViewHolder>{
     }
 
     @Override
-    public void onBindViewHolder(@NonNull UsersViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull UsersViewHolder holder, final int position) {
         Log.e(TAG, SUB_TAG+"onBindViewHolder");
         final User model = userList.get(position);
         holder.bindToListItemView(model);
@@ -57,7 +57,7 @@ public class UserListAdapter extends RecyclerView.Adapter<UsersViewHolder>{
             public void onClick(View v) {
                 // Launch PostDetailActivity
                 Log.e(TAG, SUB_TAG+"999999999999999999999999 this is the selected user: " + model.getUid());
-                userListItemClickAction.onItemClicked(model);
+                userListItemClickAction.onItemClicked(model, position);
             }
         });
 

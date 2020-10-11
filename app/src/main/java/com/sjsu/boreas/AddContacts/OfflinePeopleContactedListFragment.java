@@ -154,7 +154,7 @@ public class OfflinePeopleContactedListFragment extends Fragment implements User
     }
 
     @Override
-    public void onItemClicked(User model) {
+    public void onItemClicked(User model, int position) {
         Log.e(TAG, SUB_TAG+"on item clicked");
         FirebaseDataRefAndInstance.addContact(model);
         LocalDatabaseReference localDatabaseReference = LocalDatabaseReference.get();

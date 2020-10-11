@@ -1,9 +1,16 @@
 package com.sjsu.boreas.Database.Contacts;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
+
+import com.sjsu.boreas.Database.Messages.ChatMessage;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -11,6 +18,9 @@ import java.util.Map;
 
 @Entity
 public class User implements Serializable {
+
+    private static final String TAG = "BOREAS";
+    private static final String SUB_TAG = "-------User cleass----- ";
 
     public User(String uid, String name, double latitude, double longitude){
         this.uid = uid;
@@ -58,5 +68,24 @@ public class User implements Serializable {
 
     public String getUid(){
         return uid;
+    }
+
+    public static User convertHashMapToUser(HashMap<String, Object> user_map){
+        Log.e(TAG, SUB_TAG+"converting a hash map to user object.");
+
+        User contact = null;
+
+        String contact_name, contact_id;
+        double contact_lat, contact_lon;
+
+        contact_lat = (double) user_map.get("latitude");
+        contact_lon = (double) user_map.get("longitude");
+        contact_name = (String) user_map.get("name");
+        contact_id = (String) user_map.get("uid");
+
+        contact = new User(contact_id, contact_name, contact_lat, contact_lon);
+
+        return contact;
+
     }
 }

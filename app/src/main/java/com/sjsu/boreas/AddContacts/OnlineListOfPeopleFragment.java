@@ -1,12 +1,14 @@
 package com.sjsu.boreas.AddContacts;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SearchView;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -175,9 +177,21 @@ public class OnlineListOfPeopleFragment extends Fragment implements UserListItem
     }
 
     @Override
-    public void onItemClicked(User model) {
+    public void onItemClicked(User model, int position) {
         Log.e(TAG, SUB_TAG+"on item clicked");
         FirebaseDataRefAndInstance.addContact(model);
         localDatabaseReference.addContact(model);
+        markAddedContact(position);
+    }
+
+    private void markAddedContact(int position){
+        Log.e(TAG, SUB_TAG+"Marking the added contact");
+        View view = layoutManager.findViewByPosition(position);
+        TextView userNameView = (TextView) view.findViewById(R.id.userName);
+        userNameView.setTextColor(Color.GREEN);
+        userNameView.setVisibility(View.VISIBLE);
+        userNameView.setText(userNameView.getText() + " Added !");
+
+        mAdapter2.notifyItemChanged(position);
     }
 }

@@ -291,11 +291,12 @@ public class RegisterActivity extends Activity implements LocationListener {
 
         final LoggedInUser myUser = new LoggedInUser(uniqueId, name, location.getLatitude(), location.getLongitude(), hashedPassword);
         localDatabaseReference.registerUser(myUser);
+        pushNewUserToFIrebase(myUser);
 
         Log.e(TAG, SUB_TAG+"User: " + myUser);
         System.out.println(myUser);
-        pushNewUserToFIrebase(myUser);
 
+        localDatabaseReference.clearContactsTable();
         MainActivity.context.onActivityResult(0, MainActivity.REGISTER_ACTIVITY_DONE_CODE, null);
     }
 
