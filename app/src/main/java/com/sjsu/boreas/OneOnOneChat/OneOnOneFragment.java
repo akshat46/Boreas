@@ -165,24 +165,14 @@ public class OneOnOneFragment extends Fragment implements EventListener, UserLis
             contactArrayList.get(position).newMessage = true;
             contactArrayList.get(position).lastMessage = mssg.mssgText;
 
-            newUserUiSetup(position);
+            mParent.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mAdapter.notifyDataSetChanged();
+                }
+            });
             // add new "potential contact" to list
         }
-    }
-
-    private void newUserUiSetup(int position){
-        Log.e(TAG, SUB_TAG+"This is new user, so making the ui a bit different");
-//        View view = layoutManager.findViewByPosition(position);
-//        TextView userNameView = (TextView) view.findViewById(R.id.userName);
-//        userNameView.setTextColor(Color.MAGENTA);
-//        userNameView.setVisibility(View.VISIBLE);
-
-        mParent.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mAdapter.notifyDataSetChanged();
-            }
-        });
     }
 
 //    mParent.runOnUiThread(new Runnable() {
@@ -297,14 +287,22 @@ public class OneOnOneFragment extends Fragment implements EventListener, UserLis
     //The UserListItemClick implemented function
     public void onItemClicked(final User model, final int position) {
         Log.e(TAG, SUB_TAG+"on item clicked");
-        AsyncTask.execute(new Runnable() {
-            @Override
-            public void run() {
-                model.newMessage = false;
-                localDatabaseReference.setNewMessageToFalse(model);
-                messageReadUiUpdate(position);
-            }
-        });
+        if(model.newMessage) {
+            AsyncTask.execute(new Runnable() {
+                @Override
+                public void run() {
+                    model.newMessage = false;
+                    if(model.newMessage)
+                        Log.e(TAG, SUB_TAG+"This is the user after setting the new mssg to false: "+ model);
+                    if(model instanceof User)
+                        localDatabaseReference.updateContact(model);
+                    else if(model instanceof PotentialContacts)
+                        localDatabaseReference.updatePotentialContact((PotentialContacts) model);
+                    contactArrayList.set(position, model);
+                    messageReadUiUpdate(position);
+                }
+            });
+        }
 
         Intent intent = new Intent(getActivity(), ChatActivity2.class);
         //Passing the user object using intent
