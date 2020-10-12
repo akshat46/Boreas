@@ -204,6 +204,11 @@ public class LocalDatabaseReference implements EventEmitter{
         return false;
     }
 
+    public void setNewMessageToFalse(User user){
+        Log.e(TAG, SUB_TAG+"Set new message to false");
+        database.userDao().setNewMessageToFalse(user);
+    }
+
     public boolean isMessageAlreadyInDatabase(ChatMessage mssg){
         Log.e(TAG, SUB_TAG+"Checking if the message is already in database");
         if(!database.chatMessageDao().getSpecificMessage(mssg.mssgId).isEmpty()){
