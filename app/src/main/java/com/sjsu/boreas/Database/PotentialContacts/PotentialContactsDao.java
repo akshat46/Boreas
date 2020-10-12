@@ -22,6 +22,9 @@ public interface PotentialContactsDao {
     @Query("SELECT * FROM potentialcontacts ORDER BY abs(SQUARE(latitude) + SQUARE(longitude) - SQUARE(:lat) - SQUARE(:lon)) ASC")
     List<User> getClosestUsers(double lat, double lon);
 
+    @Query("DELETE from potentialcontacts")
+    void clearPotentialContactsTable();
+
     @Insert
     void insertAll(PotentialContacts... potentialContacts);
 

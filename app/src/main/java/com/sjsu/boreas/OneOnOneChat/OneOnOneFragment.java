@@ -159,6 +159,16 @@ public class OneOnOneFragment extends Fragment implements EventListener, UserLis
             Log.e(TAG, SUB_TAG+"The sender (" + user.name + ") of the mssg: " + mssg.mssgText + ", is not in the contacts");
             PotentialContacts potentialContact = new PotentialContacts(user.uid, user.name, user.latitude, user.longitude);
             localDatabaseReference.addPotentialContact(potentialContact);
+            contactArrayList.add(potentialContact);
+            final int position = contactArrayList.size() - 1;
+            contactArrayList.get(position).newMessage = true;
+            contactArrayList.get(position).lastMessage = mssg.mssgText;
+            mParent.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mAdapter.notifyDataSetChanged();
+                }
+            });
             // add new "potential contact" to list
         }
     }

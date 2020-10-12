@@ -227,12 +227,14 @@ public class LocalDatabaseReference implements EventEmitter{
         return database.userDao().getClosestUsers(message.recipient.latitude, message.recipient.longitude);
     }
 
-    public void clearContactsTable(){
+    public void wipeAllPreviousUserData(){
         Log.e(TAG, SUB_TAG+"Wiping the contacts/users table");
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
                 database.userDao().clearUserTable();
+                database.potentialContactsDao().clearPotentialContactsTable();
+                database.chatMessageDao().clearAllMessages();
             }
         });
     }
