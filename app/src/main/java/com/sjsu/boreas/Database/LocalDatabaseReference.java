@@ -172,6 +172,7 @@ public class LocalDatabaseReference implements EventEmitter{
     public boolean isUserAlreadyInContacts(User user){
         Log.e(TAG, SUB_TAG+"Checking if user is already in contacts");
         if(!database.userDao().getSpecificUser(user.getUid()).isEmpty()){
+            Log.e(TAG, SUB_TAG+"User is already in contacts");
             return true;
         }
         return false;

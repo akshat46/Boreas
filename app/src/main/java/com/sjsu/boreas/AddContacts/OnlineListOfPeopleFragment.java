@@ -2,6 +2,7 @@ package com.sjsu.boreas.AddContacts;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -130,12 +131,17 @@ public class OnlineListOfPeopleFragment extends Fragment implements UserListItem
                     userArrayList = new ArrayList<User>();
                     for (DataSnapshot npsnapshot : dataSnapshot.getChildren()){
                         Log.e(TAG, SUB_TAG+"    onstart new adapter snapshot thing");
-                        User u = new User(npsnapshot.child("uid").getValue().toString(),
+                        final User u = new User(npsnapshot.child("uid").getValue().toString(),
                                 npsnapshot.child("name").getValue().toString(),
                                 Double.parseDouble(npsnapshot.child("latitude").getValue().toString()),
                                 Double.parseDouble(npsnapshot.child("longitude").getValue().toString()));
-                        if(MainActivity.currentUser.uid != u.uid)
-                            userArrayList.add(u);
+                        AsyncTask.execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                if(MainActivity.currentUser.uid != u.uid && !localDatabaseReference.isUserAlreadyInContacts(u))
+                                    userArrayList.add(u);
+                            }
+                        });
                     }
                     mAdapter2=new UserListAdapter(userArrayList, mContext, userListItemClickAction);
                     recyclerView.setAdapter(mAdapter2);
