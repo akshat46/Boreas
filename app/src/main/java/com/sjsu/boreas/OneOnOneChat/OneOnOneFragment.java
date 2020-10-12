@@ -2,12 +2,14 @@ package com.sjsu.boreas.OneOnOneChat;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -271,12 +273,34 @@ public class OneOnOneFragment extends Fragment implements EventListener, UserLis
     }
 
     //The UserListItemClick implemented function
-    public void onItemClicked(User model, int position) {
+    public void onItemClicked(final User model, final int position) {
         Log.e(TAG, SUB_TAG+"on item clicked");
-        model.newMessage = false;
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                model.newMessage = false;
+                localDatabaseReference.setNewMessageToFalse(model);
+                messageReadUiUpdate(position);
+            }
+        });
+
         Intent intent = new Intent(getActivity(), ChatActivity2.class);
         //Passing the user object using intent
         intent.putExtra("ReceiverObj", model);
         startActivity(intent);
+    }
+
+    private void messageReadUiUpdate(int position){
+        Log.e(TAG, SUB_TAG+"Message is read updating ui");
+        View itemView = layoutManager.findViewByPosition(position);
+
+        View newMessageIndicator = itemView.findViewById(R.id.newMessage);
+        TextView lastMessage = itemView.findViewById(R.id.lastMessage);
+
+        newMessageIndicator.setVisibility(View.INVISIBLE);
+        lastMessage.setTypeface(lastMessage.getTypeface(), Typeface.NORMAL);
+        lastMessage.setTextColor(getResources().getColor(R.color.colorText));
+
+        mAdapter.notifyItemChanged(position);
     }
 }
