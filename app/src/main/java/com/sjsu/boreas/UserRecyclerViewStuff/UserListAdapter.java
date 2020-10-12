@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -24,6 +25,9 @@ public class UserListAdapter extends RecyclerView.Adapter<UsersViewHolder>{
     private List<User>userList;
     private Context context;
     private UserListItemClickAction userListItemClickAction;
+
+    public static final int CONTACT = 0;
+    public static final int POTENTIAL_CONTACT = 0;
 
     public UserListAdapter(ArrayList<User> ul, Context context, UserListItemClickAction userListItemClickAction){
         this.userList = ul;
@@ -61,9 +65,9 @@ public class UserListAdapter extends RecyclerView.Adapter<UsersViewHolder>{
             }
         });
 
-        if(!(model instanceof PotentialContacts)){
+        if(model instanceof PotentialContacts){
             Log.e(TAG, SUB_TAG+"This is the item for the non contact user, changin color");
-            holder.itemView.findViewById(R.id.userName).setBackgroundColor(500109); //green color i think
+            holder.setUnKnownUserUi();  //green color i think
         }
     }
 

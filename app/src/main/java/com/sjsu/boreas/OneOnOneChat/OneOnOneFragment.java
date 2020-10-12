@@ -2,6 +2,7 @@ package com.sjsu.boreas.OneOnOneChat;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -163,14 +164,25 @@ public class OneOnOneFragment extends Fragment implements EventListener, UserLis
             final int position = contactArrayList.size() - 1;
             contactArrayList.get(position).newMessage = true;
             contactArrayList.get(position).lastMessage = mssg.mssgText;
-            mParent.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    mAdapter.notifyDataSetChanged();
-                }
-            });
+
+            newUserUiSetup(position);
             // add new "potential contact" to list
         }
+    }
+
+    private void newUserUiSetup(int position){
+        Log.e(TAG, SUB_TAG+"This is new user, so making the ui a bit different");
+//        View view = layoutManager.findViewByPosition(position);
+//        TextView userNameView = (TextView) view.findViewById(R.id.userName);
+//        userNameView.setTextColor(Color.MAGENTA);
+//        userNameView.setVisibility(View.VISIBLE);
+
+        mParent.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mAdapter.notifyDataSetChanged();
+            }
+        });
     }
 
 //    mParent.runOnUiThread(new Runnable() {

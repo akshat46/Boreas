@@ -178,7 +178,7 @@ public class LocalDatabaseReference implements EventEmitter{
         return false;
     }
 
-    public List<User> getPotentialContacts(){
+    public List<PotentialContacts> getPotentialContacts(){
         Log.e(TAG, SUB_TAG+"get potential contacts");
         return database.potentialContactsDao().getUsers();
     }
