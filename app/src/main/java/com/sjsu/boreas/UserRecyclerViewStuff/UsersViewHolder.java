@@ -1,6 +1,7 @@
 package com.sjsu.boreas.UserRecyclerViewStuff;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.util.Log;
 import android.view.View;
@@ -64,6 +65,11 @@ public class UsersViewHolder extends RecyclerView.ViewHolder {
     public void hideThisView(){
         rootView.setVisibility(View.GONE);
         rootView.setLayoutParams(new RecyclerView.LayoutParams(0, 0));
+    }
+
+    public void setUnKnownUserUi(){
+        Log.e(TAG, SUB_TAG+"Setting the color for an unknown user");
+        this.name.setTextColor(Color.MAGENTA);
     }
 
     public String getUID(){

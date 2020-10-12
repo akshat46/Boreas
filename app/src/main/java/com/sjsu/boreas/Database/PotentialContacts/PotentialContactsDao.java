@@ -14,13 +14,13 @@ import java.util.List;
 public interface PotentialContactsDao {
 
     @Query("SELECT * FROM potentialcontacts")
-    List<User> getUsers();
+    List<PotentialContacts> getUsers();
 
     @Query("SELECT * FROM potentialcontacts WHERE uid is :userID")
-    List<User> getSpecificUser(String userID);
+    List<PotentialContacts> getSpecificUser(String userID);
 
     @Query("SELECT * FROM potentialcontacts ORDER BY abs(SQUARE(latitude) + SQUARE(longitude) - SQUARE(:lat) - SQUARE(:lon)) ASC")
-    List<User> getClosestUsers(double lat, double lon);
+    List<PotentialContacts> getClosestUsers(double lat, double lon);
 
     @Query("DELETE from potentialcontacts")
     void clearPotentialContactsTable();
