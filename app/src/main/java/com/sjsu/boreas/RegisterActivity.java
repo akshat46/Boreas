@@ -296,7 +296,7 @@ public class RegisterActivity extends Activity implements LocationListener {
         Log.e(TAG, SUB_TAG+"User: " + myUser);
         System.out.println(myUser);
 
-        localDatabaseReference.clearContactsTable();
+        localDatabaseReference.wipeAllPreviousUserData();
         MainActivity.context.onActivityResult(0, MainActivity.REGISTER_ACTIVITY_DONE_CODE, null);
     }
 

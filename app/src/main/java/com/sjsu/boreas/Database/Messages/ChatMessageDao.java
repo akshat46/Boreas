@@ -22,6 +22,9 @@ public interface ChatMessageDao {
     @Query("SELECT * FROM chatmessage")
     List<ChatMessage> getAllMessages();
 
+    @Query("DELETE FROM chatmessage")
+    void clearAllMessages();
+
     @Insert
     void insertAll(ChatMessage... chatMessages);
 
