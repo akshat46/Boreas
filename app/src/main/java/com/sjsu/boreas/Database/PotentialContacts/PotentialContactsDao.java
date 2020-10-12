@@ -5,6 +5,7 @@ import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
+import androidx.room.Update;
 
 import com.sjsu.boreas.Database.Contacts.User;
 
@@ -30,6 +31,9 @@ public interface PotentialContactsDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertNewUser(PotentialContacts potentialContacts);
+
+    @Update
+    void updatePotentialContact(PotentialContacts user);
 
     @Delete
     void delete(PotentialContacts potentialContacts);
