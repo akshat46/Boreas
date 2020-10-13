@@ -20,7 +20,7 @@ import androidx.viewpager.widget.ViewPager;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
-import com.sjsu.boreas.ChatViewRelatedStuff.ViewPagerTabAdapter;
+import com.sjsu.boreas.LandingPageTabAdapterStuff.ViewPagerTabAdapter;
 import com.sjsu.boreas.Database.LoggedInUser.LoggedInUser;
 import com.sjsu.boreas.GroupChats.OfflineGroupFragment;
 import com.sjsu.boreas.OneOnOneChat.OneOnOneFragment;

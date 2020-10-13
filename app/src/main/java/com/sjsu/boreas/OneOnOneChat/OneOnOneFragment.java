@@ -146,9 +146,9 @@ public class OneOnOneFragment extends Fragment implements EventListener, UserLis
 
         //First check if the user is even in our contacts or not?
         if(i>=0){
-            Log.e(TAG, SUB_TAG+"User found in contacts ");
             contactArrayList.get(i).newMessage = true;
             contactArrayList.get(i).lastMessage = mssg.mssgText;
+            localDatabaseReference.updateContactItem(contactArrayList.get(i));
             mParent.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -288,18 +288,12 @@ public class OneOnOneFragment extends Fragment implements EventListener, UserLis
     public void onItemClicked(final User model, final int position) {
         Log.e(TAG, SUB_TAG+"on item clicked");
         if(model.newMessage) {
-            AsyncTask.execute(new Runnable() {
+            contactArrayList.get(position).newMessage = false;
+            localDatabaseReference.updateContactItem(contactArrayList.get(position));
+            mParent.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    model.newMessage = false;
-                    if(model.newMessage)
-                        Log.e(TAG, SUB_TAG+"This is the user after setting the new mssg to false: "+ model);
-                    if(model instanceof User)
-                        localDatabaseReference.updateContact(model);
-                    else if(model instanceof PotentialContacts)
-                        localDatabaseReference.updatePotentialContact((PotentialContacts) model);
-                    contactArrayList.set(position, model);
-                    messageReadUiUpdate(position);
+                    mAdapter.notifyItemChanged(position);
                 }
             });
         }
@@ -310,17 +304,4 @@ public class OneOnOneFragment extends Fragment implements EventListener, UserLis
         startActivity(intent);
     }
 
-    private void messageReadUiUpdate(int position){
-        Log.e(TAG, SUB_TAG+"Message is read updating ui");
-        View itemView = layoutManager.findViewByPosition(position);
-
-        View newMessageIndicator = itemView.findViewById(R.id.newMessage);
-        TextView lastMessage = itemView.findViewById(R.id.lastMessage);
-
-        newMessageIndicator.setVisibility(View.INVISIBLE);
-        lastMessage.setTypeface(lastMessage.getTypeface(), Typeface.NORMAL);
-        lastMessage.setTextColor(getResources().getColor(R.color.colorText));
-
-        mAdapter.notifyItemChanged(position);
-    }
 }

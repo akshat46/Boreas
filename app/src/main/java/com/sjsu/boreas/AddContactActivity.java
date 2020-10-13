@@ -15,7 +15,7 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.material.tabs.TabLayout;
 import com.sjsu.boreas.Database.LocalDatabaseReference;
 import com.sjsu.boreas.UserRecyclerViewStuff.UserListAdapter;
-import com.sjsu.boreas.ChatViewRelatedStuff.ViewPagerTabAdapter;
+import com.sjsu.boreas.LandingPageTabAdapterStuff.ViewPagerTabAdapter;
 import com.sjsu.boreas.OnlineConnectionHandlers.FirebaseDataRefAndInstance;
 import com.sjsu.boreas.AddContacts.OfflinePeopleContactedListFragment;
 import com.sjsu.boreas.AddContacts.OnlineListOfPeopleFragment;
