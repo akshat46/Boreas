@@ -2,18 +2,26 @@ package com.sjsu.boreas.ChatViewRelatedStuff;
 
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import com.sjsu.boreas.Events.messageListener;
 import com.sjsu.boreas.Database.LocalDatabaseReference;
+import com.sjsu.boreas.HelperStuff.ContextHelper;
 import com.sjsu.boreas.OnlineConnectionHandlers.FirebaseDataRefAndInstance;
 import com.sjsu.boreas.MainActivity;
 import com.sjsu.boreas.PhoneBluetoothRadio.BlueTerm;
@@ -32,6 +40,7 @@ public class ChatActivity2 extends AppCompatActivity implements messageListener 
     private ListView listView;
     private View btnSend;
     private EditText mssgText;
+    private TextView userName;
     boolean myMessage = true;
     private List<ChatBubble> chatBubbles;
     private ArrayAdapter<ChatBubble> adapter;
@@ -52,21 +61,53 @@ public class ChatActivity2 extends AppCompatActivity implements messageListener 
         //Getting the user object from intent
         Intent intent = getIntent();
         myChatPartner = (User) intent.getSerializableExtra("ReceiverObj");
+        userName = findViewById(R.id.userName);
+        userName.setText(myChatPartner.name);
+
 
         Log.e(TAG, SUB_TAG+"-=-=-=-=-==-///////// "+myChatPartner+", and me: "+MainActivity.currentUser.getName());
 
         initializeChatScreen();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+            Window window = getWindow();
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+            window.setStatusBarColor(ContextCompat.getColor(ContextHelper.get().getApplicationContext(),R.color.backgroundAlt));
+        }
+
 
         listView = findViewById(R.id.list_msg);
         btnSend = findViewById(R.id.btn_chat_send);
         mssgText = findViewById(R.id.msg_type);
 
         //set ListView adapter first
-        adapter = new MessageAdapter(this, R.layout.left_chat_bubble, chatBubbles);
+        adapter = new MessageAdapter(this, R.layout.chat_bubble_left, chatBubbles);
         listView.setAdapter(adapter);
 
         //Add this instance of chatactivity2 as a listener to the ChatMessage data class
         ChatMessage.addMessageListener(this);
+
+        mssgText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                boolean handled = false;
+                if (actionId == EditorInfo.IME_ACTION_GO || actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_SEND) {
+                    //Perform your Actions here.
+                    Log.e(TAG, SUB_TAG+"We our here tryna detect enter key.");
+                    if (mssgText.getText().toString().trim().equals("")) {
+                        // TODO: disable button
+                        Toast.makeText(ChatActivity2.this, "Please input some text...", Toast.LENGTH_SHORT).show();
+                    } else {
+                        //add message to list
+                        sendMessage(mssgText.getText().toString());
+                    }
+                    handled = true;
+                }
+                return handled;
+            }
+        });
 
         //event for button SEND
         btnSend.setOnClickListener(new View.OnClickListener() {
@@ -74,6 +115,7 @@ public class ChatActivity2 extends AppCompatActivity implements messageListener 
             public void onClick(View v) {
                 Log.e(TAG, "Hea too");
                 if (mssgText.getText().toString().trim().equals("")) {
+                    // TODO: disable button
                     Toast.makeText(ChatActivity2.this, "Please input some text...", Toast.LENGTH_SHORT).show();
                 } else {
                     //add message to list
@@ -126,7 +168,7 @@ public class ChatActivity2 extends AppCompatActivity implements messageListener 
         mssgText.setText("");
     }
 
-    private void pushMessageToFirebase(ChatMessage chatMessage){
+    private void pushMessageToFirebase(ChatMessage chatMessage){  
         Log.e(TAG, SUB_TAG+"Push message to firebase");
         String oneOnOneChatId = "";
 

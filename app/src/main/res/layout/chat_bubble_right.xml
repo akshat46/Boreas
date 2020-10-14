@@ -1,22 +1,24 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="24dp"
+    android:layout_marginStart="24dp">
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:background="@drawable/bubble_in"
-        android:orientation="vertical"
-        android:paddingBottom="10dp">
+        android:layout_alignParentRight="true"
+        android:background="@drawable/bg_bubble_out"
+        android:layout_marginRight="12dp"
+        android:layout_marginBottom="8dp">
 
         <TextView
             android:id="@+id/txt_msg"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:maxWidth="100dp"
+            android:maxWidth="250dp"
             android:padding="5dp"
-            android:textColor="@android:color/holo_red_dark" />
+            android:textColor="@color/colorText" />
 
     </LinearLayout>
 
