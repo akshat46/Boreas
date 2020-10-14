@@ -178,6 +178,7 @@ public class LocalDatabaseReference implements EventEmitter{
         return false;
     }
 
+
     public List<PotentialContacts> getPotentialContacts(){
         Log.e(TAG, SUB_TAG+"get potential contacts");
         return database.potentialContactsDao().getUsers();
@@ -204,9 +205,23 @@ public class LocalDatabaseReference implements EventEmitter{
         return false;
     }
 
-    public void setNewMessageToFalse(User user){
+    public void updateContactItem(final User user){
         Log.e(TAG, SUB_TAG+"Set new message to false");
-        database.userDao().setNewMessageToFalse(user);
+
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                if(user instanceof PotentialContacts) {
+                    Log.e(TAG, SUB_TAG + "Updating potential contact: " + user.name);
+                    database.potentialContactsDao().updatePotentialContact((PotentialContacts) user);
+                }
+                else if(user instanceof User) {
+                    Log.e(TAG, SUB_TAG + "Updating contact: " + user.name);
+                    database.userDao().updateUser(user);
+                }
+            }
+        });
+
     }
 
     public boolean isMessageAlreadyInDatabase(ChatMessage mssg){

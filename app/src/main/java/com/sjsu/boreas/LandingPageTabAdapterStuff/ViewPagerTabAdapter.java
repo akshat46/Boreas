@@ -1,4 +1,4 @@
-package com.sjsu.boreas.ChatViewRelatedStuff;
+package com.sjsu.boreas.LandingPageTabAdapterStuff;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
