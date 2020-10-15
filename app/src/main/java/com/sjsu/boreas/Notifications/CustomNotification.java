@@ -9,6 +9,7 @@ import android.util.Log;
 import androidx.core.app.NotificationCompat;
 
 import com.sjsu.boreas.Database.Messages.ChatMessage;
+import com.sjsu.boreas.MainActivity;
 
 public class CustomNotification {
 
@@ -78,7 +79,10 @@ public class CustomNotification {
 
     public void sendMssgRecvdNotification(ChatMessage message){
         Log.e(TAG, SUB_TAG+"send notification of a mssg being received");
-        NotificationCompat.Builder mBuilder = getAndroidChannelNotification("Text Recieved", message.mssgText);
-        getNotificationManager().notify(101, mBuilder.build());
+        if(!(message.senderId.equals(MainActivity.currentUser.getUid()))) {
+            Log.e(TAG, SUB_TAG+"The message is a received mssg");
+            NotificationCompat.Builder mBuilder = getAndroidChannelNotification("Text Recieved", message.mssgText);
+            getNotificationManager().notify(101, mBuilder.build());
+        }
     }
 }
