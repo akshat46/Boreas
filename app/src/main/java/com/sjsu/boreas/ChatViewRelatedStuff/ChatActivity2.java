@@ -1,5 +1,7 @@
 package com.sjsu.boreas.ChatViewRelatedStuff;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -18,7 +20,14 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.sjsu.boreas.ChatViewRelatedStuff.MessageListViewStuff.OneOnOneMessageAdapter;
+import com.sjsu.boreas.ChatViewRelatedStuff.MessageListViewStuff.OneOnOneMessageViewHolder;
+import com.sjsu.boreas.Database.Messages.MessageUtility;
+import com.sjsu.boreas.Events.Event;
+import com.sjsu.boreas.Events.EventListener;
 import com.sjsu.boreas.Events.messageListener;
 import com.sjsu.boreas.Database.LocalDatabaseReference;
 import com.sjsu.boreas.HelperStuff.ContextHelper;
@@ -35,17 +44,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ChatActivity2 extends AppCompatActivity implements messageListener {
+public class ChatActivity2 extends AppCompatActivity implements EventListener {
 
-    private ListView listView;
+    private RecyclerView recyclerView;
     private View btnSend;
     private EditText mssgText;
     private TextView userName;
-    boolean myMessage = true;
-    private List<ChatBubble> chatBubbles;
-    private ArrayAdapter<ChatBubble> adapter;
+    private ArrayList<ChatMessage> chatMessages;
+    private OneOnOneMessageAdapter adapter;
+    private RecyclerView.LayoutManager layoutManager;
     private User myChatPartner;
-    private List<ChatMessage> mssgList;
+    private Context mContext;
+    private ChatActivity2 mActivity;
 
     public LocalDatabaseReference localDatabaseReference = LocalDatabaseReference.get();
 
@@ -57,6 +67,12 @@ public class ChatActivity2 extends AppCompatActivity implements messageListener 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat2);
 
+        Event event = Event.get(Event.chatMssgEventID);
+        event.addListener(this);
+
+        mContext = this;
+        mActivity = this;
+
         Log.e(TAG, SUB_TAG+"We in hea on create");
         //Getting the user object from intent
         Intent intent = getIntent();
@@ -67,7 +83,7 @@ public class ChatActivity2 extends AppCompatActivity implements messageListener 
 
         Log.e(TAG, SUB_TAG+"-=-=-=-=-==-///////// "+myChatPartner+", and me: "+MainActivity.currentUser.getName());
 
-        initializeChatScreen();
+        initUI();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
             Window window = getWindow();
@@ -76,18 +92,6 @@ public class ChatActivity2 extends AppCompatActivity implements messageListener 
             getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
             window.setStatusBarColor(ContextCompat.getColor(ContextHelper.get().getApplicationContext(),R.color.backgroundAlt));
         }
-
-
-        listView = findViewById(R.id.list_msg);
-        btnSend = findViewById(R.id.btn_chat_send);
-        mssgText = findViewById(R.id.msg_type);
-
-        //set ListView adapter first
-        adapter = new MessageAdapter(this, R.layout.chat_bubble_left, chatBubbles);
-        listView.setAdapter(adapter);
-
-        //Add this instance of chatactivity2 as a listener to the ChatMessage data class
-        ChatMessage.addMessageListener(this);
 
         mssgText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -125,19 +129,27 @@ public class ChatActivity2 extends AppCompatActivity implements messageListener 
         });
     }
 
-    private void initializeChatScreen(){
-        Log.e(TAG, SUB_TAG+"initialize Chat Screen");
-        chatBubbles = new ArrayList<>();
+    private void initUI(){
+        Log.e(TAG, SUB_TAG+"Initializig the ui");
+        recyclerView = findViewById(R.id.list_msg);
+        btnSend = findViewById(R.id.btn_chat_send);
+        mssgText = findViewById(R.id.msg_type);
+
+        initializeAdapter();
+    }
+
+    private void initializeAdapter(){
+        Log.e(TAG, SUB_TAG+"initializing adapter");
+        chatMessages = new ArrayList<ChatMessage>();
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
-                mssgList = localDatabaseReference.getLastTwentyMessagesForSpecificUser(myChatPartner);
-                if(!(mssgList.isEmpty())){
-                    for(int i = 0; i < mssgList.size(); i++){
-                        chatBubbles.add(new ChatBubble(mssgList.get(i).mssgText, mssgList.get(i).isMyMssg));
-                        adapter.notifyDataSetChanged();
-                    }
-                }
+                chatMessages = new ArrayList<ChatMessage>(localDatabaseReference.getLastTwentyMessagesForSpecificUser(myChatPartner));
+                //set ListView adapter first
+                adapter = new OneOnOneMessageAdapter(chatMessages);
+                recyclerView.setAdapter(adapter);
+                layoutManager = new LinearLayoutManager(mActivity);
+                recyclerView.setLayoutManager(layoutManager);
             }
         });
     }
@@ -148,6 +160,9 @@ public class ChatActivity2 extends AppCompatActivity implements messageListener 
         long time  = Calendar.getInstance().getTimeInMillis();
         ChatMessage chatMessage = null;
 
+        //TODO: this if was used for debugging and testing different types of mssges being sent,
+        //  during the times we were testing with radio stuff, gotta decide on whether to keep this or remove it
+        //  (most likely remove it)
         if(!(mssg.equals("4"))) {
             chatMessage = new ChatMessage(MainActivity.currentUser.getUid() + String.valueOf(time), mssg,
                     myChatPartner.getUid(), myChatPartner.getName(),
@@ -156,16 +171,11 @@ public class ChatActivity2 extends AppCompatActivity implements messageListener 
                     time, true, ChatMessage.ChatTypes.ONEONONEONLINECHAT.getValue());
         }
 
-        ChatBubble ChatBubble = new ChatBubble(mssgText.getText().toString(), myMessage);
-
         pushMessageToFirebase(chatMessage);
         saveMessageLocally(chatMessage);
 
+        //TODO: gotta add a way to send stuff thru the radio
 //        sendMessageThruRadio(chatMessage);
-
-        chatBubbles.add(ChatBubble);
-        adapter.notifyDataSetChanged();
-        mssgText.setText("");
     }
 
     private void pushMessageToFirebase(ChatMessage chatMessage){  
@@ -203,6 +213,18 @@ public class ChatActivity2 extends AppCompatActivity implements messageListener 
             @Override
             public void run() {
                 localDatabaseReference.saveChatMessageLocally(chatMessage);
+            }
+        });
+    }
+
+    private void addMessageOnScreen(final ChatMessage mssg){
+        Log.e(TAG, SUB_TAG+"Adding the mssg on screen: " + mssg);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                chatMessages.add(mssg);
+                adapter.notifyDataSetChanged();
+                mssgText.setText("");
             }
         });
     }
@@ -254,21 +276,12 @@ public class ChatActivity2 extends AppCompatActivity implements messageListener 
     }
 
     @Override
-    public void newMessageReceived(ChatMessage mssg) {
-        Log.e(TAG, SUB_TAG+"new message is received");
-        chatBubbles.add(new ChatBubble(mssg.mssgText, mssg.isMyMssg));
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                adapter.notifyDataSetChanged();
-            }
-        });
+    public void eventTriggered(HashMap<String, Object> packet, String type) {
+        Log.e(TAG, SUB_TAG+"Event is triggered, with type: " + type);
+        if(type.equals(Event.chatMssgEventID)) {
+            Log.e(TAG, SUB_TAG+"this is a chat message event");
+            ChatMessage mssg = MessageUtility.convertHashMapToChatMessage(packet);
+            addMessageOnScreen(mssg);
+        }
     }
-
-    @Override
-    public String getChatPartnerID() {
-        Log.e(TAG, SUB_TAG+"get chat partner id");
-        return myChatPartner.uid;
-    }
-
 }

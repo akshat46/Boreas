@@ -12,7 +12,7 @@ public interface ChatMessageDao {
     @Query("SELECT * FROM chatMessage " +
             "WHERE receiverId is :chatPartnerID OR senderId is :chatPartnerID AND mssgType is :mssgType " +
             "ORDER BY time " +
-            "ASC LIMIT 20")
+            "DESC LIMIT 20")
     List<ChatMessage> getLastTwentyMessagesForUser(String chatPartnerID, int mssgType);
 
     @Query("SELECT * FROM chatMessage " +
