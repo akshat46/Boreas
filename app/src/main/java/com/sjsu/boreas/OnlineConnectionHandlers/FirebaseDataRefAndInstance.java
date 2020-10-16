@@ -129,8 +129,13 @@ public class FirebaseDataRefAndInstance { //This is class should be used to acce
     }
 
     //If the user is found and the password matches then return true otherwise false
-    public static LoggedInUser checkLogInInfo(final String userID, final String password){
+    public static LoggedInUser checkLogInInfo(final String userID, final String password, Context context){
         Log.e(TAG, SUB_TAG+"Checking the provided user ID and password on Firebase");
+
+        if(!networkIsAvailable()){
+            showNetworkErrorMessage(context);
+            return null;
+        }
 
         database_ref.child("users").orderByChild("uid").equalTo(userID).addValueEventListener(new ValueEventListener() {
             @Override

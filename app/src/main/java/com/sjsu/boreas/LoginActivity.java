@@ -100,7 +100,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void checkFirebase(String userID, String password){
         Log.e(TAG, SUB_TAG+"Checking firebase");
-        loggedInUser = FirebaseDataRefAndInstance.checkLogInInfo(userID, password);
+        loggedInUser = FirebaseDataRefAndInstance.checkLogInInfo(userID, password, this);
         if(loggedInUser != null) {
             //TODO: gotta replace the currently registered user with this new user from Firebase
             saveLoggedInUserLocally();
@@ -121,7 +121,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void failed(){
-        Log.e(TAG, SUB_TAG+"Login with the given credentials failed.");
+        Log.e(TAG, SUB_TAG+"Login failed, please review ur credentials, or try again later.");
     }
 
 }
