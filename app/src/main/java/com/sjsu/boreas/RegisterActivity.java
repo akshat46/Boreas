@@ -262,18 +262,18 @@ public class RegisterActivity extends Activity implements LocationListener {
         //Check if all fields are filled
         if(fullNameEditor.getText().toString().equals("") || passwordStr.equals("") || confirmPasswordStr.equals("")){
             Log.e(TAG, SUB_TAG+"One of the fields isn't filled");
-            Toast.makeText(getApplicationContext(), R.string.reg_error_unfilled, Toast.LENGTH_LONG);
+            Toast.makeText(this, R.string.reg_error_unfilled, Toast.LENGTH_LONG);
             return;
         }
 
         if(!passwordStr.equals(confirmPasswordStr)){
             Log.e(TAG, SUB_TAG+"The 2 provided passwords don't match.");
-            Toast.makeText(getApplicationContext(), R.string.reg_error_passwords_dont_match, Toast.LENGTH_LONG);
+            Toast.makeText(this, R.string.reg_error_passwords_dont_match, Toast.LENGTH_LONG);
             return;
         }
 
         if(location==null){
-            Toast.makeText(getApplicationContext(), "Could not get your location. Please try again in a while.", Toast.LENGTH_LONG);
+            Toast.makeText(this, "Could not get your location. Please try again in a while.", Toast.LENGTH_LONG);
             Log.e(TAG, SUB_TAG+"Something not right with the info provided: " + fullNameEditor.getText() + ", " + "location: " + location);
             return;
         }
@@ -286,12 +286,12 @@ public class RegisterActivity extends Activity implements LocationListener {
 
         if(hashedPassword == null){
             Log.e(TAG, SUB_TAG+"Something went wrong with the hash yo");
-            Toast.makeText(getApplicationContext(),"Something went wrong with the password provided yo", Toast.LENGTH_LONG);
+            Toast.makeText(this,"Something went wrong with the password provided yo", Toast.LENGTH_LONG);
         }
 
         final LoggedInUser myUser = new LoggedInUser(uniqueId, name, location.getLatitude(), location.getLongitude(), hashedPassword);
         localDatabaseReference.registerUser(myUser);
-        pushNewUserToFIrebase(myUser);
+        FirebaseDataRefAndInstance.pushNewUserToFIrebase(myUser, this);
 
         Log.e(TAG, SUB_TAG+"User: " + myUser);
         System.out.println(myUser);
@@ -300,26 +300,6 @@ public class RegisterActivity extends Activity implements LocationListener {
         MainActivity.context.onActivityResult(0, MainActivity.REGISTER_ACTIVITY_DONE_CODE, null);
     }
 
-    public void pushNewUserToFIrebase(User myUser){
-        Log.e(TAG, SUB_TAG+"Push new user to firebase");
-        boolean connected = false;
-
-        if(networkIsAvailable()) {
-            Log.e(TAG, SUB_TAG+"Network is available: so pushing to firebase");
-            FirebaseDataRefAndInstance.RegisterUserOnFirebase(myUser);
-        }
-        else{
-            Log.e(TAG, SUB_TAG+"NEtwork isn't available");
-        }
-    }
-
-    public boolean networkIsAvailable(){
-        Log.e(TAG, SUB_TAG+"inside function networkIsAvailable");
-        ConnectivityManager connectivityManager
-                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
-    }
 
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
