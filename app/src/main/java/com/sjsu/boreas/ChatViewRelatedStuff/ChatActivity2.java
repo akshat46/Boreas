@@ -150,6 +150,7 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener {
                 recyclerView.setAdapter(adapter);
                 layoutManager = new LinearLayoutManager(mActivity);
                 recyclerView.setLayoutManager(layoutManager);
+                recyclerView.scrollToPosition(adapter.getItemCount() - 1);
             }
         });
     }
@@ -224,7 +225,9 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener {
             public void run() {
                 chatMessages.add(mssg);
                 adapter.notifyDataSetChanged();
-                mssgText.setText("");
+                recyclerView.scrollToPosition(adapter.getItemCount() - 1);
+                if(!(mssg.senderId.equals(MainActivity.currentUser.getUid())))
+                    mssgText.setText("");
             }
         });
     }
