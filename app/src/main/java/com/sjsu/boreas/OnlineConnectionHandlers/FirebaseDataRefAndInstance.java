@@ -1,6 +1,10 @@
 package com.sjsu.boreas.OnlineConnectionHandlers;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
@@ -13,8 +17,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
+import com.sjsu.boreas.ChatViewRelatedStuff.ChatActivity2;
 import com.sjsu.boreas.Database.Contacts.User;
 import com.sjsu.boreas.Database.LoggedInUser.LoggedInUser;
+import com.sjsu.boreas.HelperStuff.ContextHelper;
 import com.sjsu.boreas.MainActivity;
 
 import java.util.ArrayList;
@@ -26,9 +32,10 @@ public class FirebaseDataRefAndInstance { //This is class should be used to acce
     //make hecka instances firebase objects everywhere for singular tasks )
 
     private static String TAG = "BOREAS";
-    private static String SUB_TAG = "-----FirebasedataRefAndInstance";
+    private static String SUB_TAG = "-----FirebasedataRefAndInstance--- ";
 
     private static DatabaseReference database_ref = FirebaseDatabase.getInstance().getReference();
+    private static ContextHelper contextHelper = ContextHelper.get();
     private static LoggedInUser loggedInUser = null;
 
     public static DatabaseReference getDatabaseReference(){
@@ -36,7 +43,7 @@ public class FirebaseDataRefAndInstance { //This is class should be used to acce
         return database_ref;
     }
 
-    public static void RegisterUserOnFirebase(User user){
+    private static void RegisterUserOnFirebase(User user){
         Log.e(TAG, SUB_TAG+"RegisterUserOnFirebase");
 
         Map<String, Object> new_user = user.toMap();
@@ -78,6 +85,33 @@ public class FirebaseDataRefAndInstance { //This is class should be used to acce
                         database_ref.updateChildren(firebase_child_update);
                     }
                 });
+    }
+
+    public static void pushNewUserToFIrebase(User myUser, Context context){
+        Log.e(TAG, SUB_TAG+"Push new user to firebase");
+        boolean connected = false;
+
+        if(networkIsAvailable()) {
+            Log.e(TAG, SUB_TAG+"Network is available: so pushing to firebase");
+            FirebaseDataRefAndInstance.RegisterUserOnFirebase(myUser);
+        }
+        else{
+            Log.e(TAG, SUB_TAG+"NEtwork isn't available");
+            showNetworkErrorMessage(context);
+        }
+    }
+
+    private static boolean networkIsAvailable(){
+        Log.e(TAG, SUB_TAG+"inside function networkIsAvailable");
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) contextHelper.getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+    private static void showNetworkErrorMessage(Context context){
+        Log.e(TAG, SUB_TAG+"show network error message");
+        Toast.makeText(context, "Network not available, can't access online DB.", Toast.LENGTH_SHORT).show();
     }
 
     public static void addContact(User user){
