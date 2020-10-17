@@ -9,10 +9,10 @@ import java.util.List;
 @Dao
 public interface ChatMessageDao {
 
-    @Query("SELECT * FROM chatMessage " +
+    @Query("SELECT * FROM (SELECT * FROM chatMessage " +
             "WHERE receiverId is :chatPartnerID OR senderId is :chatPartnerID AND mssgType is :mssgType " +
             "ORDER BY time " +
-            "ASC LIMIT 20")
+            "DESC LIMIT 20) ORDER BY time ASC")
     List<ChatMessage> getLastTwentyMessagesForUser(String chatPartnerID, int mssgType);
 
     @Query("SELECT * FROM chatMessage " +

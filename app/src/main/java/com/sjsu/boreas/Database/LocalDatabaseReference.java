@@ -130,7 +130,7 @@ public class LocalDatabaseReference implements EventEmitter{
         return loggedInUsers;
     }
 
-    public void logUserIn(String userID, String password){
+    public LoggedInUser logUserIn(String userID, String password){
         Log.e(TAG, SUB_TAG+"Login");
         LoggedInUser user = null;
 
@@ -140,7 +140,9 @@ public class LocalDatabaseReference implements EventEmitter{
             user.logUserIn();
             Log.e(TAG, SUB_TAG+"--------------"+user);
             database.loggedInUserDao().logUserIn(user);
+            return user;
         }
+        return null;
     }
 
     public void logUserOut(LoggedInUser user){
