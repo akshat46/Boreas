@@ -19,6 +19,7 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 import com.sjsu.boreas.ChatViewRelatedStuff.ChatActivity2;
 import com.sjsu.boreas.Database.Contacts.User;
+import com.sjsu.boreas.Database.LocalDatabaseReference;
 import com.sjsu.boreas.Database.LoggedInUser.LoggedInUser;
 import com.sjsu.boreas.HelperStuff.ContextHelper;
 import com.sjsu.boreas.MainActivity;
@@ -37,6 +38,7 @@ public class FirebaseDataRefAndInstance { //This is class should be used to acce
     private static DatabaseReference database_ref = FirebaseDatabase.getInstance().getReference();
     private static ContextHelper contextHelper = ContextHelper.get();
     private static LoggedInUser loggedInUser = null;
+    private static LocalDatabaseReference localDatabaseReference = LocalDatabaseReference.get();
 
     public static DatabaseReference getDatabaseReference(){
         Log.e(TAG, SUB_TAG+"get data ref");
@@ -129,7 +131,7 @@ public class FirebaseDataRefAndInstance { //This is class should be used to acce
     }
 
     //If the user is found and the password matches then return true otherwise false
-    public static LoggedInUser checkLogInInfo(final String userID, final String password, Context context){
+    public static LoggedInUser checkLogInInfo(final String userID, final String password, final Context context){
         Log.e(TAG, SUB_TAG+"Checking the provided user ID and password on Firebase");
 
         if(!networkIsAvailable()){
@@ -157,6 +159,7 @@ public class FirebaseDataRefAndInstance { //This is class should be used to acce
                         if(user.getPassword().equals(password)){
                             Log.e(TAG, SUB_TAG+"The login info was correct");
                             loggedInUser = user;
+                            synchContactsForUser(loggedInUser, context);
                         }
                     }
                 }
@@ -169,5 +172,37 @@ public class FirebaseDataRefAndInstance { //This is class should be used to acce
         });
 
         return loggedInUser;
+    }
+
+    private static void synchContactsForUser(LoggedInUser user, Context context){
+        Log.e(TAG, SUB_TAG+"Synch the contacts for the provided user");
+
+        if(!networkIsAvailable()){
+            showNetworkErrorMessage(context);
+            return;
+        }
+
+        database_ref.child("contacts").child(user.uid).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Log.e(TAG, SUB_TAG + "On data Change listener");
+                ArrayList<User> contacts = new ArrayList<>();
+                if (dataSnapshot.exists()) {
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        User contact = new User(snapshot.child("uid").getValue().toString(),
+                                snapshot.child("name").getValue().toString(),
+                                Double.parseDouble(snapshot.child("latitude").getValue().toString()),
+                                Double.parseDouble(snapshot.child("longitude").getValue().toString()));
+                        Log.e(TAG, SUB_TAG+"\n\t"+contact.name);
+                        localDatabaseReference.addContact(contact);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 }
