@@ -16,6 +16,7 @@ import com.sjsu.boreas.Events.EventEmitter;
 import com.sjsu.boreas.Messages.LongDistanceMessage;
 import com.sjsu.boreas.Notifications.CustomNotification;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -163,7 +164,7 @@ public class LocalDatabaseReference implements EventEmitter{
             public void run() {
                 if (!isUserAlreadyInContacts(user)) {
                     Log.e(TAG, SUB_TAG + "User doesn't already exist in the contacts and is being added now");
-                    database.userDao().insertAll(user);
+                    database.userDao().insertNewUser(user);
                     HashMap<String, Object> contact_map = (HashMap<String, Object>) user.toMap();
                     event_user.trigger(contact_map);
                 }
