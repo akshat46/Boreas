@@ -84,7 +84,7 @@ public class LoginActivity extends AppCompatActivity {
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
-                localDatabaseReference.logUserIn(userID, password);
+                loggedInUser = localDatabaseReference.logUserIn(userID, password);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -103,20 +103,20 @@ public class LoginActivity extends AppCompatActivity {
         loggedInUser = FirebaseDataRefAndInstance.checkLogInInfo(userID, password, this);
         if(loggedInUser != null) {
             //TODO: gotta replace the currently registered user with this new user from Firebase
-            saveLoggedInUserLocally();
+            localDatabaseReference.wipeAllPreviousUserData();
+            saveNewLoggedInUserLocally();
             success();
         }
         failed();
     }
 
-    private void saveLoggedInUserLocally(){
+    private void saveNewLoggedInUserLocally(){
         Log.e(TAG, SUB_TAG+"Save the user gotten from firebase locally as well");
         localDatabaseReference.registerUser(loggedInUser);
     }
 
     private void success(){
         Log.e(TAG, SUB_TAG+"success");
-        localDatabaseReference.wipeAllPreviousUserData();
         MainActivity.context.checkRegistration();
     }
 
