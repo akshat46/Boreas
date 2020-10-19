@@ -1,6 +1,5 @@
 package com.sjsu.boreas.ChatViewRelatedStuff;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -12,9 +11,9 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
-import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,26 +21,25 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.appcompat.widget.Toolbar;
 
 import com.sjsu.boreas.ChatViewRelatedStuff.MessageListViewStuff.OneOnOneMessageAdapter;
-import com.sjsu.boreas.ChatViewRelatedStuff.MessageListViewStuff.OneOnOneMessageViewHolder;
+import com.sjsu.boreas.Database.Contacts.User;
+import com.sjsu.boreas.Database.LocalDatabaseReference;
+import com.sjsu.boreas.Database.Messages.ChatMessage;
 import com.sjsu.boreas.Database.Messages.MessageUtility;
+import com.sjsu.boreas.Database.PotentialContacts.PotentialContacts;
 import com.sjsu.boreas.Events.Event;
 import com.sjsu.boreas.Events.EventListener;
-import com.sjsu.boreas.Events.messageListener;
-import com.sjsu.boreas.Database.LocalDatabaseReference;
 import com.sjsu.boreas.HelperStuff.ContextHelper;
-import com.sjsu.boreas.OnlineConnectionHandlers.FirebaseDataRefAndInstance;
 import com.sjsu.boreas.MainActivity;
+import com.sjsu.boreas.OnlineConnectionHandlers.FirebaseDataRefAndInstance;
 import com.sjsu.boreas.PhoneBluetoothRadio.BlueTerm;
 import com.sjsu.boreas.R;
-import com.sjsu.boreas.Database.Messages.ChatMessage;
-import com.sjsu.boreas.Database.Contacts.User;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class ChatActivity2 extends AppCompatActivity implements EventListener {
@@ -56,6 +54,9 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener {
     private User myChatPartner;
     private Context mContext;
     private ChatActivity2 mActivity;
+    private Toolbar toolbar;
+    private Button dynamicButton;
+    private Button dynamicButton2;
 
     public LocalDatabaseReference localDatabaseReference = LocalDatabaseReference.get();
 
@@ -134,8 +135,59 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener {
         recyclerView = findViewById(R.id.list_msg);
         btnSend = findViewById(R.id.btn_chat_send);
         mssgText = findViewById(R.id.msg_type);
+        toolbar = findViewById(R.id.home_toolbar);
+        dynamicButton = findViewById(R.id.dynamic_button);
+        dynamicButton2 = findViewById(R.id.dynamic_button2);
+
+        //By default the dynamic buttons is disabled
+        dynamicButton.setEnabled(false);
+        dynamicButton.setVisibility(View.INVISIBLE);
+        dynamicButton2.setEnabled(false);
+        dynamicButton2.setVisibility(View.INVISIBLE);
+
+        if(myChatPartner instanceof PotentialContacts){
+            Log.e(TAG, SUB_TAG+"my chatpartner is not my contact, adding the option to ignore or add contact");
+            setUpTheIgnoreButton();
+            setUpTheAddToContactsButton();
+        }
 
         initializeAdapter();
+    }
+
+    private void setUpTheIgnoreButton(){
+        Log.e(TAG, SUB_TAG+"Setting up the ignore button");
+        dynamicButton.setText("-");
+        dynamicButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.e(TAG, SUB_TAG+"Ignoring this user burr");
+                //TODO: gotta remove this user and then go to the previous screen
+                // and also update the oneOnOne Fragment
+                //localDatabaseReference.removePotentialUser(myChatPartner);
+            }
+        });
+        dynamicButton.setTextSize(12);
+        dynamicButton.setEnabled(true);
+        dynamicButton.setWidth(10);
+        dynamicButton.setVisibility(View.VISIBLE);
+    }
+
+    private void setUpTheAddToContactsButton(){
+        Log.e(TAG, SUB_TAG+"Setting up the adding to contact button");
+        dynamicButton2.setText("+");
+        dynamicButton2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.e(TAG, SUB_TAG+"Add to contact burr");
+                //TODO: gotta remove this user and then go to the previous screen
+                // and also update the oneOnOne Fragment
+                //localDatabaseReference.addContact(myChatPartner);
+            }
+        });
+        dynamicButton2.setTextSize(12);
+        dynamicButton2.setEnabled(true);
+        dynamicButton2.setWidth(10);
+        dynamicButton2.setVisibility(View.VISIBLE);
     }
 
     private void initializeAdapter(){
