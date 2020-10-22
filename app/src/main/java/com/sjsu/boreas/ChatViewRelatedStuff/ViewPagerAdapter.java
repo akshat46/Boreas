@@ -6,12 +6,12 @@ import androidx.fragment.app.FragmentPagerAdapter;
 
 import java.util.List;
 
-public class ViewPagerTabAdapter extends FragmentPagerAdapter {
+public class ViewPagerAdapter extends FragmentPagerAdapter {
 
     private List<Fragment> mFragments;
     private List<String> mTitles;
 
-    public ViewPagerTabAdapter(FragmentManager fm, List<Fragment> fragments, List<String> titles)
+    public ViewPagerAdapter(FragmentManager fm, List<Fragment> fragments, List<String> titles)
     {
         super(fm);
         mFragments = fragments;

@@ -28,7 +28,7 @@
             android:layout_gravity="center"
             android:textSize="12sp"
             android:layout_marginBottom="-2dp"
-            android:fontFamily="@font/worksans_regular"
+            android:fontFamily="@font/text"
             android:textColor="@color/colorTitle"
             android:text="SIGN UP AND CONTINUE TO" />
 
@@ -53,7 +53,7 @@
                 android:textSize="30sp"
                 android:textColor="@color/colorTitle"
                 android:layout_marginLeft="5dp"
-                android:fontFamily="@font/worksans_extrabold"
+                android:fontFamily="@font/title"
                 android:text="BOREAS" />
         </LinearLayout>
 
@@ -87,7 +87,7 @@
             android:layout_height="40dp"
             android:text="Login*"
             android:textAllCaps="false"
-            android:fontFamily="@font/worksans_medium"
+            android:fontFamily="@font/button"
             android:textColor="@color/background"
             android:background="@drawable/bg_button"
             style="?android:attr/borderlessButtonStyle"
@@ -100,7 +100,7 @@
             android:layout_height="40dp"
             android:text="Signup*"
             android:textAllCaps="false"
-            android:fontFamily="@font/worksans_medium"
+            android:fontFamily="@font/button"
             android:textColor="@color/background"
             android:background="@drawable/bg_button"
             style="?android:attr/borderlessButtonStyle"
@@ -115,7 +115,7 @@
             android:paddingRight="10dp"
             android:gravity="left"
             android:textSize="10dp"
-            android:fontFamily="@font/worksans_light"
+            android:fontFamily="@font/subtext"
             android:text="*Boreas requires location permission to generate your unique ID." />
 
     </LinearLayout>

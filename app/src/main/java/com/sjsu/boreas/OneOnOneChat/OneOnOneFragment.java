@@ -12,11 +12,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.sjsu.boreas.ChatViewRelatedStuff.ChatActivity2;
 import com.sjsu.boreas.Database.LocalDatabaseReference;
 import com.sjsu.boreas.Database.Messages.ChatMessage;
@@ -79,6 +81,7 @@ public class OneOnOneFragment extends Fragment implements EventListener, UserLis
     public void onAttach(Context context) {
         Log.e(TAG, SUB_TAG+"onAttach");
         super.onAttach(context);
+        mContext = context;
     }
 
     @Override
@@ -88,7 +91,7 @@ public class OneOnOneFragment extends Fragment implements EventListener, UserLis
         // Inflate the layout for this fragment
         rootView = inflater.inflate(R.layout.fragment_one_on_one, container, false);
         mTabName = getArguments().getString(EXTRA_TAB_NAME);
-        mContext = container.getContext();
+//        mContext = container.getContext();
 //        try {
 //            mParent.runOnUiThread(new Runnable() {
 //                @Override
@@ -115,6 +118,17 @@ public class OneOnOneFragment extends Fragment implements EventListener, UserLis
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(mParent);
         recyclerView.setLayoutManager(layoutManager);
+        final FloatingActionButton fabAdd = (FloatingActionButton) getActivity().findViewById(R.id.fabAdd);
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (dy > 0)
+                    fabAdd.hide();
+                else if (dy < 0)
+                    fabAdd.show();
+            }
+        });
 
         initializeAdapter();
 

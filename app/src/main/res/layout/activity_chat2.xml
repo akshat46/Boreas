@@ -82,7 +82,7 @@
             android:layout_width="35dp"
             android:layout_height="35dp"
             android:layout_margin="6dp"
-            android:src="@drawable/ic_camera_16"
+            android:src="@drawable/ic_picture_f"
             android:tint="@color/colorText"
             android:background="@drawable/bg_button_media"
             style="?android:attr/borderlessButtonStyle" />
