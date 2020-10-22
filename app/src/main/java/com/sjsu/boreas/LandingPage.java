@@ -2,34 +2,42 @@ package com.sjsu.boreas;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.ImageButton;
+import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.ui.AppBarConfiguration;
-import androidx.viewpager.widget.ViewPager;
+import androidx.viewpager2.adapter.FragmentStateAdapter;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
-import com.google.android.material.tabs.TabLayout;
-import com.sjsu.boreas.LandingPageTabAdapterStuff.ViewPagerTabAdapter;
 import com.sjsu.boreas.Database.LoggedInUser.LoggedInUser;
 import com.sjsu.boreas.GroupChats.OfflineGroupFragment;
+import com.sjsu.boreas.HelperStuff.AppBarButtonsHandler;
+import com.sjsu.boreas.HelperStuff.ContextHelper;
 import com.sjsu.boreas.OneOnOneChat.OneOnOneFragment;
 import com.sjsu.boreas.Database.Contacts.User;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-public class LandingPage extends AppCompatActivity{
+public class LandingPage extends FragmentActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
     private static String TAG = "Boreas";
@@ -37,48 +45,54 @@ public class LandingPage extends AppCompatActivity{
     private NavigationView mNavigationView;
     private FragmentTransaction mFragmentTransaction;
     private LoggedInUser currentUser = null;
+    private AppBarButtonsHandler mbuttonsHandler = new AppBarButtonsHandler(0);
+    private ViewPager2 mViewPager;
+    private TextView fragmentTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.e(TAG, SUB_TAG+"In landing");
+        Log.e(TAG, SUB_TAG + "In landing");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_landing_page);
+        fragmentTitle= findViewById(R.id.fragmentTitle);
 
-		//~ setUpNavigationDrawer();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+            Window window = getWindow();
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+            window.setStatusBarColor(ContextCompat.getColor(ContextHelper.get().getApplicationContext(),R.color.background));
+        }
+
+        //~ setUpNavigationDrawer();
 
         Intent intent = getIntent();
         currentUser = (LoggedInUser) intent.getSerializableExtra("currentUser");
-		
-		init();
-		makeADummyUserForFirebase();
+
+        initViews();
+        makeADummyUserForFirebase();
 
     }
 
-    private void makeADummyUserForFirebase(){
-        Log.e(TAG, SUB_TAG+"makeADummyUserForFirebase");
+    private void makeADummyUserForFirebase() {
+        Log.e(TAG, SUB_TAG + "makeADummyUserForFirebase");
         User u = new User("23", "name of", 123.4, -123.4);
     }
 
-    private void init() {
-		Log.e(TAG, SUB_TAG+"Init");
-        initViews();
-    }
-
     private void initViews() {
-		Log.e(TAG, SUB_TAG+"InitViews");
+        Log.e(TAG, SUB_TAG + "InitViews");
         initToolbar();
-        initAddContactFloatingButton();
         initSettingsFloatingButtons();
         initViewPager();
-        initTabLayout();
-        if(MainActivity.newAcct)
+        initAppBar();
+        if (MainActivity.newAcct)
             showTokenDialogBox();
     }
 
-    private void showTokenDialogBox(){
-        Log.e(TAG, SUB_TAG+"Showing the token dialog box");
+    private void showTokenDialogBox() {
+        Log.e(TAG, SUB_TAG + "Showing the token dialog box");
         MainActivity.newAcct = false;
-        Log.e(TAG, SUB_TAG+"new acct got created");
+        Log.e(TAG, SUB_TAG + "new acct got created");
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
         dialog.setMessage("Your USER Id token is: " + currentUser.getUid() +
                 "\nPlease save this in a secure location, you need this to access your account in-case you get logged out.");
@@ -87,7 +101,7 @@ public class LandingPage extends AppCompatActivity{
         dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Log.e(TAG, SUB_TAG+"Clicked the ok button in dialog box");
+                Log.e(TAG, SUB_TAG + "Clicked the ok button in dialog box");
                 dialog.dismiss();
             }
         });
@@ -96,31 +110,18 @@ public class LandingPage extends AppCompatActivity{
     }
 
     private void initToolbar() {
-		Log.e(TAG, SUB_TAG+"InitToolbar");
+        Log.e(TAG, SUB_TAG + "InitToolbar");
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+//        setSupportActionBar(toolbar);
     }
 
-    private void initAddContactFloatingButton() {
-		Log.e(TAG, SUB_TAG+"InitNewMessageFloatingButton");
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.e(TAG, SUB_TAG+"onClick of initNewMessageFloatingButton");
-                Intent intent = new Intent(view.getContext(), AddContactActivity.class);
-                startActivity(intent);
-            }
-        });
-    }
-
-    private void initSettingsFloatingButtons(){
-        Log.e(TAG, SUB_TAG+"Initializing settings floating button");
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.settings_button);
+    private void initSettingsFloatingButtons() {
+        Log.e(TAG, SUB_TAG + "Initializing settings floating button");
+        ImageButton fab = (ImageButton) findViewById(R.id.settings_button);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.e(TAG, SUB_TAG+"On click settings button");
+                Log.e(TAG, SUB_TAG + "On click settings button");
                 Intent intent = new Intent(v.getContext(), SettingsActivity.class);
                 intent.putExtra("currentUser", currentUser);
                 startActivity(intent);
@@ -128,26 +129,49 @@ public class LandingPage extends AppCompatActivity{
         });
     }
 
-    private ViewPager mViewPager;
-
     private void initViewPager() {
-        mViewPager = (ViewPager) findViewById(R.id.viewpager);
-        List<String> tabNames = new ArrayList<String>();
-        tabNames.add("Friends");
-        tabNames.add("Local");
-        tabNames.add("Global");
-        ViewPagerTabAdapter viewPagerTabAdapter = new ViewPagerTabAdapter(getSupportFragmentManager(), getFragments(), tabNames);
-        mViewPager.setOffscreenPageLimit(2);
-        mViewPager.setAdapter(viewPagerTabAdapter);
+        mViewPager = findViewById(R.id.viewpager);
+        mViewPager.setUserInputEnabled(false);
+        CustomFragmentStateAdapter mAdapter = new CustomFragmentStateAdapter(this);
+        mViewPager.setAdapter(mAdapter);
     }
 
-    private void initTabLayout() {
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
-        tabLayout.setupWithViewPager(mViewPager);
-        tabLayout.setSelectedTabIndicatorColor(Color.parseColor("#FFFFFF"));
-        tabLayout.getTabAt(0).setIcon(R.drawable.ic_contacts_white_24dp);
-        tabLayout.getTabAt(1).setIcon(R.drawable.ic_location_city_white_24dp);
-        tabLayout.getTabAt(2).setIcon(R.drawable.ic_cloud_white_24dp);
+    private void initAppBar() {
+        Log.e(TAG, SUB_TAG + " Initializing bottom app bar.");
+
+        ArrayList<String> imageButtonIDs = new ArrayList<String>(
+                Arrays.asList("bottombar_contacts", "bottombar_groups"));
+        ImageButton b;
+        final String[] fragmentTitles = new String[]{"CHATS", "GROUPS"};
+
+        Log.e(TAG, SUB_TAG + " Initializing bottom app bar: Buttons");
+        for (int i = 0; i < imageButtonIDs.size(); i++) {
+            b = findViewById(getResources().getIdentifier(imageButtonIDs.get(i), "id", "com.sjsu.boreas"));
+            mbuttonsHandler.addButton(b);
+            if (i == 0) b.setSelected(true);
+            else b.setSelected(false);
+            final int temp = i;
+            b.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mViewPager.setCurrentItem(temp);
+                    fragmentTitle.setText(fragmentTitles[temp]);
+                    mbuttonsHandler.setState(temp);
+                }
+            });
+        }
+
+        Log.e(TAG, SUB_TAG + " Initializing bottom app bar: FAB");
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fabAdd);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.e(TAG, SUB_TAG + "onClick of initNewMessageFloatingButton");
+                Intent intent = new Intent(view.getContext(), AddContactActivity.class);
+                startActivity(intent);
+            }
+        });
+
     }
 
     @Override
@@ -174,68 +198,35 @@ public class LandingPage extends AppCompatActivity{
         return super.onOptionsItemSelected(item);
     }
 
-
-    private List<Fragment> mFragments;
-
-    private List<Fragment> getFragments() {
-
+    private static List<Fragment> getFragments() {
+        List<Fragment> mFragments;
         mFragments = new ArrayList<Fragment>();
         mFragments.add(OneOnOneFragment.newInstance(""));
         mFragments.add(OfflineGroupFragment.newInstance(""));
-        mFragments.add(OneOnOneFragment.newInstance(""));
-
         return mFragments;
     }
-    
-//    private void setUpNavigationDrawer(){
-//		final DrawerLayout drawer = findViewById(R.id.drawer_layout);
-//        NavigationView navigationView = findViewById(R.id.navigation);
-//
-//
-//        mFragmentTransaction = getSupportFragmentManager().beginTransaction();
-//
-//        //Set the default fragment (i think)
-//        mFragmentTransaction.add(R.id.main_container, new OneOnOneFragment());
-//        mFragmentTransaction.commit();
-//
-//        mNavigationView = findViewById(R.id.navigation);
-//        mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-//            @Override
-//            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-//                switch (item.getItemId()){
-//
-//                    case R.id.help:
-//                        Log.e(TAG, SUB_TAG+"Starting help");
-//                        break;
-//                    case R.id.offline_group_chat:
-//                        Log.e(TAG, SUB_TAG+"Starting offline group chat fragment activity.");
-//                        mFragmentTransaction = getSupportFragmentManager().beginTransaction();
-//                        mFragmentTransaction.replace(R.id.main_container, new OfflineGroupFragment());
-//                        mFragmentTransaction.commit();
-//                        item.setChecked(true);
-//                        drawer.closeDrawers();
-//                        break;
-//                    case R.id.online_group_chat:
-//                        Log.e(TAG, SUB_TAG+"Starting online group chat fragment activity.");
-//                        mFragmentTransaction = getSupportFragmentManager().beginTransaction();
-//                        mFragmentTransaction.replace(R.id.main_container, new OnlineGroupFragment());
-//                        mFragmentTransaction.commit();
-//                        item.setChecked(true);
-//                        drawer.closeDrawers();
-//                        break;
-//                    case R.id.single_mssg_chat:
-//                        Log.e(TAG, SUB_TAG+"Starting one on one chat fragment activity.");
-//                        mFragmentTransaction = getSupportFragmentManager().beginTransaction();
-//                        mFragmentTransaction.replace(R.id.main_container, new OneOnOneFragment());
-//                        mFragmentTransaction.commit();
-//                        item.setChecked(true);
-//                        drawer.closeDrawers();
-//                        break;
-//                }
-//
-//                return false;
-//            }
-//        });
-//	}
+
+    private class CustomFragmentStateAdapter extends FragmentStateAdapter {
+        private List<Fragment> mFragments;
+        private List<String> mTitles;
+        private int COUNT = 2;
+
+        public CustomFragmentStateAdapter(@NonNull FragmentActivity fragmentActivity) {
+            super(fragmentActivity);
+            mFragments = LandingPage.getFragments();
+        }
+
+        @NonNull
+        @Override
+        public Fragment createFragment(int position) {
+            if (position > mFragments.size() || position < 0) return null;
+            return mFragments.get(position);
+        }
+
+        @Override
+        public int getItemCount() {
+            return COUNT;
+        }
+    }
 
 }
