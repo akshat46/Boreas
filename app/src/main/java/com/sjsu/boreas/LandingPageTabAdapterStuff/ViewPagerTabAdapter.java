@@ -1,4 +1,4 @@
-package com.sjsu.boreas.ChatViewRelatedStuff;
+package com.sjsu.boreas.LandingPageTabAdapterStuff;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -6,12 +6,12 @@ import androidx.fragment.app.FragmentPagerAdapter;
 
 import java.util.List;
 
-public class ViewPagerAdapter extends FragmentPagerAdapter {
+public class ViewPagerTabAdapter extends FragmentPagerAdapter {
 
     private List<Fragment> mFragments;
     private List<String> mTitles;
 
-    public ViewPagerAdapter(FragmentManager fm, List<Fragment> fragments, List<String> titles)
+    public ViewPagerTabAdapter(FragmentManager fm, List<Fragment> fragments, List<String> titles)
     {
         super(fm);
         mFragments = fragments;

@@ -14,8 +14,8 @@ import androidx.viewpager.widget.ViewPager;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.material.tabs.TabLayout;
 import com.sjsu.boreas.Database.LocalDatabaseReference;
+import com.sjsu.boreas.LandingPageTabAdapterStuff.ViewPagerTabAdapter;
 import com.sjsu.boreas.UserRecyclerViewStuff.UserListAdapter;
-import com.sjsu.boreas.ChatViewRelatedStuff.ViewPagerAdapter;
 import com.sjsu.boreas.OnlineConnectionHandlers.FirebaseDataRefAndInstance;
 import com.sjsu.boreas.AddContacts.OfflinePeopleContactedListFragment;
 import com.sjsu.boreas.AddContacts.OnlineListOfPeopleFragment;
@@ -67,9 +67,9 @@ public class AddContactActivity extends AppCompatActivity {
         List<String> tabNames = new ArrayList<String>();
         tabNames.add("Online People List");
         tabNames.add("Offline People List");
-        ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(), getFragments(), tabNames);
+        ViewPagerTabAdapter viewPagerTabAdapter = new ViewPagerTabAdapter(getSupportFragmentManager(), getFragments(), tabNames);
         mViewPager.setOffscreenPageLimit(2);
-        mViewPager.setAdapter(viewPagerAdapter);
+        mViewPager.setAdapter(viewPagerTabAdapter);
     }
 
     private void initTabLayout() {

@@ -14,7 +14,7 @@ public class OneOnOneChatViewAdapter extends RecyclerView.Adapter<OneOnOneChatVi
 
 
     private static String TAG = "BOREAS";
-    private static String SUB_TAG = "--------OneonOneChatViewADapter ";
+    private static String SUB_TAG = "--------OneonOneChatViewADapter--- ";
     private User[] userContactList;
 
     // Provide a reference to the views for each data item
