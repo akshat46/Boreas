@@ -3,6 +3,7 @@
     android:layout_height="wrap_content">
 
     <LinearLayout
+        android:id="@+id/chat_bubble_left"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"

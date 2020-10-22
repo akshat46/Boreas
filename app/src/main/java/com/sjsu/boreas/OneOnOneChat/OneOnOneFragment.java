@@ -160,9 +160,9 @@ public class OneOnOneFragment extends Fragment implements EventListener, UserLis
 
         //First check if the user is even in our contacts or not?
         if(i>=0){
-            Log.e(TAG, SUB_TAG+"User found in contacts ");
             contactArrayList.get(i).newMessage = true;
             contactArrayList.get(i).lastMessage = mssg.mssgText;
+            localDatabaseReference.updateContactItem(contactArrayList.get(i));
             mParent.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -179,24 +179,14 @@ public class OneOnOneFragment extends Fragment implements EventListener, UserLis
             contactArrayList.get(position).newMessage = true;
             contactArrayList.get(position).lastMessage = mssg.mssgText;
 
-            newUserUiSetup(position);
+            mParent.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mAdapter.notifyDataSetChanged();
+                }
+            });
             // add new "potential contact" to list
         }
-    }
-
-    private void newUserUiSetup(int position){
-        Log.e(TAG, SUB_TAG+"This is new user, so making the ui a bit different");
-//        View view = layoutManager.findViewByPosition(position);
-//        TextView userNameView = (TextView) view.findViewById(R.id.userName);
-//        userNameView.setTextColor(Color.MAGENTA);
-//        userNameView.setVisibility(View.VISIBLE);
-
-        mParent.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mAdapter.notifyDataSetChanged();
-            }
-        });
     }
 
 //    mParent.runOnUiThread(new Runnable() {
@@ -311,14 +301,16 @@ public class OneOnOneFragment extends Fragment implements EventListener, UserLis
     //The UserListItemClick implemented function
     public void onItemClicked(final User model, final int position) {
         Log.e(TAG, SUB_TAG+"on item clicked");
-        AsyncTask.execute(new Runnable() {
-            @Override
-            public void run() {
-                model.newMessage = false;
-                localDatabaseReference.setNewMessageToFalse(model);
-                messageReadUiUpdate(position);
-            }
-        });
+        if(model.newMessage) {
+            contactArrayList.get(position).newMessage = false;
+            localDatabaseReference.updateContactItem(contactArrayList.get(position));
+            mParent.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mAdapter.notifyItemChanged(position);
+                }
+            });
+        }
 
         Intent intent = new Intent(getActivity(), ChatActivity2.class);
         //Passing the user object using intent
@@ -326,17 +318,4 @@ public class OneOnOneFragment extends Fragment implements EventListener, UserLis
         startActivity(intent);
     }
 
-    private void messageReadUiUpdate(int position){
-        Log.e(TAG, SUB_TAG+"Message is read updating ui");
-        View itemView = layoutManager.findViewByPosition(position);
-
-        View newMessageIndicator = itemView.findViewById(R.id.newMessage);
-        TextView lastMessage = itemView.findViewById(R.id.lastMessage);
-
-        newMessageIndicator.setVisibility(View.INVISIBLE);
-        lastMessage.setTypeface(lastMessage.getTypeface(), Typeface.NORMAL);
-        lastMessage.setTextColor(getResources().getColor(R.color.colorText));
-
-        mAdapter.notifyItemChanged(position);
-    }
 }

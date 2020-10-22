@@ -17,7 +17,7 @@ import com.sjsu.boreas.Database.Contacts.User;
 public class UsersViewHolder extends RecyclerView.ViewHolder {
 
     private static String TAG = "BOREAS";
-    private static String SUB_TAG = "------UsersViewHolder";
+    private static String SUB_TAG = "------UsersViewHolder--- ";
 
     public View rootView;
     public TextView name;

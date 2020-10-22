@@ -31,7 +31,7 @@ public interface UserDao {
     void insertNewUser(User user);
 
     @Update
-    void setNewMessageToFalse(User user);
+    void updateUser(User user);
 
     @Delete
     void delete(User user);

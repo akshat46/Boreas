@@ -2,8 +2,6 @@ package com.sjsu.boreas.Events;
 
 import android.util.Log;
 
-import com.sjsu.boreas.ChatViewRelatedStuff.OneOnOneChatViewAdapter;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
