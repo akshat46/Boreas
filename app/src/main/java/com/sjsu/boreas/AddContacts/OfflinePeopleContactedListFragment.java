@@ -15,12 +15,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.sjsu.boreas.Database.LocalDatabaseReference;
-import com.sjsu.boreas.OnlineConnectionHandlers.FirebaseDataRefAndInstance;
-import com.sjsu.boreas.UserRecyclerViewStuff.UserListAdapter;
-import com.sjsu.boreas.AddContactActivity;
+import com.sjsu.boreas.OnlineConnectionHandlers.FirebaseController;
+import com.sjsu.boreas.ContactRecyclerItems.UserListAdapter;
 import com.sjsu.boreas.R;
 import com.sjsu.boreas.Database.Contacts.User;
-import com.sjsu.boreas.UserRecyclerViewStuff.UserListItemClickAction;
+import com.sjsu.boreas.ContactRecyclerItems.UserListItemClickAction;
 
 import java.util.ArrayList;
 
@@ -156,7 +155,7 @@ public class OfflinePeopleContactedListFragment extends Fragment implements User
     @Override
     public void onItemClicked(User model, int position) {
         Log.e(TAG, SUB_TAG+"on item clicked");
-        FirebaseDataRefAndInstance.addContact(model);
+        FirebaseController.addContact(model);
         LocalDatabaseReference localDatabaseReference = LocalDatabaseReference.get();
         localDatabaseReference.addContact(model);
     }

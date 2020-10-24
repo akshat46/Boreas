@@ -1,4 +1,4 @@
-package com.sjsu.boreas.UserRecyclerViewStuff;
+package com.sjsu.boreas.ContactRecyclerItems;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -10,11 +10,11 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.sjsu.boreas.HelperStuff.ContextHelper;
+import com.sjsu.boreas.Misc.ContextHelper;
 import com.sjsu.boreas.R;
 import com.sjsu.boreas.Database.Contacts.User;
 
-public class UsersViewHolder extends RecyclerView.ViewHolder {
+public class UserViewHolder extends RecyclerView.ViewHolder {
 
     private static String TAG = "BOREAS";
     private static String SUB_TAG = "------UsersViewHolder--- ";
@@ -26,7 +26,7 @@ public class UsersViewHolder extends RecyclerView.ViewHolder {
     private View newMessageIndicator;
     public Context context = ContextHelper.get().getApplicationContext();
 
-    public UsersViewHolder(@NonNull View itemView) {
+    public UserViewHolder(@NonNull View itemView) {
         super(itemView);
         Log.e(TAG, SUB_TAG+"UsersViewHolder");
         this.rootView = itemView;
