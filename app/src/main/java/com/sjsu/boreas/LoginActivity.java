@@ -12,8 +12,8 @@ import android.widget.EditText;
 import com.sjsu.boreas.Database.LocalDatabaseReference;
 import com.sjsu.boreas.Database.Contacts.User;
 import com.sjsu.boreas.Database.LoggedInUser.LoggedInUser;
-import com.sjsu.boreas.OnlineConnectionHandlers.FirebaseDataRefAndInstance;
-import com.sjsu.boreas.SecurityRelatedStuff.SecurityStuff;
+import com.sjsu.boreas.OnlineConnectionHandlers.FirebaseController;
+import com.sjsu.boreas.Security.PasswordManager;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -72,7 +72,7 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
-        String hashedPassword = SecurityStuff.hashThePassword(passwordStr);
+        String hashedPassword = PasswordManager.hashThePassword(passwordStr);
 
         checkLocalDatabase(userIDStr, hashedPassword);
     }
@@ -100,7 +100,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void checkFirebase(String userID, String password){
         Log.e(TAG, SUB_TAG+"Checking firebase");
-        loggedInUser = FirebaseDataRefAndInstance.checkLogInInfo(userID, password, this);
+        loggedInUser = FirebaseController.checkLogInInfo(userID, password, this);
         if(loggedInUser != null) {
             //TODO: gotta replace the currently registered user with this new user from Firebase
             localDatabaseReference.wipeAllPreviousUserData();

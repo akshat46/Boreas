@@ -1,4 +1,4 @@
-package com.sjsu.boreas.LandingPageTabAdapterStuff;
+package com.sjsu.boreas.Misc;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -6,12 +6,12 @@ import androidx.fragment.app.FragmentPagerAdapter;
 
 import java.util.List;
 
-public class ViewPagerTabAdapter extends FragmentPagerAdapter {
+public class FragmentTabAdapter extends FragmentPagerAdapter {
 
     private List<Fragment> mFragments;
     private List<String> mTitles;
 
-    public ViewPagerTabAdapter(FragmentManager fm, List<Fragment> fragments, List<String> titles)
+    public FragmentTabAdapter(FragmentManager fm, List<Fragment> fragments, List<String> titles)
     {
         super(fm);
         mFragments = fragments;

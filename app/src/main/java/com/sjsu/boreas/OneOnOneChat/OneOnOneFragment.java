@@ -2,15 +2,12 @@ package com.sjsu.boreas.OneOnOneChat;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,7 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.sjsu.boreas.ChatViewRelatedStuff.ChatActivity2;
+import com.sjsu.boreas.ChatView.ChatActivity2;
 import com.sjsu.boreas.Database.LocalDatabaseReference;
 import com.sjsu.boreas.Database.Messages.ChatMessage;
 import com.sjsu.boreas.Database.PotentialContacts.PotentialContacts;
@@ -28,8 +25,8 @@ import com.sjsu.boreas.Events.EventListener;
 import com.sjsu.boreas.LandingPage;
 import com.sjsu.boreas.Database.Messages.MessageUtility;
 import com.sjsu.boreas.R;
-import com.sjsu.boreas.UserRecyclerViewStuff.UserListAdapter;
-import com.sjsu.boreas.UserRecyclerViewStuff.UserListItemClickAction;
+import com.sjsu.boreas.ContactRecyclerItems.UserListAdapter;
+import com.sjsu.boreas.ContactRecyclerItems.UserListItemClickAction;
 import com.sjsu.boreas.Database.AppDatabase;
 import com.sjsu.boreas.Database.Contacts.User;
 

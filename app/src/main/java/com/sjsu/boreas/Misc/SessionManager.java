@@ -1,4 +1,4 @@
-package com.sjsu.boreas;
+package com.sjsu.boreas.Misc;
 
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -7,7 +7,11 @@ import android.view.View;
 
 import com.sjsu.boreas.Database.LocalDatabaseReference;
 import com.sjsu.boreas.Database.LoggedInUser.LoggedInUser;
+import com.sjsu.boreas.LandingPage;
+import com.sjsu.boreas.LoginActivity;
+import com.sjsu.boreas.MainActivity;
 import com.sjsu.boreas.OfflineConnectionHandlers.NearbyConnectionHandler;
+import com.sjsu.boreas.RegisterActivity;
 
 public class SessionManager {
 

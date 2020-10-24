@@ -26,10 +26,11 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
+import com.sjsu.boreas.AddContacts.AddContactActivity;
 import com.sjsu.boreas.Database.LoggedInUser.LoggedInUser;
 import com.sjsu.boreas.GroupChats.OfflineGroupFragment;
-import com.sjsu.boreas.HelperStuff.AppBarButtonsHandler;
-import com.sjsu.boreas.HelperStuff.ContextHelper;
+import com.sjsu.boreas.Misc.AppBarButtonsHandler;
+import com.sjsu.boreas.Misc.ContextHelper;
 import com.sjsu.boreas.OneOnOneChat.OneOnOneFragment;
 import com.sjsu.boreas.Database.Contacts.User;
 

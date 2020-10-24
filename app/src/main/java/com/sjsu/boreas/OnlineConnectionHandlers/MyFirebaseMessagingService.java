@@ -59,7 +59,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             //We are putting this data under the users branch of the firebase database
             firebase_child_update.put("/users/" + MainActivity.currentUser.getUid() + "/tokenFCM/", token);
             //Do the actual writing of the data onto firebase
-            FirebaseDataRefAndInstance.getDatabaseReference().updateChildren(firebase_child_update);
+            FirebaseController.getDatabaseReference().updateChildren(firebase_child_update);
         }
     }
 
