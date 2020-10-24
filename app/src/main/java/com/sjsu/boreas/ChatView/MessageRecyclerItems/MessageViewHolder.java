@@ -1,4 +1,4 @@
-package com.sjsu.boreas.ChatViewRelatedStuff.MessageListViewStuff;
+package com.sjsu.boreas.ChatView.MessageRecyclerItems;
 
 import android.util.Log;
 import android.view.View;
@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.sjsu.boreas.Database.Messages.ChatMessage;
 import com.sjsu.boreas.R;
 
-public class OneOnOneMessageViewHolder extends RecyclerView.ViewHolder {
+public class MessageViewHolder extends RecyclerView.ViewHolder {
 
     private static String TAG = "BOREAS";
     private static String SUB_TAG = "------MesssageViewHolder-- ";
@@ -18,7 +18,7 @@ public class OneOnOneMessageViewHolder extends RecyclerView.ViewHolder {
     public TextView msg_txt;
     public View rootView;
 
-    public OneOnOneMessageViewHolder(View v) {
+    public MessageViewHolder(View v) {
         super(v);
         Log.e(TAG, SUB_TAG+"Inside message view holder");
         this.rootView = v;

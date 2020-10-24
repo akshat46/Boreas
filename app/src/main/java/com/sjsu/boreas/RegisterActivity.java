@@ -6,15 +6,12 @@ import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -30,9 +27,8 @@ import android.widget.Toast;
 
 import com.sjsu.boreas.Database.LocalDatabaseReference;
 import com.sjsu.boreas.Database.LoggedInUser.LoggedInUser;
-import com.sjsu.boreas.OnlineConnectionHandlers.FirebaseDataRefAndInstance;
-import com.sjsu.boreas.Database.Contacts.User;
-import com.sjsu.boreas.SecurityRelatedStuff.SecurityStuff;
+import com.sjsu.boreas.OnlineConnectionHandlers.FirebaseController;
+import com.sjsu.boreas.Security.PasswordManager;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -282,7 +278,7 @@ public class RegisterActivity extends Activity implements LocationListener {
         String uniqueId = generateUniqueUserId(name + "\n" + location.getLatitude() + "\n" + location.getLongitude());
 
         String hashedPassword = null;
-        hashedPassword = SecurityStuff.hashThePassword(passwordStr);
+        hashedPassword = PasswordManager.hashThePassword(passwordStr);
 
         if(hashedPassword == null){
             Log.e(TAG, SUB_TAG+"Something went wrong with the hash yo");
@@ -291,7 +287,7 @@ public class RegisterActivity extends Activity implements LocationListener {
 
         final LoggedInUser myUser = new LoggedInUser(uniqueId, name, location.getLatitude(), location.getLongitude(), hashedPassword);
         localDatabaseReference.registerUser(myUser);
-        FirebaseDataRefAndInstance.pushNewUserToFIrebase(myUser, this);
+        FirebaseController.pushNewUserToFIrebase(myUser, this);
 
         Log.e(TAG, SUB_TAG+"User: " + myUser);
         System.out.println(myUser);

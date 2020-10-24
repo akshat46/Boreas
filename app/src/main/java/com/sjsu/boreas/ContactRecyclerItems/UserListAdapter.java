@@ -1,11 +1,10 @@
-package com.sjsu.boreas.UserRecyclerViewStuff;
+package com.sjsu.boreas.ContactRecyclerItems;
 
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -18,7 +17,7 @@ import com.sjsu.boreas.Database.Contacts.User;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserListAdapter extends RecyclerView.Adapter<UsersViewHolder>{
+public class UserListAdapter extends RecyclerView.Adapter<UserViewHolder>{
 
     private static String TAG = "BOREAS";
     private static String SUB_TAG = "------AdapterForFirebase-----";
@@ -37,16 +36,16 @@ public class UserListAdapter extends RecyclerView.Adapter<UsersViewHolder>{
 
     @NonNull
     @Override
-    public UsersViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public UserViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         Log.e(TAG, SUB_TAG+"onCreateViewHolder");
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_chat, parent, false);
 
-        return new UsersViewHolder(view);
+        return new UserViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull UsersViewHolder holder, final int position) {
+    public void onBindViewHolder(@NonNull UserViewHolder holder, final int position) {
         Log.e(TAG, SUB_TAG+"onBindViewHolder");
         final User model = userList.get(position);
         holder.bindToListItemView(model);

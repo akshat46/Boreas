@@ -1,12 +1,10 @@
 package com.sjsu.boreas;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
@@ -19,10 +17,9 @@ import android.widget.Toast;
 import com.google.firebase.FirebaseApp;
 import com.sjsu.boreas.Database.LocalDatabaseReference;
 import com.sjsu.boreas.Database.LoggedInUser.LoggedInUser;
-import com.sjsu.boreas.HelperStuff.ContextHelper;
+import com.sjsu.boreas.Misc.ContextHelper;
 import com.sjsu.boreas.Notifications.CustomNotification;
 import com.sjsu.boreas.OfflineConnectionHandlers.NearbyConnectionHandler;
-import com.sjsu.boreas.Database.Contacts.User;
 import com.sjsu.boreas.pdel_messaging.ChatActivity;
 
 public class MainActivity extends AppCompatActivity {

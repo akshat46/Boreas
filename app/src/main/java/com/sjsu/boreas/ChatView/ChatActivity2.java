@@ -1,6 +1,5 @@
-package com.sjsu.boreas.ChatViewRelatedStuff;
+package com.sjsu.boreas.ChatView;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -12,9 +11,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,15 +20,13 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.sjsu.boreas.ChatViewRelatedStuff.MessageListViewStuff.OneOnOneMessageAdapter;
-import com.sjsu.boreas.ChatViewRelatedStuff.MessageListViewStuff.OneOnOneMessageViewHolder;
+import com.sjsu.boreas.ChatView.MessageRecyclerItems.MessageAdapter;
 import com.sjsu.boreas.Database.Messages.MessageUtility;
 import com.sjsu.boreas.Events.Event;
 import com.sjsu.boreas.Events.EventListener;
-import com.sjsu.boreas.Events.messageListener;
 import com.sjsu.boreas.Database.LocalDatabaseReference;
-import com.sjsu.boreas.HelperStuff.ContextHelper;
-import com.sjsu.boreas.OnlineConnectionHandlers.FirebaseDataRefAndInstance;
+import com.sjsu.boreas.Misc.ContextHelper;
+import com.sjsu.boreas.OnlineConnectionHandlers.FirebaseController;
 import com.sjsu.boreas.MainActivity;
 import com.sjsu.boreas.PhoneBluetoothRadio.BlueTerm;
 import com.sjsu.boreas.R;
@@ -41,7 +36,6 @@ import com.sjsu.boreas.Database.Contacts.User;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class ChatActivity2 extends AppCompatActivity implements EventListener {
@@ -51,7 +45,7 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener {
     private EditText mssgText;
     private TextView userName;
     private ArrayList<ChatMessage> chatMessages;
-    private OneOnOneMessageAdapter adapter;
+    private MessageAdapter adapter;
     private RecyclerView.LayoutManager layoutManager;
     private User myChatPartner;
     private Context mContext;
@@ -146,7 +140,7 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener {
             public void run() {
                 chatMessages = new ArrayList<ChatMessage>(localDatabaseReference.getLastTwentyMessagesForSpecificUser(myChatPartner));
                 //set ListView adapter first
-                adapter = new OneOnOneMessageAdapter(chatMessages);
+                adapter = new MessageAdapter(chatMessages);
                 recyclerView.setAdapter(adapter);
                 layoutManager = new LinearLayoutManager(mActivity);
                 recyclerView.setLayoutManager(layoutManager);
@@ -205,7 +199,7 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener {
         firebase_child_update.put("/oneOnOneChats/" + oneOnOneChatId + "/messages/" + chatMessage.mssgId, new_chat_mssg);
 
         //Do the actual writing of the data onto firebase
-        FirebaseDataRefAndInstance.getDatabaseReference().updateChildren(firebase_child_update);
+        FirebaseController.getDatabaseReference().updateChildren(firebase_child_update);
     }
 
     private void saveMessageLocally(final ChatMessage chatMessage){

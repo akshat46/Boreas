@@ -17,10 +17,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
-import com.sjsu.boreas.ChatViewRelatedStuff.ChatActivity2;
 import com.sjsu.boreas.Database.Contacts.User;
 import com.sjsu.boreas.Database.LoggedInUser.LoggedInUser;
-import com.sjsu.boreas.HelperStuff.ContextHelper;
+import com.sjsu.boreas.Misc.ContextHelper;
 import com.sjsu.boreas.MainActivity;
 
 import java.util.ArrayList;
@@ -28,7 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class FirebaseDataRefAndInstance { //This is class should be used to access firebase database ref in any other activity (so we don't have
+public class FirebaseController { //This is class should be used to access firebase database ref in any other activity (so we don't have
     //make hecka instances firebase objects everywhere for singular tasks )
 
     private static String TAG = "BOREAS";
@@ -93,7 +92,7 @@ public class FirebaseDataRefAndInstance { //This is class should be used to acce
 
         if(networkIsAvailable()) {
             Log.e(TAG, SUB_TAG+"Network is available: so pushing to firebase");
-            FirebaseDataRefAndInstance.RegisterUserOnFirebase(myUser);
+            FirebaseController.RegisterUserOnFirebase(myUser);
         }
         else{
             Log.e(TAG, SUB_TAG+"NEtwork isn't available");
