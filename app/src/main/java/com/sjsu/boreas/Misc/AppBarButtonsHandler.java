@@ -1,4 +1,4 @@
-package com.sjsu.boreas.HelperStuff;
+package com.sjsu.boreas.Misc;
 
 import android.widget.ImageButton;
 

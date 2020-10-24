@@ -1,4 +1,4 @@
-package com.sjsu.boreas.UserRecyclerViewStuff;
+package com.sjsu.boreas.ContactRecyclerItems;
 
 import com.sjsu.boreas.Database.Contacts.User;
 
