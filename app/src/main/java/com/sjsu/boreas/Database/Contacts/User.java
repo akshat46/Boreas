@@ -53,6 +53,9 @@ public class User implements Serializable {
     @ColumnInfo(name = "longitude")
     public double longitude;
 
+    @ColumnInfo(name = "publicKey")
+    public String publicKey;
+
     public String toString(){
         return name+": "+uid+"\n"+latitude + " , " + longitude+"\n";
     }
@@ -63,6 +66,7 @@ public class User implements Serializable {
         result.put("name", name);
         result.put("latitude", latitude);
         result.put("longitude", longitude);
+        result.put("publicKey", publicKey);
         return result;
     }
 

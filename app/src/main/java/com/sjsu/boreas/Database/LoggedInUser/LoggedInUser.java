@@ -30,6 +30,9 @@ public class LoggedInUser extends User implements Serializable {
     @ColumnInfo(name="isLoggedIn")
     public boolean isLoggedIn;
 
+    @ColumnInfo(name = "privateKey")
+    public String privateKey; //private key used to decrypt 1-1 messages sent to this user
+
     public boolean isLoggedIn(){
         return isLoggedIn;
     }
@@ -56,6 +59,7 @@ public class LoggedInUser extends User implements Serializable {
         result.put("latitude", latitude);
         result.put("longitude", longitude);
         result.put("password", password);
+        result.put("privateKey", privateKey);
         return result;
     }
 
