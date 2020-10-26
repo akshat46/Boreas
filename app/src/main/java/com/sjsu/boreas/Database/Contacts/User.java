@@ -29,8 +29,6 @@ public class User implements Serializable {
         this.longitude = longitude;
     }
 
-    public String getName(){    return name;}
-
     @NonNull
     @PrimaryKey
     public String uid;
@@ -73,6 +71,9 @@ public class User implements Serializable {
     public String getUid(){
         return uid;
     }
+    public String getName(){return name;}
+    public double getLatitude(){return latitude;}
+    public double getLongitude(){return longitude;}
 
     public static User convertHashMapToUser(HashMap<String, Object> user_map){
         Log.e(TAG, SUB_TAG+"converting a hash map to user object.");
