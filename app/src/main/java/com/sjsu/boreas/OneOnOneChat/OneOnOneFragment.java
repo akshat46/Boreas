@@ -152,7 +152,7 @@ public class OneOnOneFragment extends Fragment implements EventListener, UserLis
     private void manageMessage(ChatMessage mssg){
         Log.e(TAG, SUB_TAG+"Handling new message event");
 
-        User user = new User(mssg.senderId, mssg.senderName, mssg.latitude, mssg.longitude);
+        User user = mssg.sender;
         final int i = indexInContact(user);
 
         //First check if the user is even in our contacts or not?
@@ -169,7 +169,7 @@ public class OneOnOneFragment extends Fragment implements EventListener, UserLis
         }
         else{
             Log.e(TAG, SUB_TAG+"The sender (" + user.name + ") of the mssg: " + mssg.mssgText + ", is not in the contacts");
-            PotentialContacts potentialContact = new PotentialContacts(user.uid, user.name, user.latitude, user.longitude);
+            PotentialContacts potentialContact = new PotentialContacts(user.uid, user.name, user.latitude, user.longitude, user.publicKey);
             localDatabaseReference.addPotentialContact(potentialContact);
             contactArrayList.add(potentialContact);
             final int position = contactArrayList.size() - 1;

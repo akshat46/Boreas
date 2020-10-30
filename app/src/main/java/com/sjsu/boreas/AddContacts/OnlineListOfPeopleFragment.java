@@ -133,7 +133,8 @@ public class OnlineListOfPeopleFragment extends Fragment implements UserListItem
                         final User u = new User(npsnapshot.child("uid").getValue().toString(),
                                 npsnapshot.child("name").getValue().toString(),
                                 Double.parseDouble(npsnapshot.child("latitude").getValue().toString()),
-                                Double.parseDouble(npsnapshot.child("longitude").getValue().toString()));
+                                Double.parseDouble(npsnapshot.child("longitude").getValue().toString()),
+                                npsnapshot.child("publicKey").getValue().toString()); //TODO make sure it's in DataSnapshot
                         AsyncTask.execute(new Runnable() {
                             @Override
                             public void run() {

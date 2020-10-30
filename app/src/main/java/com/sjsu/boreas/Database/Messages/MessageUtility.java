@@ -40,7 +40,8 @@ public class MessageUtility {
             isMyMssg = false;
             mssgType = Integer.parseInt(jsonMssg.getString("mssgType"));
 
-            mssg = new ChatMessage(mssgId, mssgText,
+            mssg = new ChatMessage();
+                    new ChatMessage(mssgId, mssgText,
                     receiverId, receiverName,
                     senderId, senderName,
                     latitude, longitude,
@@ -61,7 +62,7 @@ public class MessageUtility {
 //                databaseReference.addContact(sender);
 //            }
 
-            Log.e(TAG, SUB_TAG+"New mssg: "+ mssg.receiverName + ", mssgType: " + mssg.mssgType);
+            Log.e(TAG, SUB_TAG+"New mssg: "+ mssg.recipient.getName() + ", mssgType: " + mssg.mssgType);
         } catch (JSONException e) {
             Log.e(TAG, SUB_TAG+"JSON exception: \n\t" + e);
             e.printStackTrace();
@@ -75,17 +76,7 @@ public class MessageUtility {
 
         ChatMessage mssgObj = new ChatMessage();
 
-        mssgObj.isMyMssg = (boolean) mssg.get("isMyMssg");
-        mssgObj.latitude = (double) mssg.get("latitude");
-        mssgObj.longitude = (double) mssg.get("longitude");
-        mssgObj.mssgId = (String) mssg.get("mssgId");
-        mssgObj.receiverId = (String) mssg.get("receiverId");
-        mssgObj.senderId = (String) mssg.get("senderId");
-        mssgObj.receiverName = (String) mssg.get("receiverName");
-        mssgObj.senderName = (String) mssg.get("senderName");
-        mssgObj.time = (long) mssg.get("time");
-        mssgObj.mssgType = (int) mssg.get("mssgType");
-        mssgObj.mssgText = (String) mssg.get("mssgText");
+        mssgObj.fromMap(mssg);
 
         return mssgObj;
 

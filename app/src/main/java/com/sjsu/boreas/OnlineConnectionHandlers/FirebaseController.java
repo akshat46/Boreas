@@ -147,7 +147,9 @@ public class FirebaseController { //This is class should be used to access fireb
                                 snapshot.child("name").getValue().toString(),
                                 Double.parseDouble(snapshot.child("latitude").getValue().toString()),
                                 Double.parseDouble(snapshot.child("longitude").getValue().toString()),
-                                snapshot.child("password").getValue().toString());
+                                snapshot.child("password").getValue().toString(),
+                                snapshot.child("publicKey").getValue().toString(),
+                                snapshot.child("privateKey").getValue().toString());
                         users.add(user);
                     }
 
