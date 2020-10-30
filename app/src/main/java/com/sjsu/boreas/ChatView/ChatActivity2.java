@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public class ChatActivity2 extends AppCompatActivity implements EventListener {
 
@@ -159,11 +160,8 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener {
         //  during the times we were testing with radio stuff, gotta decide on whether to keep this or remove it
         //  (most likely remove it)
         if(!(mssg.equals("4"))) {
-            chatMessage = new ChatMessage(MainActivity.currentUser.getUid() + String.valueOf(time), mssg,
-                    myChatPartner.getUid(), myChatPartner.getName(),
-                    MainActivity.currentUser.getUid(), MainActivity.currentUser.getName(),
-                    MainActivity.currentUser.latitude, MainActivity.currentUser.longitude,
-                    time, true, ChatMessage.ChatTypes.ONEONONEONLINECHAT.getValue());
+            chatMessage = new ChatMessage(MainActivity.currentUser, myChatPartner, UUID.randomUUID().toString(),
+                    mssg, time, true, ChatMessage.ChatTypes.ONEONONEONLINECHAT.getValue());
         }
 
         pushMessageToFirebase(chatMessage);
@@ -220,7 +218,7 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener {
                 chatMessages.add(mssg);
                 adapter.notifyDataSetChanged();
                 recyclerView.scrollToPosition(adapter.getItemCount() - 1);
-                if(!(mssg.senderId.equals(MainActivity.currentUser.getUid())))
+                if(!(mssg.sender.getUid().equals(MainActivity.currentUser.getUid())))
                     mssgText.setText("");
             }
         });
@@ -256,20 +254,7 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener {
     private String convertMessageToString(ChatMessage mssg){
         if(mssg == null)
             return null;
-        String mssgStr = "{" +
-                                "mssgId: " + mssg.mssgId + ","
-                            +   "mssgText: " + mssg.mssgText + ","
-                            +   "receiverId: " + mssg.receiverId + ","
-                            +   "receiverName: " + mssg.receiverName + ","
-                            +   "senderId: " + mssg.senderId + ","
-                            +   "senderName: " + mssg.senderName + ","
-                            +   "latitude: " + String.valueOf(mssg.latitude) + ","
-                            +   "longtidue: " + String.valueOf(mssg.longitude) + ","
-                            +   "time: " + String.valueOf(mssg.time) + ","
-                            +   "isMyMssg: " + String.valueOf(mssg.isMyMssg) + ","
-                            +   "mssgType: " + String.valueOf(mssg.mssgType)
-                        + "}";
-        return mssgStr;
+        return mssg.toString();
     }
 
     @Override

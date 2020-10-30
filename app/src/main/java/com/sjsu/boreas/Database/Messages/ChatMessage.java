@@ -4,9 +4,11 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
+import androidx.room.Embedded;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+import com.sjsu.boreas.Database.Contacts.User;
 import com.sjsu.boreas.Events.messageListener;
 
 import java.io.Serializable;
@@ -40,38 +42,29 @@ public class ChatMessage implements Serializable {
 
     }
 
-    public ChatMessage(String mssgId, String mssgText,
-                       String receiverId, String receiverName,
-                       String senderId, String senderName,
-                       double latitude, double longitude, long time, boolean isMyMssg, int mssgType){
+    public ChatMessage(User sender, User recipient, String mssgId, String mssgText,
+                       long time, boolean isMyMssg, int mssgType){
         this.mssgId = mssgId;
         this.time = time;
-        this.latitude = latitude;
-        this.longitude = longitude;
-        this.senderName = senderName;
-        this.senderId = senderId;
-        this.receiverId = receiverId;
-        this.receiverName = receiverName;
         this.mssgText = mssgText;
         this.isMyMssg = isMyMssg;
         this.mssgType = mssgType;
+
+        this.sender = sender;
+        this.recipient = recipient;
     }
 
     public ChatMessage(){
         this.mssgId = String.valueOf(System.currentTimeMillis());
         this.time = System.currentTimeMillis();
-        this.latitude = 123.13;
-        this.longitude = -123.123;
-        this.senderName = "fakeSender1";
-        this.senderId = "fakeIdOfSender1";
-        this.receiverId = "receiverFakeID";
-        this.receiverName = "fakeReciver";
         this.mssgText = "testing";
         this.isMyMssg = false;
         this.mssgType = ChatTypes.ONEONONEONLINECHAT.getValue();
+        this.sender = new User("1234-abcd", "test SENDER", 0, 0, "");
+        this.recipient = new User("5678-efab", "test RECIPIENT", 0, 0, "");
     }
 
-    public String getSenderName(){    return senderName;}
+    public String getSenderName(){return sender.name;}
 
     @NonNull
     @PrimaryKey
@@ -79,24 +72,6 @@ public class ChatMessage implements Serializable {
 
     @ColumnInfo(name = "mssgText")
     public String mssgText;
-
-    @ColumnInfo(name = "receiverId")
-    public String receiverId;
-
-    @ColumnInfo(name = "receiverName")
-    public String receiverName;
-
-    @ColumnInfo(name = "senderName")
-    public String senderName;
-
-    @ColumnInfo(name = "senderId")
-    public String senderId;
-
-    @ColumnInfo(name = "latitude")
-    public double latitude;
-
-    @ColumnInfo(name = "longitude")
-    public double longitude;
 
     @ColumnInfo(name = "time")
     public long time;
@@ -107,20 +82,18 @@ public class ChatMessage implements Serializable {
     @ColumnInfo(name = "mssgType")
     public int mssgType;
 
-//    public String toString(){
-//        return name+": "+uid+"\n"+latitude + " , " + longitude+"\n" + (isMe ? "IS" : "NOT") + " me";
-//    }
+    @Embedded(prefix = "sender_")
+    public User sender;
+
+    @Embedded(prefix = "recipient_")
+    public User recipient;
 
     public String toString(){
        String mssgStr = "{" +
                 "mssgId: " + mssgId + ","
                 +   "mssgText: " + mssgText + ","
-                +   "receiverId: " + receiverId + ","
-                +   "receiverName: " + receiverName + ","
-                +   "senderId: " + senderId + ","
-                +   "senderName: " + senderName + ","
-                +   "latitude: " + String.valueOf(latitude) + ","
-                +   "longtidue: " + String.valueOf(longitude) + ","
+                +   "sender: "+ sender.toString() + ","
+                +   "recipient: "+ recipient.toString() + ","
                 +   "time: " + String.valueOf(time) + ","
                 +   "isMyMssg: " + String.valueOf(isMyMssg) + ","
                 +   "mssgType: " + String.valueOf(mssgType)
@@ -129,19 +102,21 @@ public class ChatMessage implements Serializable {
     }
 
     public void fromMap(HashMap<String, Object> chatMessage){
-
+        sender = (User) chatMessage.get("sender");
+        recipient = (User) chatMessage.get("recipient");
+        mssgId = (String) chatMessage.get("mssgId");
+        mssgText = (String) chatMessage.get("mssgText");
+        mssgType = (Integer) chatMessage.get("mssgType");
+        isMyMssg = (Boolean) chatMessage.get("isMyMssg");
+        time = (Long) chatMessage.get("time");
     }
 
     public Map<String, Object> toMap(){
         HashMap<String, Object> result = new HashMap<>();
         result.put("mssgId", mssgId);
         result.put("mssgText", mssgText);
-        result.put("receiverId", receiverId);
-        result.put("receiverName", receiverName);
-        result.put("senderId", senderId);
-        result.put("senderName", senderName);
-        result.put("latitude", latitude);
-        result.put("longitude", longitude);
+        result.put("sender", sender.toMap());
+        result.put("recipient", recipient.toMap());
         result.put("time", time);
         result.put("isMyMssg", isMyMssg);
         result.put("mssgType", mssgType);
@@ -164,11 +139,11 @@ public class ChatMessage implements Serializable {
 
     public static void notifyListener(ChatMessage mssg){
         Log.e(TAG, SUB_TAG+"Notifying all listeners: This function is for testing");
-        if(mssg.senderId.equals(listener.getChatPartnerID())) {
+        if(mssg.sender.getUid().equals(listener.getChatPartnerID())) {
             listener.newMessageReceived(mssg);
         }
         else{
-            Log.e(TAG, SUB_TAG+mssg.senderId+"\n\t\t"+listener.getChatPartnerID());
+            Log.e(TAG, SUB_TAG+mssg.sender.getUid()+"\n\t\t"+listener.getChatPartnerID());
         }
 //        for(int i = 0; i < listeners.size(); i++){
 //            listeners.get(i).newMessageReceived(mssg);

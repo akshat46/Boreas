@@ -63,7 +63,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageViewHolder> {
     public int getItemViewType(int position) {
         // return a value between 0 and (getViewTypeCount - 1)
         Log.e(TAG, SUB_TAG+"Checking if this is my message");
-        if(chatMessages.get(position).senderId.equals(MainActivity.currentUser.getUid())){
+        if(chatMessages.get(position).sender.getUid().equals(MainActivity.currentUser.getUid())){
             Log.e(TAG, SUB_TAG+"This message is from me");
             return MY_MSSG;
         }
@@ -83,7 +83,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageViewHolder> {
 
     private boolean isTheMssgFromMe(ChatMessage mssg){
         Log.e(TAG, SUB_TAG+"Checking if this is my message");
-        if(mssg.senderId.equals(MainActivity.currentUser.getUid())){
+        if(mssg.sender.getUid().equals(MainActivity.currentUser.getUid())){
             Log.e(TAG, SUB_TAG+"This message is from me");
             return true;
         }

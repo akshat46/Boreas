@@ -77,7 +77,7 @@ public class LandingPage extends FragmentActivity {
 
     private void makeADummyUserForFirebase() {
         Log.e(TAG, SUB_TAG + "makeADummyUserForFirebase");
-        User u = new User("23", "name of", 123.4, -123.4);
+        User u = new User("23", "name of", 123.4, -123.4, "");
     }
 
     private void initViews() {
