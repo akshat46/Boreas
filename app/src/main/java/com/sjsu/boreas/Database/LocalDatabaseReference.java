@@ -239,9 +239,13 @@ public class LocalDatabaseReference implements EventEmitter{
         return database.userDao().getUsers();
     }
 
-    public List<User> getClosestUseres(LongDistanceMessage message){
+    public List<User> getClosestUsers(LongDistanceMessage message){
         Log.e(TAG, SUB_TAG+"get the closest users based on location");
         return database.userDao().getClosestUsers(message.recipient.latitude, message.recipient.longitude);
+    }
+
+    public List<User> getClosestUsers(User recipient){
+        return database.userDao().getClosestUsers(recipient.getLatitude(), recipient.getLongitude());
     }
 
     public void wipeAllPreviousUserData(){

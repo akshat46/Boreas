@@ -1,5 +1,7 @@
 package com.sjsu.boreas.OfflineConnectionHandlers;
 
+import android.os.AsyncTask;
+
 import androidx.annotation.NonNull;
 
 import com.google.android.gms.nearby.connection.ConnectionInfo;
@@ -89,6 +91,43 @@ public class NearbyCallbackHandler {
                 }
 
 
+                else if(result instanceof ChatMessage){
+                    final ChatMessage message = (ChatMessage) result;
+
+                    //Check if this message has already been forwarded by this user
+                    if(message.isForwarder(MainActivity.currentUser.getUid()))
+                        return;
+
+                    //Check if this is recipient
+                    if(message.recipient.getUid().equals(MainActivity.currentUser.getUid())){
+                        //Message has arrived at destination!
+                        localDatabaseReference.saveChatMessageLocally(message);
+                        return;
+                    }
+                    //If not, send to everyone except who sent it to you
+                    //Decide who to forward it to based on distances to recipient
+                    int forwardCount = 0;
+                    List<User> nearestUsers = localDatabaseReference.getClosestUsers(message.recipient);
+                    message.addForwarder(MainActivity.currentUser.getUid());
+                    for(User user : nearestUsers){
+                        //Complete message forwarding once messages have been sent to at most 3 users
+                        if(forwardCount >= 3)
+                            break;
+                        if(connectionHandler.neighbors.containsKey(user.uid)){
+                            //Don't resend to person who sent this message here OR someone who has forwarded this message before
+                            //First of above is subset of second, so only need to check second clause
+                            if(!message.isForwarder(user.getUid())){
+                                //Send message to user and increment
+                                forwardCount++;
+                                Payload forwardPayload = Payload.fromStream(constructStreamFromSerializable(message));
+                                connectionHandler.getClient().sendPayload(connectionHandler.neighbors.get(user.uid), forwardPayload);
+                            }
+                        }
+                    }
+
+                }
+
+
                 //Long distance chat message
                 else if(result instanceof LongDistanceMessage){
                     LongDistanceMessage message = (LongDistanceMessage) result;
@@ -98,7 +137,7 @@ public class NearbyCallbackHandler {
                     message.forwarder = MainActivity.currentUser;
                     //Decide who to forward it to based on distances to recipient
                     int forwardCount = 0;
-                    List<User> nearestUsers = localDatabaseReference.getClosestUseres(message);
+                    List<User> nearestUsers = localDatabaseReference.getClosestUsers(message);
                     for(User user : nearestUsers){
                         //Complete message forwarding once messages have been sent to at most 3 users
                         if(forwardCount >= 3)
