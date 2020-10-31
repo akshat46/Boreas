@@ -293,6 +293,7 @@ public class RegisterActivity extends Activity implements LocationListener {
             keygen.initialize(512);
             byte [] publicKeyArr = keygen.genKeyPair().getPublic().getEncoded();
             byte [] privateKeyArr = keygen.genKeyPair().getPrivate().getEncoded();
+
             StringBuffer publicString = new StringBuffer();
             StringBuffer privateString = new StringBuffer();
             for (int i = 0; i < publicKeyArr.length; ++i) {
@@ -302,8 +303,8 @@ public class RegisterActivity extends Activity implements LocationListener {
                 privateString.append(Integer.toHexString(0x0100 + (privateKeyArr[i] & 0x00FF)).substring(1));
             }
             System.out.println("\nEncryption Keys generated!\n"+publicString+"\n"+privateString);
-            publicKey = publicString.toString();
-            privateKey = privateString.toString();
+            publicKey = new String(publicKeyArr);//publicString.toString();
+            privateKey = new String(privateKeyArr);//privateString.toString();
         }catch (NoSuchAlgorithmException e){
             System.err.println("RSA alg not found!");
             Toast.makeText(this,"Something went wrong with encryption key generation", Toast.LENGTH_LONG);

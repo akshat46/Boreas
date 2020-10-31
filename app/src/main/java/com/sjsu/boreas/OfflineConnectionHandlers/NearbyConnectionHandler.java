@@ -2,6 +2,7 @@ package com.sjsu.boreas.OfflineConnectionHandlers;
 
 import android.app.Activity;
 import android.content.Context;
+import android.util.Base64;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -22,6 +23,13 @@ import com.sjsu.boreas.Database.Contacts.User;
 import com.sjsu.boreas.Messages.TextMessage;
 import com.sjsu.boreas.pdel_messaging.ChatActivity;
 
+import java.io.UnsupportedEncodingException;
+import java.security.InvalidKeyException;
+import java.security.KeyFactory;
+import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -30,6 +38,11 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 
 public class NearbyConnectionHandler {
 
@@ -199,8 +212,34 @@ public class NearbyConnectionHandler {
     }
 
     public void send1to1Message(Context activity, User recipient, String text){
+        String encryptedText = text;
+        boolean isEncrypted = false;
+        try {
+            Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+            X509EncodedKeySpec keySpec = new X509EncodedKeySpec(recipient.publicKey.getBytes());
+            KeyFactory fac = KeyFactory.getInstance("RSA");
+
+            cipher.init(Cipher.ENCRYPT_MODE, fac.generatePublic(keySpec));
+            encryptedText = Base64.encodeToString(cipher.doFinal(text.getBytes("UTF-8")), Base64.DEFAULT);
+
+            isEncrypted = true;
+        }catch (NoSuchAlgorithmException e){
+            Toast.makeText(context, "Error: Could not encrypt text- RSA alg not found", Toast.LENGTH_SHORT);
+            e.printStackTrace();
+        }catch (NoSuchPaddingException e){
+            Toast.makeText(context, "Error: Could not encrypt text- Padding alg not found", Toast.LENGTH_SHORT);
+            e.printStackTrace();
+        }catch (InvalidKeySpecException | InvalidKeyException e){
+            Toast.makeText(context, "Error: Could not parse recipient's key", Toast.LENGTH_SHORT);
+            e.printStackTrace();
+        }catch (UnsupportedEncodingException | BadPaddingException | IllegalBlockSizeException e){
+            Toast.makeText(context, "Error: Could not perform encryption", Toast.LENGTH_SHORT);
+            e.printStackTrace();
+        }
         ChatMessage message = new ChatMessage(MainActivity.currentUser, recipient, UUID.randomUUID().toString(),
-                text, System.currentTimeMillis(), true, ChatMessage.ChatTypes.ONEONONEOFFLINECHAT.getValue());
+                encryptedText, System.currentTimeMillis(), true, ChatMessage.ChatTypes.ONEONONEOFFLINECHAT.getValue());
+        message.isEncrypted = isEncrypted;
+
         int forwardCount = 0;
         List<User> nearestUsers = localDatabaseReference.getClosestUsers(message.recipient);
         message.addForwarder(MainActivity.currentUser.getUid());

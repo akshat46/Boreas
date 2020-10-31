@@ -100,6 +100,10 @@ public class ChatMessage implements Serializable {
     public User recipient;
 
     //Not stored in DB, only used by messages in transit
+
+    @Ignore
+    public boolean isEncrypted;
+
     @Ignore
     private List<String> forwarderIds;
 
