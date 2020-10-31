@@ -2,6 +2,8 @@ package com.sjsu.boreas.Database.Messages;
 
 import android.util.Log;
 
+import com.sjsu.boreas.Database.Contacts.User;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -16,7 +18,7 @@ public class MessageUtility {
         ChatMessage mssg = null;
         JSONObject jsonMssg = null;
 
-        String mssgId, mssgText, receiverId, receiverName, senderId, senderName;
+        String mssgId, mssgText;
         double latitude, longitude;
         long time;
         int mssgType;
@@ -28,24 +30,21 @@ public class MessageUtility {
 
             mssgId = jsonMssg.getString("mssgId");
             mssgText = jsonMssg.getString("mssgText");
-            receiverId = jsonMssg.getString("receiverId");
-            receiverName = jsonMssg.getString("receiverName");
-            senderId = jsonMssg.getString("senderId");
-            senderName = jsonMssg.getString("senderName");
-            Log.e(TAG, SUB_TAG+"SO far so good: senderId: " + senderId);
-            latitude = Double.parseDouble(jsonMssg.getString("latitude"));
-            longitude = Double.parseDouble(jsonMssg.getString("longitude"));
-            Log.e(TAG, SUB_TAG+"SO far so good 2");
+            User sender = new User(jsonMssg.getJSONObject("sender"));
+            User recipient = new User(jsonMssg.getJSONObject("recipient"));
+            //receiverId = jsonMssg.getString("receiverId");
+            //receiverName = jsonMssg.getString("receiverName");
+            //senderId = jsonMssg.getString("senderId");
+            //senderName = jsonMssg.getString("senderName");
+            //Log.e(TAG, SUB_TAG+"SO far so good: senderId: " + senderId);
+            //latitude = Double.parseDouble(jsonMssg.getString("latitude"));
+            //longitude = Double.parseDouble(jsonMssg.getString("longitude"));
+            //Log.e(TAG, SUB_TAG+"SO far so good 2");
             time = Long.parseLong(jsonMssg.getString("time"));
             isMyMssg = false;
             mssgType = Integer.parseInt(jsonMssg.getString("mssgType"));
 
-            mssg = new ChatMessage();
-                    new ChatMessage(mssgId, mssgText,
-                    receiverId, receiverName,
-                    senderId, senderName,
-                    latitude, longitude,
-                    time, isMyMssg, mssgType);
+            mssg = new ChatMessage(sender, recipient, mssgId, mssgText, time, isMyMssg, mssgType);
 
 //            ContextHelper contextHelper = ContextHelper.get(null);
 //            DatabaseReference databaseReference = DatabaseReference.get(contextHelper.getApplicationContext());

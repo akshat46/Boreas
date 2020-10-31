@@ -30,6 +30,7 @@ import com.sjsu.boreas.Database.LoggedInUser.LoggedInUser;
 import com.sjsu.boreas.OnlineConnectionHandlers.FirebaseController;
 import com.sjsu.boreas.Security.PasswordManager;
 
+import java.security.KeyPairGenerator;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -285,7 +286,30 @@ public class RegisterActivity extends Activity implements LocationListener {
             Toast.makeText(this,"Something went wrong with the password provided yo", Toast.LENGTH_LONG);
         }
 
-        final LoggedInUser myUser = new LoggedInUser(uniqueId, name, location.getLatitude(), location.getLongitude(), hashedPassword);
+        String publicKey = "", privateKey = "";
+
+        try {
+            KeyPairGenerator keygen = KeyPairGenerator.getInstance("RSA");
+            keygen.initialize(512);
+            byte [] publicKeyArr = keygen.genKeyPair().getPublic().getEncoded();
+            byte [] privateKeyArr = keygen.genKeyPair().getPrivate().getEncoded();
+            StringBuffer publicString = new StringBuffer();
+            StringBuffer privateString = new StringBuffer();
+            for (int i = 0; i < publicKeyArr.length; ++i) {
+                publicString.append(Integer.toHexString(0x0100 + (publicKeyArr[i] & 0x00FF)).substring(1));
+            }
+            for (int i = 0; i < privateKeyArr.length; ++i) {
+                privateString.append(Integer.toHexString(0x0100 + (privateKeyArr[i] & 0x00FF)).substring(1));
+            }
+            System.out.println("\nEncryption Keys generated!\n"+publicString+"\n"+privateString);
+            publicKey = publicString.toString();
+            privateKey = privateString.toString();
+        }catch (NoSuchAlgorithmException e){
+            System.err.println("RSA alg not found!");
+            Toast.makeText(this,"Something went wrong with encryption key generation", Toast.LENGTH_LONG);
+        }
+
+        final LoggedInUser myUser = new LoggedInUser(uniqueId, name, location.getLatitude(), location.getLongitude(), hashedPassword, publicKey, privateKey);
         localDatabaseReference.registerUser(myUser);
         FirebaseController.pushNewUserToFIrebase(myUser, this);
 

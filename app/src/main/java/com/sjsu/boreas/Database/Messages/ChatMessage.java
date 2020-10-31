@@ -6,10 +6,13 @@ import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Embedded;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 import com.sjsu.boreas.Database.Contacts.User;
 import com.sjsu.boreas.Events.messageListener;
+
+import org.json.JSONStringer;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -54,6 +57,7 @@ public class ChatMessage implements Serializable {
         this.recipient = recipient;
     }
 
+    @Ignore
     public ChatMessage(){
         this.mssgId = String.valueOf(System.currentTimeMillis());
         this.time = System.currentTimeMillis();
@@ -90,13 +94,13 @@ public class ChatMessage implements Serializable {
 
     public String toString(){
        String mssgStr = "{" +
-                "mssgId: " + mssgId + ","
-                +   "mssgText: " + mssgText + ","
-                +   "sender: "+ sender.toString() + ","
-                +   "recipient: "+ recipient.toString() + ","
-                +   "time: " + String.valueOf(time) + ","
-                +   "isMyMssg: " + String.valueOf(isMyMssg) + ","
-                +   "mssgType: " + String.valueOf(mssgType)
+                "mssgId: \"" + mssgId + "\","
+                +   "\"mssgText\": \"" + mssgText + "\","
+                +   "\"sender\": "+ sender.toString() + ","
+                +   "\"recipient\": "+ recipient.toString() + ","
+                +   "\"time\": " + String.valueOf(time) + ","
+                +   "\"isMyMssg\": " + String.valueOf(isMyMssg) + ","
+                +   "\"mssgType\": " + String.valueOf(mssgType)
                 + "} \n";
         return mssgStr;
     }
