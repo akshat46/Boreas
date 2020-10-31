@@ -30,6 +30,14 @@ public class User implements Serializable {
         this.publicKey = publicKey;
     }
 
+    public User(JSONObject user) throws JSONException {
+        name = user.getString("name");
+        uid = user.getString("uid");
+        publicKey = user.getString("publicKey");
+        latitude = user.getDouble("latitude");
+        longitude = user.getDouble("longitude");
+    }
+
     @NonNull
     @PrimaryKey
     public String uid;
@@ -55,8 +63,20 @@ public class User implements Serializable {
     @ColumnInfo(name = "publicKey")
     public String publicKey;
 
+    /**
+     *
+     * @return JSON representation of this object
+     */
     public String toString(){
-        return name+": "+uid+"\n"+latitude + " , " + longitude+"\n"+publicKey+"\n";
+        String str = "{";
+        str += "\"name\": \""+name+"\",";
+        str += "\"uid\": \""+uid+"\",";
+        str += "\"latitude\": "+latitude+",";
+        str += "\"longitude\": "+longitude+",";
+        str += "\"publicKey\": \""+publicKey+"\"";
+        str += "}";
+        return str;
+        //return name+": "+uid+"\n"+latitude + " , " + longitude+"\n"+publicKey+"\n";
     }
 
     public Map<String, Object> toMap(){
