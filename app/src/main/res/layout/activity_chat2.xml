@@ -112,7 +112,7 @@
             android:layout_width="35dp"
             android:layout_height="35dp"
             android:layout_margin="6dp"
-            android:src="@drawable/ic_send_16"
+            android:src="@drawable/ic_online_send"
             android:tint="@android:color/white"
             android:background="@drawable/bg_button"
             style="?android:attr/borderlessButtonStyle" />
