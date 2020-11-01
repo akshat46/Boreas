@@ -13,6 +13,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
@@ -303,8 +304,8 @@ public class RegisterActivity extends Activity implements LocationListener {
                 privateString.append(Integer.toHexString(0x0100 + (privateKeyArr[i] & 0x00FF)).substring(1));
             }
             System.out.println("\nEncryption Keys generated!\n"+publicString+"\n"+privateString);
-            publicKey = new String(publicKeyArr);//publicString.toString();
-            privateKey = new String(privateKeyArr);//privateString.toString();
+            publicKey = Base64.encodeToString(publicKeyArr, Base64.DEFAULT);//publicString.toString();
+            privateKey = Base64.encodeToString(publicKeyArr, Base64.DEFAULT);//privateString.toString();
         }catch (NoSuchAlgorithmException e){
             System.err.println("RSA alg not found!");
             Toast.makeText(this,"Something went wrong with encryption key generation", Toast.LENGTH_LONG);
