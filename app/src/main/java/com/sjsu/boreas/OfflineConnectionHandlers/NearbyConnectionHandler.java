@@ -216,7 +216,7 @@ public class NearbyConnectionHandler {
         boolean isEncrypted = false;
         try {
             Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
-            X509EncodedKeySpec keySpec = new X509EncodedKeySpec(recipient.publicKey.getBytes());
+            X509EncodedKeySpec keySpec = new X509EncodedKeySpec(Base64.decode(recipient.publicKey, Base64.DEFAULT));
             KeyFactory fac = KeyFactory.getInstance("RSA");
 
             cipher.init(Cipher.ENCRYPT_MODE, fac.generatePublic(keySpec));
