@@ -79,7 +79,7 @@ public class CustomNotification {
 
     public void sendMssgRecvdNotification(ChatMessage message){
         Log.e(TAG, SUB_TAG+"send notification of a mssg being received");
-        if(!(message.senderId.equals(MainActivity.currentUser.getUid()))) {
+        if(!(message.sender.getUid().equals(MainActivity.currentUser.getUid()))) {
             Log.e(TAG, SUB_TAG+"The message is a received mssg");
             NotificationCompat.Builder mBuilder = getAndroidChannelNotification("Text Recieved", message.mssgText);
             getNotificationManager().notify(101, mBuilder.build());

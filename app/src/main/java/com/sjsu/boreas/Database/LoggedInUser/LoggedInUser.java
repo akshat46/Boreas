@@ -17,11 +17,11 @@ public class LoggedInUser extends User implements Serializable {
     private static String TAG = "BOREAS";
     private static String SUB_TAG = "----------Logged In User -- ";
 
-    public LoggedInUser(String uid, String name, double latitude, double longitude, String password) {
-        super(uid, name, latitude, longitude);
+    public LoggedInUser(String uid, String name, double latitude, double longitude, String password, String publicKey, String privateKey) {
+        super(uid, name, latitude, longitude, publicKey);
         this.password = password;
+        this.privateKey = privateKey;
         isLoggedIn = true;
-
     }
 
     @ColumnInfo(name="password")
@@ -29,6 +29,9 @@ public class LoggedInUser extends User implements Serializable {
 
     @ColumnInfo(name="isLoggedIn")
     public boolean isLoggedIn;
+
+    @ColumnInfo(name = "privateKey")
+    public String privateKey; //private key used to decrypt 1-1 messages sent to this user
 
     public boolean isLoggedIn(){
         return isLoggedIn;
@@ -50,12 +53,9 @@ public class LoggedInUser extends User implements Serializable {
 
     public Map<String, Object> toMap(){
         Log.e(TAG, SUB_TAG+"Top map");
-        HashMap<String, Object> result = new HashMap<>();
-        result.put("uid", uid);
-        result.put("name", name);
-        result.put("latitude", latitude);
-        result.put("longitude", longitude);
+        Map<String, Object> result = super.toMap();
         result.put("password", password);
+        result.put("privateKey", privateKey);
         return result;
     }
 

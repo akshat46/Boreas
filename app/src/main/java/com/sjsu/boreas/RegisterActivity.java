@@ -6,15 +6,12 @@ import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -30,10 +27,10 @@ import android.widget.Toast;
 
 import com.sjsu.boreas.Database.LocalDatabaseReference;
 import com.sjsu.boreas.Database.LoggedInUser.LoggedInUser;
-import com.sjsu.boreas.OnlineConnectionHandlers.FirebaseDataRefAndInstance;
-import com.sjsu.boreas.Database.Contacts.User;
-import com.sjsu.boreas.SecurityRelatedStuff.SecurityStuff;
+import com.sjsu.boreas.OnlineConnectionHandlers.FirebaseController;
+import com.sjsu.boreas.Security.PasswordManager;
 
+import java.security.KeyPairGenerator;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -282,16 +279,39 @@ public class RegisterActivity extends Activity implements LocationListener {
         String uniqueId = generateUniqueUserId(name + "\n" + location.getLatitude() + "\n" + location.getLongitude());
 
         String hashedPassword = null;
-        hashedPassword = SecurityStuff.hashThePassword(passwordStr);
+        hashedPassword = PasswordManager.hashThePassword(passwordStr);
 
         if(hashedPassword == null){
             Log.e(TAG, SUB_TAG+"Something went wrong with the hash yo");
             Toast.makeText(this,"Something went wrong with the password provided yo", Toast.LENGTH_LONG);
         }
 
-        final LoggedInUser myUser = new LoggedInUser(uniqueId, name, location.getLatitude(), location.getLongitude(), hashedPassword);
+        String publicKey = "", privateKey = "";
+
+        try {
+            KeyPairGenerator keygen = KeyPairGenerator.getInstance("RSA");
+            keygen.initialize(512);
+            byte [] publicKeyArr = keygen.genKeyPair().getPublic().getEncoded();
+            byte [] privateKeyArr = keygen.genKeyPair().getPrivate().getEncoded();
+            StringBuffer publicString = new StringBuffer();
+            StringBuffer privateString = new StringBuffer();
+            for (int i = 0; i < publicKeyArr.length; ++i) {
+                publicString.append(Integer.toHexString(0x0100 + (publicKeyArr[i] & 0x00FF)).substring(1));
+            }
+            for (int i = 0; i < privateKeyArr.length; ++i) {
+                privateString.append(Integer.toHexString(0x0100 + (privateKeyArr[i] & 0x00FF)).substring(1));
+            }
+            System.out.println("\nEncryption Keys generated!\n"+publicString+"\n"+privateString);
+            publicKey = publicString.toString();
+            privateKey = privateString.toString();
+        }catch (NoSuchAlgorithmException e){
+            System.err.println("RSA alg not found!");
+            Toast.makeText(this,"Something went wrong with encryption key generation", Toast.LENGTH_LONG);
+        }
+
+        final LoggedInUser myUser = new LoggedInUser(uniqueId, name, location.getLatitude(), location.getLongitude(), hashedPassword, publicKey, privateKey);
         localDatabaseReference.registerUser(myUser);
-        FirebaseDataRefAndInstance.pushNewUserToFIrebase(myUser, this);
+        FirebaseController.pushNewUserToFIrebase(myUser, this);
 
         Log.e(TAG, SUB_TAG+"User: " + myUser);
         System.out.println(myUser);

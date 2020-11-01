@@ -22,14 +22,21 @@ public class User implements Serializable {
     private static final String TAG = "BOREAS";
     private static final String SUB_TAG = "-------User cleass----- ";
 
-    public User(String uid, String name, double latitude, double longitude){
+    public User(String uid, String name, double latitude, double longitude, String publicKey){
         this.uid = uid;
         this.name = name;
         this.latitude = latitude;
         this.longitude = longitude;
+        this.publicKey = publicKey;
     }
 
-    public String getName(){    return name;}
+    public User(JSONObject user) throws JSONException {
+        name = user.getString("name");
+        uid = user.getString("uid");
+        publicKey = user.getString("publicKey");
+        latitude = user.getDouble("latitude");
+        longitude = user.getDouble("longitude");
+    }
 
     @NonNull
     @PrimaryKey
@@ -53,8 +60,23 @@ public class User implements Serializable {
     @ColumnInfo(name = "longitude")
     public double longitude;
 
+    @ColumnInfo(name = "publicKey")
+    public String publicKey;
+
+    /**
+     *
+     * @return JSON representation of this object
+     */
     public String toString(){
-        return name+": "+uid+"\n"+latitude + " , " + longitude+"\n";
+        String str = "{";
+        str += "\"name\": \""+name+"\",";
+        str += "\"uid\": \""+uid+"\",";
+        str += "\"latitude\": "+latitude+",";
+        str += "\"longitude\": "+longitude+",";
+        str += "\"publicKey\": \""+publicKey+"\"";
+        str += "}";
+        return str;
+        //return name+": "+uid+"\n"+latitude + " , " + longitude+"\n"+publicKey+"\n";
     }
 
     public Map<String, Object> toMap(){
@@ -63,27 +85,32 @@ public class User implements Serializable {
         result.put("name", name);
         result.put("latitude", latitude);
         result.put("longitude", longitude);
+        result.put("publicKey", publicKey);
         return result;
     }
 
     public String getUid(){
         return uid;
     }
+    public String getName(){return name;}
+    public double getLatitude(){return latitude;}
+    public double getLongitude(){return longitude;}
 
     public static User convertHashMapToUser(HashMap<String, Object> user_map){
         Log.e(TAG, SUB_TAG+"converting a hash map to user object.");
 
         User contact = null;
 
-        String contact_name, contact_id;
+        String contact_name, contact_id, contact_key;
         double contact_lat, contact_lon;
 
         contact_lat = (double) user_map.get("latitude");
         contact_lon = (double) user_map.get("longitude");
         contact_name = (String) user_map.get("name");
         contact_id = (String) user_map.get("uid");
+        contact_key = (String) user_map.get("publicKey");
 
-        contact = new User(contact_id, contact_name, contact_lat, contact_lon);
+        contact = new User(contact_id, contact_name, contact_lat, contact_lon, contact_key);
 
         return contact;
 

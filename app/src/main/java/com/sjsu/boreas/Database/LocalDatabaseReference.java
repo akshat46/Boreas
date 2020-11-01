@@ -63,8 +63,10 @@ public class LocalDatabaseReference implements EventEmitter{
                 if(!isMessageAlreadyInDatabase(message)) {
                     database.chatMessageDao().insertAll(message);
                     HashMap<String, Object> cm_map = (HashMap<String, Object>) message.toMap();
-                    event_chatmessage.trigger(cm_map);
-                    customNotification.sendMssgRecvdNotification(message);
+                    if(!(message.isMyMssg)) {
+                        event_chatmessage.trigger(cm_map);
+                        customNotification.sendMssgRecvdNotification(message);
+                    }
                 }
             }
         });
