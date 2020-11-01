@@ -1,11 +1,11 @@
-package com.sjsu.boreas.SecurityRelatedStuff;
+package com.sjsu.boreas.Security;
 
 import android.util.Log;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-public class SecurityStuff {
+public class PasswordManager {
 
     private static String TAG = "BOREAS";
     private static String SUB_TAG = "-------Security-Stuff-- ";

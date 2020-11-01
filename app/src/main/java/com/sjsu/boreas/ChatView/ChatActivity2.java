@@ -1,4 +1,4 @@
-package com.sjsu.boreas.ChatViewRelatedStuff;
+package com.sjsu.boreas.ChatView;
 
 import android.content.Context;
 import android.content.Intent;
@@ -7,6 +7,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -14,6 +15,9 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,33 +27,39 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.Toolbar;
 
-import com.sjsu.boreas.ChatViewRelatedStuff.MessageListViewStuff.OneOnOneMessageAdapter;
+//import com.sjsu.boreas.ChatViewRelatedStuff.MessageListViewStuff.OneOnOneMessageAdapter;
 import com.sjsu.boreas.Database.Contacts.User;
 import com.sjsu.boreas.Database.LocalDatabaseReference;
 import com.sjsu.boreas.Database.Messages.ChatMessage;
+import com.sjsu.boreas.ChatView.MessageRecyclerItems.MessageAdapter;
 import com.sjsu.boreas.Database.Messages.MessageUtility;
 import com.sjsu.boreas.Database.PotentialContacts.PotentialContacts;
 import com.sjsu.boreas.Events.Event;
 import com.sjsu.boreas.Events.EventListener;
-import com.sjsu.boreas.HelperStuff.ContextHelper;
+//import com.sjsu.boreas.HelperStuff.ContextHelper;
+import com.sjsu.boreas.Database.LocalDatabaseReference;
+import com.sjsu.boreas.Misc.ContextHelper;
+import com.sjsu.boreas.OnlineConnectionHandlers.FirebaseController;
 import com.sjsu.boreas.MainActivity;
-import com.sjsu.boreas.OnlineConnectionHandlers.FirebaseDataRefAndInstance;
 import com.sjsu.boreas.PhoneBluetoothRadio.BlueTerm;
 import com.sjsu.boreas.R;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public class ChatActivity2 extends AppCompatActivity implements EventListener {
 
     private RecyclerView recyclerView;
-    private View btnSend;
+    private ImageButton btnSend;
     private EditText mssgText;
     private TextView userName;
     private ArrayList<ChatMessage> chatMessages;
-    private OneOnOneMessageAdapter adapter;
+    private MessageAdapter adapter;
     private RecyclerView.LayoutManager layoutManager;
     private User myChatPartner;
     private Context mContext;
@@ -58,6 +68,22 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener {
     private Button dynamicButton;
     private Button dynamicButton2;
 
+    private enum SendMode{
+        ONLINE("ONLINE"),
+        OFFLINE("OFFLINE");
+
+        public final String label;
+
+        private SendMode(String label){
+            this.label = label;
+        }
+
+        public String getValue(){
+            return label;
+        }
+    };
+    // TODO: save it to, and set it from loggedin user database to have better ux
+    private SendMode mode = SendMode.ONLINE;
     public LocalDatabaseReference localDatabaseReference = LocalDatabaseReference.get();
 
     private static String TAG = "BOREAS";
@@ -113,6 +139,19 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener {
                 return handled;
             }
         });
+    }
+
+    private void initUI(){
+        Log.e(TAG, SUB_TAG+"Initializig the ui");
+        recyclerView = findViewById(R.id.list_msg);
+        btnSend = findViewById(R.id.btn_chat_send);
+        mssgText = findViewById(R.id.msg_type);
+        initNewUI();
+        initSendButton();
+        initAdapter();
+    }
+
+    private void initSendButton() {
 
         //event for button SEND
         btnSend.setOnClickListener(new View.OnClickListener() {
@@ -130,7 +169,7 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener {
         });
     }
 
-    private void initUI(){
+    private void initNewUI(){
         Log.e(TAG, SUB_TAG+"Initializig the ui");
         recyclerView = findViewById(R.id.list_msg);
         btnSend = findViewById(R.id.btn_chat_send);
@@ -150,8 +189,49 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener {
             setUpTheIgnoreButton();
             setUpTheAddToContactsButton();
         }
-
-        initializeAdapter();
+        btnSend.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                PopupMenu popup = new PopupMenu(ChatActivity2.this, btnSend);
+                popup.inflate(R.menu.menu_send);
+                try {
+                    Field[] fields = popup.getClass().getDeclaredFields();
+                    for (Field field : fields) {
+                        if ("mPopup".equals(field.getName())) {
+                            field.setAccessible(true);
+                            Object menuPopupHelper = field.get(popup);
+                            Class<?> classPopupHelper = Class.forName(menuPopupHelper
+                                    .getClass().getName());
+                            Method setForceIcons = classPopupHelper.getMethod(
+                                    "setForceShowIcon", boolean.class);
+                            ((Method) setForceIcons).invoke(menuPopupHelper, true);
+                            break;
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    public boolean onMenuItemClick(MenuItem item) {
+                        Log.e(TAG, SUB_TAG+"Inside popup");
+                        // cant use switch. doesn't work with enum.values
+                        if(item.getTitle().toString().toUpperCase().equals(SendMode.OFFLINE.getValue())) {
+                            Log.e(TAG, SUB_TAG+"changing the mode to offline");
+                            btnSend.setImageResource(R.drawable.ic_offline_send);
+                            mode =SendMode.OFFLINE;
+                        }
+                        else if(item.getTitle().toString().toUpperCase().equals(SendMode.ONLINE.getValue())){
+                            Log.e(TAG, SUB_TAG+"Changing the mode to online");
+                            btnSend.setImageResource(R.drawable.ic_online_send);
+                            mode =SendMode.ONLINE;
+                        }
+                        return true;
+                    }
+                });
+                popup.show(); //showing popup menu
+                return false;
+            }
+        });
     }
 
     private void setUpTheIgnoreButton(){
@@ -190,7 +270,9 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener {
         dynamicButton2.setVisibility(View.VISIBLE);
     }
 
-    private void initializeAdapter(){
+//    private void initializeAdapter(){
+
+    private void initAdapter(){
         Log.e(TAG, SUB_TAG+"initializing adapter");
         chatMessages = new ArrayList<ChatMessage>();
         AsyncTask.execute(new Runnable() {
@@ -198,7 +280,7 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener {
             public void run() {
                 chatMessages = new ArrayList<ChatMessage>(localDatabaseReference.getLastTwentyMessagesForSpecificUser(myChatPartner));
                 //set ListView adapter first
-                adapter = new OneOnOneMessageAdapter(chatMessages);
+                adapter = new MessageAdapter(chatMessages);
                 recyclerView.setAdapter(adapter);
                 layoutManager = new LinearLayoutManager(mActivity);
                 recyclerView.setLayoutManager(layoutManager);
@@ -210,6 +292,14 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener {
     private void sendMessage(String mssg){
         Log.e(TAG, SUB_TAG+"sending message");
 
+        // TODO: add correct online/offline implementations here
+        if(mode.getValue().equals(SendMode.ONLINE.getValue())){
+            Toast.makeText(ChatActivity2.this, "Sending Online.", Toast.LENGTH_SHORT).show();
+        }
+        else if(mode.getValue().equals(SendMode.OFFLINE.getValue())){
+            Toast.makeText(ChatActivity2.this, "Sending Offline.", Toast.LENGTH_SHORT).show();
+        }
+
         long time  = Calendar.getInstance().getTimeInMillis();
         ChatMessage chatMessage = null;
 
@@ -217,11 +307,8 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener {
         //  during the times we were testing with radio stuff, gotta decide on whether to keep this or remove it
         //  (most likely remove it)
         if(!(mssg.equals("4"))) {
-            chatMessage = new ChatMessage(MainActivity.currentUser.getUid() + String.valueOf(time), mssg,
-                    myChatPartner.getUid(), myChatPartner.getName(),
-                    MainActivity.currentUser.getUid(), MainActivity.currentUser.getName(),
-                    MainActivity.currentUser.latitude, MainActivity.currentUser.longitude,
-                    time, true, ChatMessage.ChatTypes.ONEONONEONLINECHAT.getValue());
+            chatMessage = new ChatMessage(MainActivity.currentUser, myChatPartner, UUID.randomUUID().toString(),
+                    mssg, time, true, ChatMessage.ChatTypes.ONEONONEONLINECHAT.getValue());
         }
 
         pushMessageToFirebase(chatMessage);
@@ -257,7 +344,7 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener {
         firebase_child_update.put("/oneOnOneChats/" + oneOnOneChatId + "/messages/" + chatMessage.mssgId, new_chat_mssg);
 
         //Do the actual writing of the data onto firebase
-        FirebaseDataRefAndInstance.getDatabaseReference().updateChildren(firebase_child_update);
+        FirebaseController.getDatabaseReference().updateChildren(firebase_child_update);
     }
 
     private void saveMessageLocally(final ChatMessage chatMessage){
@@ -278,7 +365,7 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener {
                 chatMessages.add(mssg);
                 adapter.notifyDataSetChanged();
                 recyclerView.scrollToPosition(adapter.getItemCount() - 1);
-                if(!(mssg.senderId.equals(MainActivity.currentUser.getUid())))
+                if(!(mssg.sender.getUid().equals(MainActivity.currentUser.getUid())))
                     mssgText.setText("");
             }
         });
@@ -314,20 +401,7 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener {
     private String convertMessageToString(ChatMessage mssg){
         if(mssg == null)
             return null;
-        String mssgStr = "{" +
-                                "mssgId: " + mssg.mssgId + ","
-                            +   "mssgText: " + mssg.mssgText + ","
-                            +   "receiverId: " + mssg.receiverId + ","
-                            +   "receiverName: " + mssg.receiverName + ","
-                            +   "senderId: " + mssg.senderId + ","
-                            +   "senderName: " + mssg.senderName + ","
-                            +   "latitude: " + String.valueOf(mssg.latitude) + ","
-                            +   "longtidue: " + String.valueOf(mssg.longitude) + ","
-                            +   "time: " + String.valueOf(mssg.time) + ","
-                            +   "isMyMssg: " + String.valueOf(mssg.isMyMssg) + ","
-                            +   "mssgType: " + String.valueOf(mssg.mssgType)
-                        + "}";
-        return mssgStr;
+        return mssg.toString();
     }
 
     @Override

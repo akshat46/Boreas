@@ -1,4 +1,4 @@
-package com.sjsu.boreas.ChatViewRelatedStuff;
+package com.sjsu.boreas.ChatView;
 
 public class ChatBubble {
     private String content;

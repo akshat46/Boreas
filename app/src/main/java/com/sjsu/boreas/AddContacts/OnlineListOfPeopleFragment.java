@@ -23,13 +23,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.sjsu.boreas.Database.LocalDatabaseReference;
-import com.sjsu.boreas.OnlineConnectionHandlers.FirebaseDataRefAndInstance;
-import com.sjsu.boreas.UserRecyclerViewStuff.UserListAdapter;
-import com.sjsu.boreas.AddContactActivity;
+import com.sjsu.boreas.OnlineConnectionHandlers.FirebaseController;
+import com.sjsu.boreas.ContactRecyclerItems.UserListAdapter;
 import com.sjsu.boreas.MainActivity;
 import com.sjsu.boreas.R;
-import com.sjsu.boreas.UserRecyclerViewStuff.UserListItemClickAction;
-import com.sjsu.boreas.UserRecyclerViewStuff.UsersViewHolder;
+import com.sjsu.boreas.ContactRecyclerItems.UserListItemClickAction;
+import com.sjsu.boreas.ContactRecyclerItems.UserViewHolder;
 import com.sjsu.boreas.Database.Contacts.User;
 
 import java.util.ArrayList;
@@ -43,7 +42,7 @@ public class OnlineListOfPeopleFragment extends Fragment implements UserListItem
     private View rootView;
     private RecyclerView recyclerView;
     private ArrayList<User> userArrayList;
-    private FirebaseRecyclerAdapter<User, UsersViewHolder> mAdapter;
+    private FirebaseRecyclerAdapter<User, UserViewHolder> mAdapter;
     private RecyclerView.LayoutManager layoutManager;
     private AddContactActivity mParent;
     private SearchView searchBar;
@@ -134,7 +133,9 @@ public class OnlineListOfPeopleFragment extends Fragment implements UserListItem
                         final User u = new User(npsnapshot.child("uid").getValue().toString(),
                                 npsnapshot.child("name").getValue().toString(),
                                 Double.parseDouble(npsnapshot.child("latitude").getValue().toString()),
-                                Double.parseDouble(npsnapshot.child("longitude").getValue().toString()));
+                                Double.parseDouble(npsnapshot.child("longitude").getValue().toString()),
+                                "publicKey");
+//                                npsnapshot.child("publicKey").getValue().toString()); //TODO make sure it's in DataSnapshot
                         AsyncTask.execute(new Runnable() {
                             @Override
                             public void run() {
@@ -185,7 +186,7 @@ public class OnlineListOfPeopleFragment extends Fragment implements UserListItem
     @Override
     public void onItemClicked(User model, int position) {
         Log.e(TAG, SUB_TAG+"on item clicked");
-        FirebaseDataRefAndInstance.addContact(model);
+        FirebaseController.addContact(model);
         localDatabaseReference.addContact(model);
         markAddedContact(position);
     }

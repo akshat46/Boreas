@@ -55,6 +55,7 @@ public class NearbyCallbackHandler {
                 /*Parse message and find its type*/
 
                 //Adjacency List
+                //Don't connect if this device shares neighbors with the recipient to prevent graph from becoming too dense
                 if(result instanceof AdjacencyListMessage){
                     AdjacencyListMessage message = (AdjacencyListMessage) result;
                     localDatabaseReference.addContact(message.sender);
@@ -82,9 +83,8 @@ public class NearbyCallbackHandler {
                     localDatabaseReference.addContact(message.forwarder);
 
                     localDatabaseReference.saveChatMessageLocally(
-                            new ChatMessage("", message.message, MainActivity.currentUser.uid, MainActivity.currentUser.name,
-                                    message.sender.uid, message.sender.name, message.sender.latitude, message.sender.longitude,
-                                    message.timestamp, false, ChatMessage.ChatTypes.OFFLINEGROUPCHAT.getValue())
+                            new ChatMessage(MainActivity.currentUser, message.sender, "",
+                                    message.message, message.timestamp, false, ChatMessage.ChatTypes.OFFLINEGROUPCHAT.getValue())
                     );
                 }
 

@@ -2,22 +2,21 @@ package com.sjsu.boreas.OneOnOneChat;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.sjsu.boreas.ChatViewRelatedStuff.ChatActivity2;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.sjsu.boreas.ChatView.ChatActivity2;
 import com.sjsu.boreas.Database.LocalDatabaseReference;
 import com.sjsu.boreas.Database.Messages.ChatMessage;
 import com.sjsu.boreas.Database.PotentialContacts.PotentialContacts;
@@ -26,8 +25,8 @@ import com.sjsu.boreas.Events.EventListener;
 import com.sjsu.boreas.LandingPage;
 import com.sjsu.boreas.Database.Messages.MessageUtility;
 import com.sjsu.boreas.R;
-import com.sjsu.boreas.UserRecyclerViewStuff.UserListAdapter;
-import com.sjsu.boreas.UserRecyclerViewStuff.UserListItemClickAction;
+import com.sjsu.boreas.ContactRecyclerItems.UserListAdapter;
+import com.sjsu.boreas.ContactRecyclerItems.UserListItemClickAction;
 import com.sjsu.boreas.Database.AppDatabase;
 import com.sjsu.boreas.Database.Contacts.User;
 
@@ -79,6 +78,7 @@ public class OneOnOneFragment extends Fragment implements EventListener, UserLis
     public void onAttach(Context context) {
         Log.e(TAG, SUB_TAG+"onAttach");
         super.onAttach(context);
+        mContext = context;
     }
 
     @Override
@@ -88,7 +88,7 @@ public class OneOnOneFragment extends Fragment implements EventListener, UserLis
         // Inflate the layout for this fragment
         rootView = inflater.inflate(R.layout.fragment_one_on_one, container, false);
         mTabName = getArguments().getString(EXTRA_TAB_NAME);
-        mContext = container.getContext();
+//        mContext = container.getContext();
 //        try {
 //            mParent.runOnUiThread(new Runnable() {
 //                @Override
@@ -115,6 +115,17 @@ public class OneOnOneFragment extends Fragment implements EventListener, UserLis
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(mParent);
         recyclerView.setLayoutManager(layoutManager);
+        final FloatingActionButton fabAdd = (FloatingActionButton) getActivity().findViewById(R.id.fabAdd);
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (dy > 0)
+                    fabAdd.hide();
+                else if (dy < 0)
+                    fabAdd.show();
+            }
+        });
 
         initializeAdapter();
 
@@ -133,7 +144,12 @@ public class OneOnOneFragment extends Fragment implements EventListener, UserLis
                 //Also add any potential contacts chats
                 contactArrayList.addAll(localDatabaseReference.getPotentialContacts());
                 mAdapter=new UserListAdapter(contactArrayList, mContext, userListItemClickAction);
-                recyclerView.setAdapter(mAdapter);
+                mParent.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        recyclerView.setAdapter(mAdapter);
+                    }
+                });
             }
         });
     }
@@ -141,7 +157,7 @@ public class OneOnOneFragment extends Fragment implements EventListener, UserLis
     private void manageMessage(ChatMessage mssg){
         Log.e(TAG, SUB_TAG+"Handling new message event");
 
-        User user = new User(mssg.senderId, mssg.senderName, mssg.latitude, mssg.longitude);
+        User user = mssg.sender;
         final int i = indexInContact(user);
 
         //First check if the user is even in our contacts or not?
@@ -158,7 +174,7 @@ public class OneOnOneFragment extends Fragment implements EventListener, UserLis
         }
         else{
             Log.e(TAG, SUB_TAG+"The sender (" + user.name + ") of the mssg: " + mssg.mssgText + ", is not in the contacts");
-            PotentialContacts potentialContact = new PotentialContacts(user.uid, user.name, user.latitude, user.longitude);
+            PotentialContacts potentialContact = new PotentialContacts(user.uid, user.name, user.latitude, user.longitude, user.publicKey);
             localDatabaseReference.addPotentialContact(potentialContact);
             contactArrayList.add(potentialContact);
             final int position = contactArrayList.size() - 1;

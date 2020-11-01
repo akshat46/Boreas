@@ -1,4 +1,4 @@
-package com.sjsu.boreas;
+package com.sjsu.boreas.AddContacts;
 
 import android.graphics.Color;
 import android.os.Bundle;
@@ -14,12 +14,13 @@ import androidx.viewpager.widget.ViewPager;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.material.tabs.TabLayout;
 import com.sjsu.boreas.Database.LocalDatabaseReference;
-import com.sjsu.boreas.UserRecyclerViewStuff.UserListAdapter;
-import com.sjsu.boreas.LandingPageTabAdapterStuff.ViewPagerTabAdapter;
-import com.sjsu.boreas.OnlineConnectionHandlers.FirebaseDataRefAndInstance;
-import com.sjsu.boreas.AddContacts.OfflinePeopleContactedListFragment;
-import com.sjsu.boreas.AddContacts.OnlineListOfPeopleFragment;
-import com.sjsu.boreas.UserRecyclerViewStuff.UsersViewHolder;
+import com.sjsu.boreas.LandingPage;
+import com.sjsu.boreas.Misc.FragmentTabAdapter;
+import com.sjsu.boreas.MainActivity;
+import com.sjsu.boreas.R;
+import com.sjsu.boreas.ContactRecyclerItems.UserListAdapter;
+import com.sjsu.boreas.OnlineConnectionHandlers.FirebaseController;
+import com.sjsu.boreas.ContactRecyclerItems.UserViewHolder;
 import com.sjsu.boreas.Database.Contacts.User;
 
 import java.util.ArrayList;
@@ -34,7 +35,7 @@ public class AddContactActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
     private ArrayList<User> userArrayList;
-    private FirebaseRecyclerAdapter<User, UsersViewHolder> mAdapter;
+    private FirebaseRecyclerAdapter<User, UserViewHolder> mAdapter;
     private RecyclerView.LayoutManager layoutManager;
     private LandingPage mParent;
     private SearchView searchBar;
@@ -67,9 +68,9 @@ public class AddContactActivity extends AppCompatActivity {
         List<String> tabNames = new ArrayList<String>();
         tabNames.add("Online People List");
         tabNames.add("Offline People List");
-        ViewPagerTabAdapter viewPagerTabAdapter = new ViewPagerTabAdapter(getSupportFragmentManager(), getFragments(), tabNames);
+        FragmentTabAdapter fragmentTabAdapter = new FragmentTabAdapter(getSupportFragmentManager(), getFragments(), tabNames);
         mViewPager.setOffscreenPageLimit(2);
-        mViewPager.setAdapter(viewPagerTabAdapter);
+        mViewPager.setAdapter(fragmentTabAdapter);
     }
 
     private void initTabLayout() {
@@ -100,7 +101,7 @@ public class AddContactActivity extends AppCompatActivity {
         Log.e(TAG, SUB_TAG+"My user ID is: " + MainActivity.currentUser.getUid() + ", and the contact id is: " + user.getUid());
 
         //Do the actual writing of the data onto firebase and locally
-        FirebaseDataRefAndInstance.getDatabaseReference().updateChildren(firebase_child_update);
+        FirebaseController.getDatabaseReference().updateChildren(firebase_child_update);
 
     }
 }

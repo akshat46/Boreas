@@ -9,7 +9,7 @@ import java.io.Serializable;
 @Entity
 public class PotentialContacts extends User implements Serializable {
 
-    public PotentialContacts(String uid, String name, double latitude, double longitude) {
-        super(uid, name, latitude, longitude);
+    public PotentialContacts(String uid, String name, double latitude, double longitude, String publicKey) {
+        super(uid, name, latitude, longitude, publicKey);
     }
 }
