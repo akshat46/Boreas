@@ -7,11 +7,14 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,6 +36,8 @@ import com.sjsu.boreas.R;
 import com.sjsu.boreas.Database.Messages.ChatMessage;
 import com.sjsu.boreas.Database.Contacts.User;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -41,7 +46,7 @@ import java.util.Map;
 public class ChatActivity2 extends AppCompatActivity implements EventListener {
 
     private RecyclerView recyclerView;
-    private View btnSend;
+    private ImageButton btnSend;
     private EditText mssgText;
     private TextView userName;
     private ArrayList<ChatMessage> chatMessages;
@@ -50,6 +55,22 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener {
     private User myChatPartner;
     private Context mContext;
     private ChatActivity2 mActivity;
+    private enum SendMode{
+        ONLINE("ONLINE"),
+        OFFLINE("OFFLINE");
+
+        public final String label;
+
+        private SendMode(String label){
+            this.label = label;
+        }
+
+        public String getValue(){
+            return label;
+        }
+    };
+    // TODO: save it to, and set it from loggedin user database to have better ux
+    private SendMode mode = SendMode.ONLINE;
 
     public LocalDatabaseReference localDatabaseReference = LocalDatabaseReference.get();
 
@@ -106,6 +127,18 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener {
                 return handled;
             }
         });
+    }
+
+    private void initUI(){
+        Log.e(TAG, SUB_TAG+"Initializig the ui");
+        recyclerView = findViewById(R.id.list_msg);
+        btnSend = findViewById(R.id.btn_chat_send);
+        mssgText = findViewById(R.id.msg_type);
+        initSendButton();
+        initAdapter();
+    }
+
+    private void initSendButton(){
 
         //event for button SEND
         btnSend.setOnClickListener(new View.OnClickListener() {
@@ -121,18 +154,51 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener {
                 }
             }
         });
+
+        btnSend.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                PopupMenu popup = new PopupMenu(ChatActivity2.this, btnSend);
+                popup.inflate(R.menu.menu_send);
+                try {
+                    Field[] fields = popup.getClass().getDeclaredFields();
+                    for (Field field : fields) {
+                        if ("mPopup".equals(field.getName())) {
+                            field.setAccessible(true);
+                            Object menuPopupHelper = field.get(popup);
+                            Class<?> classPopupHelper = Class.forName(menuPopupHelper
+                                    .getClass().getName());
+                            Method setForceIcons = classPopupHelper.getMethod(
+                                    "setForceShowIcon", boolean.class);
+                            ((Method) setForceIcons).invoke(menuPopupHelper, true);
+                            break;
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    public boolean onMenuItemClick(MenuItem item) {
+                        // cant use switch. doesn't work with enum.values
+                        if(item.getTitle().toString().toUpperCase().equals(SendMode.OFFLINE.getValue())) {
+                            btnSend.setImageResource(R.drawable.ic_offline_send);
+                            mode =SendMode.OFFLINE;
+                        }
+                        else if(item.getTitle().toString().toUpperCase().equals(SendMode.ONLINE.getValue())){
+                            btnSend.setImageResource(R.drawable.ic_online_send);
+                            mode =SendMode.ONLINE;
+                        }
+                        return true;
+                    }
+                });
+                popup.show(); //showing popup menu
+                return false;
+            }
+        });
     }
 
-    private void initUI(){
-        Log.e(TAG, SUB_TAG+"Initializig the ui");
-        recyclerView = findViewById(R.id.list_msg);
-        btnSend = findViewById(R.id.btn_chat_send);
-        mssgText = findViewById(R.id.msg_type);
-
-        initializeAdapter();
-    }
-
-    private void initializeAdapter(){
+    private void initAdapter(){
         Log.e(TAG, SUB_TAG+"initializing adapter");
         chatMessages = new ArrayList<ChatMessage>();
         AsyncTask.execute(new Runnable() {
@@ -151,6 +217,14 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener {
 
     private void sendMessage(String mssg){
         Log.e(TAG, SUB_TAG+"sending message");
+
+        // TODO: add correct online/offline implementations here
+        if(mode.getValue().equals(SendMode.ONLINE.getValue())){
+            Toast.makeText(ChatActivity2.this, "Sending Online.", Toast.LENGTH_SHORT).show();
+        }
+        else if(mode.getValue().equals(SendMode.OFFLINE.getValue())){
+            Toast.makeText(ChatActivity2.this, "Sending Offline.", Toast.LENGTH_SHORT).show();
+        }
 
         long time  = Calendar.getInstance().getTimeInMillis();
         ChatMessage chatMessage = null;
