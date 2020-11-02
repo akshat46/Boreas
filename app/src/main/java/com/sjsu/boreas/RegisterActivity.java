@@ -15,11 +15,8 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-<<<<<<< overhaul
 import android.text.method.PasswordTransformationMethod;
-=======
 import android.util.Base64;
->>>>>>> master
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
