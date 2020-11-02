@@ -1,6 +1,7 @@
 package com.sjsu.boreas.OfflineConnectionHandlers;
 
 import android.os.AsyncTask;
+import android.util.Base64;
 
 import androidx.annotation.NonNull;
 
@@ -27,11 +28,15 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.security.KeyFactory;
+import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+
+import javax.crypto.Cipher;
 
 public class NearbyCallbackHandler {
 
@@ -101,6 +106,14 @@ public class NearbyCallbackHandler {
                     //Check if this is recipient
                     if(message.recipient.getUid().equals(MainActivity.currentUser.getUid())){
                         //Message has arrived at destination!
+                        if(message.isEncrypted){
+                            Cipher cipher = Cipher.getInstance("RSA");
+                            PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(Base64.decode(MainActivity.currentUser.privateKey, Base64.DEFAULT));
+                            KeyFactory kf = KeyFactory.getInstance("RSA");
+
+                            cipher.init(Cipher.DECRYPT_MODE, kf.generatePrivate(spec));
+                            message.mssgText = new String(cipher.doFinal(Base64.decode(message.mssgText, Base64.DEFAULT)), "UTF-8");
+                        }
                         localDatabaseReference.saveChatMessageLocally(message);
                         return;
                     }
