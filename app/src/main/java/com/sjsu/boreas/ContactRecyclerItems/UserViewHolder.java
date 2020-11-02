@@ -58,12 +58,12 @@ public class UserViewHolder extends RecyclerView.ViewHolder {
         if(user.newMessage){
             newMessageIndicator.setVisibility(View.VISIBLE);
             this.lastMessage.setTypeface(this.lastMessage.getTypeface(), Typeface.BOLD);
-            this.lastMessage.setTextColor(context.getResources().getColor(R.color.colorTitle));
+            this.lastMessage.setTextColor(context.getResources().getColor(R.color.colorText));
         }
         else{
             newMessageIndicator.setVisibility(View.INVISIBLE);
             this.lastMessage.setTypeface(this.lastMessage.getTypeface(), Typeface.NORMAL);
-            this.lastMessage.setTextColor(context.getResources().getColor(R.color.colorText));
+            this.lastMessage.setTextColor(context.getResources().getColor(R.color.colorSubtext));
         }
     }
 

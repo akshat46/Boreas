@@ -8,14 +8,14 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:background="@drawable/bg_bubble_in"
-        android:layout_marginBottom="8dp"
-        android:layout_marginLeft="12dp">
+        android:layout_marginBottom="@dimen/space_small"
+        android:layout_marginLeft="@dimen/space_standard">
         <TextView
             android:id="@+id/txt_msg"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:maxWidth="250dp"
-            android:padding="5dp"
+            android:padding="@dimen/space_small"
             android:textColor="@android:color/white" />
     </LinearLayout>
 
