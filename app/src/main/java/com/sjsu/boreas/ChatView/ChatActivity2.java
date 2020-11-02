@@ -241,6 +241,8 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener {
             @Override
             public void onClick(View v) {
                 Log.e(TAG, SUB_TAG+"Ignoring this user burr");
+                localDatabaseReference.removePotentialContact((PotentialContacts) myChatPartner);
+                ChatActivity2.this.finish();
                 //TODO: gotta remove this user and then go to the previous screen
                 // and also update the oneOnOne Fragment
                 //localDatabaseReference.removePotentialUser(myChatPartner);
@@ -259,6 +261,7 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener {
             @Override
             public void onClick(View v) {
                 Log.e(TAG, SUB_TAG+"Add to contact burr");
+                localDatabaseReference.convertPotentialContactToContact((PotentialContacts) myChatPartner);
                 //TODO: gotta remove this user and then go to the previous screen
                 // and also update the oneOnOne Fragment
                 //localDatabaseReference.addContact(myChatPartner);
@@ -310,6 +313,8 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener {
             chatMessage = new ChatMessage(MainActivity.currentUser, myChatPartner, UUID.randomUUID().toString(),
                     mssg, time, true, ChatMessage.ChatTypes.ONEONONEONLINECHAT.getValue());
         }
+
+        mssgText.setText("");
 
         pushMessageToFirebase(chatMessage);
         saveMessageLocally(chatMessage);
