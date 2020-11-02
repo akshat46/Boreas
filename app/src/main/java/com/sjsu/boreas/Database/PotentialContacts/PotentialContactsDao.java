@@ -36,5 +36,5 @@ public interface PotentialContactsDao {
     void updatePotentialContact(PotentialContacts user);
 
     @Delete
-    void delete(PotentialContacts potentialContacts);
+    void delete(PotentialContacts potentialContact);
 }
