@@ -15,7 +15,11 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+<<<<<<< overhaul
 import android.text.method.PasswordTransformationMethod;
+=======
+import android.util.Base64;
+>>>>>>> master
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
@@ -303,6 +307,7 @@ public class RegisterActivity extends AppCompatActivity implements LocationListe
             keygen.initialize(512);
             byte [] publicKeyArr = keygen.genKeyPair().getPublic().getEncoded();
             byte [] privateKeyArr = keygen.genKeyPair().getPrivate().getEncoded();
+
             StringBuffer publicString = new StringBuffer();
             StringBuffer privateString = new StringBuffer();
             for (int i = 0; i < publicKeyArr.length; ++i) {
@@ -312,8 +317,8 @@ public class RegisterActivity extends AppCompatActivity implements LocationListe
                 privateString.append(Integer.toHexString(0x0100 + (privateKeyArr[i] & 0x00FF)).substring(1));
             }
             System.out.println("\nEncryption Keys generated!\n"+publicString+"\n"+privateString);
-            publicKey = publicString.toString();
-            privateKey = privateString.toString();
+            publicKey = Base64.encodeToString(publicKeyArr, Base64.DEFAULT);//publicString.toString();
+            privateKey = Base64.encodeToString(publicKeyArr, Base64.DEFAULT);//privateString.toString();
         }catch (NoSuchAlgorithmException e){
             System.err.println("RSA alg not found!");
             Toast.makeText(this,"Something went wrong with encryption key generation", Toast.LENGTH_LONG);
