@@ -106,7 +106,7 @@ public class RegisterActivity extends AppCompatActivity implements LocationListe
     protected void onCreate(Bundle savedInstanceState) {
 		Log.e(TAG, SUB_TAG+"On Create");
         super.onCreate(savedInstanceState);
-        //Remove title bar
+        //Remove heavy bar
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);

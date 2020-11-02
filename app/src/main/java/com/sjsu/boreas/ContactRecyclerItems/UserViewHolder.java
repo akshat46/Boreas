@@ -3,8 +3,11 @@ package com.sjsu.boreas.ContactRecyclerItems;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.media.Image;
+import android.net.Uri;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -13,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.sjsu.boreas.Misc.ContextHelper;
 import com.sjsu.boreas.R;
 import com.sjsu.boreas.Database.Contacts.User;
+import com.squareup.picasso.Picasso;
 
 public class UserViewHolder extends RecyclerView.ViewHolder {
 
@@ -24,6 +28,7 @@ public class UserViewHolder extends RecyclerView.ViewHolder {
     public TextView lastMessage;
     private String uid;
     private View newMessageIndicator;
+    private ImageView userAvatar;
     public Context context = ContextHelper.get().getApplicationContext();
 
     public UserViewHolder(@NonNull View itemView) {
@@ -33,6 +38,7 @@ public class UserViewHolder extends RecyclerView.ViewHolder {
         this.name = itemView.findViewById(R.id.userName);
         this.newMessageIndicator = itemView.findViewById(R.id.newMessage);
         this.lastMessage = itemView.findViewById(R.id.lastMessage);
+        this.userAvatar = itemView.findViewById(R.id.userAvatar);
     }
 
     public void bindToListItemView(User user) {

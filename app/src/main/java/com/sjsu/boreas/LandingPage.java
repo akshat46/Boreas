@@ -2,6 +2,7 @@ package com.sjsu.boreas;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,6 +12,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -33,6 +35,7 @@ import com.sjsu.boreas.Misc.AppBarButtonsHandler;
 import com.sjsu.boreas.Misc.ContextHelper;
 import com.sjsu.boreas.OneOnOneChat.OneOnOneFragment;
 import com.sjsu.boreas.Database.Contacts.User;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -49,6 +52,7 @@ public class LandingPage extends FragmentActivity {
     private AppBarButtonsHandler mbuttonsHandler = new AppBarButtonsHandler(0);
     private ViewPager2 mViewPager;
     private TextView fragmentTitle;
+    private ImageView avatar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,7 +87,7 @@ public class LandingPage extends FragmentActivity {
     private void initViews() {
         Log.e(TAG, SUB_TAG + "InitViews");
         initToolbar();
-        initSettingsFloatingButtons();
+        initSettingsButtons();
         initViewPager();
         initAppBar();
         if (MainActivity.newAcct)
@@ -116,10 +120,10 @@ public class LandingPage extends FragmentActivity {
 //        setSupportActionBar(toolbar);
     }
 
-    private void initSettingsFloatingButtons() {
+    private void initSettingsButtons() {
         Log.e(TAG, SUB_TAG + "Initializing settings floating button");
-        ImageButton fab = (ImageButton) findViewById(R.id.settings_button);
-        fab.setOnClickListener(new View.OnClickListener() {
+        ImageButton settings = (ImageButton) findViewById(R.id.settings_button);
+        settings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.e(TAG, SUB_TAG + "On click settings button");
