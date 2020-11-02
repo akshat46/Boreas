@@ -262,6 +262,7 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener {
             public void onClick(View v) {
                 Log.e(TAG, SUB_TAG+"Add to contact burr");
                 localDatabaseReference.convertPotentialContactToContact((PotentialContacts) myChatPartner);
+                FirebaseController.addContact((User) myChatPartner);
                 //TODO: gotta remove this user and then go to the previous screen
                 // and also update the oneOnOne Fragment
                 //localDatabaseReference.addContact(myChatPartner);
