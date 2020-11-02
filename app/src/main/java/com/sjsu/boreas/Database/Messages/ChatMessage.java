@@ -15,7 +15,10 @@ import com.sjsu.boreas.Events.messageListener;
 import org.json.JSONStringer;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 @Entity
@@ -55,6 +58,8 @@ public class ChatMessage implements Serializable {
 
         this.sender = sender;
         this.recipient = recipient;
+
+        forwarderIds = new LinkedList<>();
     }
 
     @Ignore
@@ -66,6 +71,8 @@ public class ChatMessage implements Serializable {
         this.mssgType = ChatTypes.ONEONONEONLINECHAT.getValue();
         this.sender = new User("1234-abcd", "test SENDER", 0, 0, "");
         this.recipient = new User("5678-efab", "test RECIPIENT", 0, 0, "");
+
+        forwarderIds = new LinkedList<>();
     }
 
     public String getSenderName(){return sender.name;}
@@ -91,6 +98,14 @@ public class ChatMessage implements Serializable {
 
     @Embedded(prefix = "recipient_")
     public User recipient;
+
+    //Not stored in DB, only used by messages in transit
+
+    @Ignore
+    public boolean isEncrypted;
+
+    @Ignore
+    private List<String> forwarderIds;
 
     public String toString(){
        String mssgStr = "{" +
@@ -152,6 +167,14 @@ public class ChatMessage implements Serializable {
 //        for(int i = 0; i < listeners.size(); i++){
 //            listeners.get(i).newMessageReceived(mssg);
 //        }
+    }
+
+    public void addForwarder(String uid){
+        forwarderIds.add(uid);
+    }
+
+    public boolean isForwarder(String uid){
+        return forwarderIds.contains(uid);
     }
 
 }
