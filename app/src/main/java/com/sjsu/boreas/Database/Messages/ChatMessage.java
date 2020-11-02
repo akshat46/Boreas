@@ -106,8 +106,8 @@ public class ChatMessage implements Serializable {
     }
 
     public void fromMap(HashMap<String, Object> chatMessage){
-        sender = (User) chatMessage.get("sender");
-        recipient = (User) chatMessage.get("recipient");
+        sender = User.convertHashMapToUser((HashMap<String, Object>) chatMessage.get("sender"));
+        recipient = User.convertHashMapToUser((HashMap<String, Object>)chatMessage.get("recipient"));
         mssgId = (String) chatMessage.get("mssgId");
         mssgText = (String) chatMessage.get("mssgText");
         mssgType = (Integer) chatMessage.get("mssgType");

@@ -15,7 +15,7 @@
         android:layout_height="?attr/actionBarSize"
         android:background="@color/backgroundAlt">
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
             <ImageButton
@@ -58,6 +58,20 @@
                 android:textColor="@color/colorText"
                 android:textSize="18sp"
                 android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/dynamic_button"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="end"
+                android:paddingLeft="10dp"/>
+
+            <Button
+                android:id="@+id/dynamic_button2"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="end"
+                android:paddingLeft="10dp"/>
         </LinearLayout>
     </androidx.appcompat.widget.Toolbar>
 
