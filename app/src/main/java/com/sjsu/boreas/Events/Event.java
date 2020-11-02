@@ -13,6 +13,7 @@ public class Event {
 
     public static final String chatMssgEventID = "chatmessages";
     public static final String usersEventID = "user";
+    public static final String userRemoved = "userremoved";
 
     private String event_id;
     private List<EventListener> listeners = new ArrayList<>();
