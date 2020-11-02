@@ -22,8 +22,9 @@ import java.util.List;
 
 public class LocalDatabaseReference implements EventEmitter{
 
-    private Event event_chatmessage = Event.get("chatmessages");
-    private Event event_user = Event.get("user");
+    private Event event_chatmessage = Event.get(Event.chatMssgEventID);
+    private Event event_user = Event.get(Event.usersEventID);
+    private Event event_user_removed = Event.get(Event.userRemoved);
 
     private static String TAG = "BOREAS";
     private static String SUB_TAG = "------DatabaseReference----- ";
@@ -64,9 +65,9 @@ public class LocalDatabaseReference implements EventEmitter{
                     database.chatMessageDao().insertAll(message);
                     HashMap<String, Object> cm_map = (HashMap<String, Object>) message.toMap();
                     if(!(message.isMyMssg)) {
-                        event_chatmessage.trigger(cm_map);
                         customNotification.sendMssgRecvdNotification(message);
                     }
+                    event_chatmessage.trigger(cm_map);
                 }
             }
         });
@@ -208,6 +209,40 @@ public class LocalDatabaseReference implements EventEmitter{
             return true;
         }
         return false;
+    }
+
+    public void removePotentialContact(final PotentialContacts potentialContact){
+        Log.e(TAG, SUB_TAG+"removing potential contact");
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                database.potentialContactsDao().delete(potentialContact);
+                HashMap<String, Object> potential_contact_map = (HashMap<String, Object>) potentialContact.toMap();
+                event_user_removed.trigger(potential_contact_map);
+            }
+        });
+    }
+
+    public void convertPotentialContactToContact(final PotentialContacts potentialContact){
+        Log.e(TAG, SUB_TAG+"Convert potential contact to contact");
+
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                //First remove the potential contact
+                database.potentialContactsDao().delete(potentialContact);
+                HashMap<String, Object> potential_contact_map = (HashMap<String, Object>) potentialContact.toMap();
+                event_user_removed.trigger(potential_contact_map);
+
+                //Then add the contact
+                User contact = new User(potentialContact.uid, potentialContact.name,
+                        potentialContact.latitude, potentialContact.longitude, potentialContact.publicKey);
+                localDatabaseReference.database.userDao().insertNewUser(contact);
+                HashMap<String, Object> contact_map = (HashMap<String, Object>) contact.toMap();
+                event_user.trigger(contact_map);
+            }
+        });
+
     }
 
     public void updateContactItem(final User user){
