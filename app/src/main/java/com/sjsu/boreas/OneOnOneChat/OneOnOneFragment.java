@@ -58,8 +58,10 @@ public class OneOnOneFragment extends Fragment implements EventListener, UserLis
     public void onCreate(Bundle savedInstanceState) {
         Event event = Event.get(Event.chatMssgEventID);
         Event event_users = Event.get(Event.usersEventID);
+        Event event_user_removed = Event.get(Event.userRemoved);
         event.addListener(this);
         event_users.addListener(this);
+        event_user_removed.addListener(this);
         Log.e(TAG, SUB_TAG+"On create");
         super.onCreate(savedInstanceState);
         mParent = (LandingPage) getActivity();
@@ -191,6 +193,25 @@ public class OneOnOneFragment extends Fragment implements EventListener, UserLis
         }
     }
 
+    private void removeUserFromList(PotentialContacts potentialContacts){
+        Log.e(TAG, SUB_TAG+"remove user from list");
+
+        final int i = indexInContact(potentialContacts);
+
+        if(i < 0){
+            Log.e(TAG, SUB_TAG+"Couldn't find the give potential contact in the list");
+            return;
+        }
+
+        contactArrayList.remove(i);
+        mParent.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mAdapter.notifyItemRemoved(i);
+            }
+        });
+    }
+
 //    mParent.runOnUiThread(new Runnable() {
 //        @Override
 //        public void run() {
@@ -214,6 +235,12 @@ public class OneOnOneFragment extends Fragment implements EventListener, UserLis
 
     private void newContactAdded(User contact){
         Log.e(TAG, SUB_TAG+"new contact added");
+        if(contact instanceof PotentialContacts){
+            Log.e(TAG, SUB_TAG+"Potential contact in hea ---------");
+        }
+        else{
+            Log.e(TAG, SUB_TAG+ "Not potential yo -----------------");
+        }
         contactArrayList.add(contact);
         mParent.runOnUiThread(new Runnable() {
             @Override
@@ -287,6 +314,7 @@ public class OneOnOneFragment extends Fragment implements EventListener, UserLis
 
     public void eventTriggered(HashMap<String, Object> packet, String type){
         Log.e(TAG, SUB_TAG+"I have received a message, my lord. It goes something like: "+ packet.toString());
+        Log.e(TAG, SUB_TAG+"type: " + type);
         // parse chatmessage from packet
         // try catch for parsing user when new user (not in contact list) messages
         if(type.equals(Event.chatMssgEventID)) {
@@ -297,6 +325,10 @@ public class OneOnOneFragment extends Fragment implements EventListener, UserLis
             Log.e(TAG, SUB_TAG+"this is a new user event");
             User user = User.convertHashMapToUser(packet);
             newContactAdded(user);
+        }else if(type.equals(Event.userRemoved)){
+            Log.e(TAG, SUB_TAG+"This is a user removed event");
+            PotentialContacts potentialContact = PotentialContacts.convertHashMapToUser(packet);
+            removeUserFromList(potentialContact);
         }
     }
 
