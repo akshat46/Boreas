@@ -52,7 +52,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/space_mini"
-                android:fontFamily="@font/title"
+                android:fontFamily="@font/heavy"
                 android:text="BOREAS"
                 android:textColor="@color/colorTitle"
                 android:textSize="30sp" />
@@ -90,7 +90,7 @@
             android:layout_gravity="left"
             android:layout_marginTop="20dp"
             android:background="@drawable/bg_button"
-            android:fontFamily="@font/button"
+            android:fontFamily="@font/bold"
             android:text="Login*"
             android:textAllCaps="false"
             android:textColor="@color/colorButtonText" />
