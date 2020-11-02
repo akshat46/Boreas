@@ -65,8 +65,8 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener {
     private Context mContext;
     private ChatActivity2 mActivity;
     private Toolbar toolbar;
-    private Button dynamicButton;
-    private Button dynamicButton2;
+    private ImageButton dynamicButton;
+    private ImageButton dynamicButton2;
 
     private enum SendMode{
         ONLINE("ONLINE"),
@@ -217,12 +217,14 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener {
                         // cant use switch. doesn't work with enum.values
                         if(item.getTitle().toString().toUpperCase().equals(SendMode.OFFLINE.getValue())) {
                             Log.e(TAG, SUB_TAG+"changing the mode to offline");
-                            btnSend.setImageResource(R.drawable.ic_offline_send);
+                            btnSend.setImageResource(R.drawable.ic_offline_send_f);
+                            btnSend.setBackgroundResource(R.drawable.bg_button_send_offline);
                             mode =SendMode.OFFLINE;
                         }
                         else if(item.getTitle().toString().toUpperCase().equals(SendMode.ONLINE.getValue())){
                             Log.e(TAG, SUB_TAG+"Changing the mode to online");
-                            btnSend.setImageResource(R.drawable.ic_online_send);
+                            btnSend.setImageResource(R.drawable.ic_online_send_f);
+                            btnSend.setBackgroundResource(R.drawable.bg_button);
                             mode =SendMode.ONLINE;
                         }
                         return true;
@@ -236,7 +238,7 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener {
 
     private void setUpTheIgnoreButton(){
         Log.e(TAG, SUB_TAG+"Setting up the ignore button");
-        dynamicButton.setText("-");
+        dynamicButton.setImageResource(R.drawable.ic_block_contact);
         dynamicButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -248,15 +250,13 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener {
                 //localDatabaseReference.removePotentialUser(myChatPartner);
             }
         });
-        dynamicButton.setTextSize(12);
         dynamicButton.setEnabled(true);
-        dynamicButton.setWidth(10);
         dynamicButton.setVisibility(View.VISIBLE);
     }
 
     private void setUpTheAddToContactsButton(){
         Log.e(TAG, SUB_TAG+"Setting up the adding to contact button");
-        dynamicButton2.setText("+");
+        dynamicButton2.setImageResource(R.drawable.ic_add_contact);
         dynamicButton2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -267,9 +267,7 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener {
                 //localDatabaseReference.addContact(myChatPartner);
             }
         });
-        dynamicButton2.setTextSize(12);
         dynamicButton2.setEnabled(true);
-        dynamicButton2.setWidth(10);
         dynamicButton2.setVisibility(View.VISIBLE);
     }
 

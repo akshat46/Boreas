@@ -6,16 +6,18 @@
     android:id="@+id/chatRL"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="6dp">
+    android:layout_marginLeft="@dimen/space_standard"
+    android:layout_marginRight="@dimen/space_standard"
+    android:layout_marginTop="@dimen/space_standard"
+    android:orientation="vertical">
 
     <androidx.cardview.widget.CardView
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/profilePhoto"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         app:cardCornerRadius="@dimen/radius"
-        android:layout_margin="@dimen/space_small"
+        android:layout_marginRight="@dimen/space_small"
         android:padding="0dp"
         app:cardElevation="0dp"
         android:elevation="0dp">
@@ -36,7 +38,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/space_standard"
-        android:layout_marginTop="@dimen/space_standard"
+        android:layout_marginTop="@dimen/space_mini"
         android:layout_toRightOf="@id/profilePhoto"
         android:text="Account1"
         android:textColor="@color/colorTitle"
@@ -56,7 +58,7 @@
         android:layout_marginRight="@dimen/space_large"
         android:layout_toRightOf="@id/profilePhoto"
         android:layout_toEndOf="@id/profilePhoto"
-        android:textColor="@color/colorText"
+        android:textColor="@color/colorSubtext"
         android:text="This is a sample message"
         android:maxLines="1"
         android:ellipsize="end" />
@@ -66,23 +68,22 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:layout_marginTop="15dp"
-        android:layout_marginRight="10dp"
+        android:layout_marginTop="@dimen/space_mini"
         android:text="5:30 PM"
         android:textColor="@color/colorSubtext"
-        android:textSize="12sp" />
+        android:textSize="@dimen/text_sub" />
 
     <!--
 
     -->
     <View
         android:id="@+id/newMessage"
-        android:layout_width="15dp"
-        android:layout_height="15dp"
+        android:layout_width="@dimen/space_standard"
+        android:layout_height="@dimen/space_standard"
         android:layout_below="@id/lastMessageTime"
         android:layout_alignParentRight="true"
-        android:layout_marginRight="10dp"
-        android:layout_marginTop="15dp"
+        android:layout_marginRight="@dimen/space_small"
+        android:layout_marginTop="@dimen/space_small"
         android:background="@drawable/bg_newmessage"
         android:gravity="center"
         android:visibility="invisible"/>
