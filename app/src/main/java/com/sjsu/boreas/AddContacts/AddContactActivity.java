@@ -77,8 +77,8 @@ public class AddContactActivity extends AppCompatActivity {
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
         tabLayout.setSelectedTabIndicatorColor(Color.parseColor("#FFFFFF"));
-        tabLayout.getTabAt(0).setIcon(R.drawable.ic_contacts_white_24dp);
-        tabLayout.getTabAt(1).setIcon(R.drawable.ic_contacts_white_24dp);
+        tabLayout.getTabAt(0).setIcon(R.drawable.ic_contacts);
+        tabLayout.getTabAt(1).setIcon(R.drawable.ic_contacts);
     }
 
     private List<Fragment> getFragments() {
