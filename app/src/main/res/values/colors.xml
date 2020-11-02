@@ -2,15 +2,22 @@
 <resources>
     <color name="colorBack">#0B0C10</color>
     <color name="colorBackLight">#19191C</color>
-    <color name="colorText">#7e7f94</color>
-    <color name="colorTitle">#303260</color>
-    <color name="colorSubtext">#9A9BB3</color>
 
-    <color name="colorAccent">#7999e6</color>
-    <color name="colorAccentDark">#303260</color>
+    <color name="colorText">#1b2d45</color>
+    <color name="colorButtonText">#00214d</color>
+    <color name="colorTitle">#00214d</color>
+    <color name="colorSubtext">#A7BEDD</color>
+
+    <color name="colorAccent">#00ebc7</color>
+    <color name="colorAccentGradient">#78ffeb</color>
+    <color name="colorAccentSecondary">#ff5470</color>
+    <color name="colorAccentTertiary">#fde24f</color>
+    <color name="colorBackgroundDark">#001534</color>
+    <color name="colorAccentDark">#001534</color>
+
     <color name="backgroundOff">#f0f0f0</color>
-    <color name="backgroundAlt">#f3f9fc</color>
-    <color name="background">#FFFFFF</color>
+    <color name="backgroundAlt">#f2f4f6</color>
+    <color name="background">#fffffe</color>
 
     <color name="common_bordmer_color">#ffffff</color>
     <color name="round_green">#0aea07</color>
