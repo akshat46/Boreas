@@ -144,7 +144,12 @@ public class OneOnOneFragment extends Fragment implements EventListener, UserLis
                 //Also add any potential contacts chats
                 contactArrayList.addAll(localDatabaseReference.getPotentialContacts());
                 mAdapter=new UserListAdapter(contactArrayList, mContext, userListItemClickAction);
-                recyclerView.setAdapter(mAdapter);
+                mParent.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        recyclerView.setAdapter(mAdapter);
+                    }
+                });
             }
         });
     }
