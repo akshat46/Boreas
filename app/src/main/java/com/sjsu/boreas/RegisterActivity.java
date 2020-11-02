@@ -1,6 +1,7 @@
 package com.sjsu.boreas;
 
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
@@ -8,11 +9,13 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.graphics.Typeface;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.text.method.PasswordTransformationMethod;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
@@ -34,7 +37,7 @@ import java.security.KeyPairGenerator;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-public class RegisterActivity extends Activity implements LocationListener {
+public class RegisterActivity extends AppCompatActivity implements LocationListener {
 
     String KEY = "AIzaSyDyGjh3NUYPVNdxlbRdZD38FDrX-bOf5B4";
 
@@ -54,7 +57,7 @@ public class RegisterActivity extends Activity implements LocationListener {
     private EditText password;
     private EditText confirmPassword;
     private Button sign_up;
-    private Button log_in;
+    private TextView log_in;
 
     public LocalDatabaseReference localDatabaseReference = LocalDatabaseReference.get();
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
@@ -108,12 +111,12 @@ public class RegisterActivity extends Activity implements LocationListener {
 
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        setContentView(R.layout.activity_register_temp);
+        setContentView(R.layout.activity_register);
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         int width = displayMetrics.widthPixels;
         int margin = (width/6);
-        registerLayout = (LinearLayout) findViewById(R.id.login_layout);
+        registerLayout = (LinearLayout) findViewById(R.id.signup_layout);
         ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) registerLayout.getLayoutParams();
         params.setMargins(margin,0,0,0);
 
@@ -124,6 +127,13 @@ public class RegisterActivity extends Activity implements LocationListener {
         confirmPassword = findViewById(R.id.register_confirm_password);
         sign_up = findViewById(R.id.signup);
         log_in = findViewById(R.id.login_register_act);
+
+        password.setTypeface(Typeface.DEFAULT);
+        password.setTransformationMethod(new PasswordTransformationMethod());
+
+        confirmPassword.setTypeface(Typeface.DEFAULT);
+        confirmPassword.setTransformationMethod(new PasswordTransformationMethod());
+
 
         log_in.setOnClickListener(new View.OnClickListener() {
             @Override

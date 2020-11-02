@@ -8,115 +8,114 @@
     android:orientation="vertical">
 
     <LinearLayout
+        android:id="@+id/login_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/login_layout"
-        android:layout_marginLeft="0dp"
         android:layout_centerVertical="true"
-        android:paddingTop="40dp"
-        android:paddingBottom="40dp"
-        android:paddingLeft="40dp"
+        android:layout_marginLeft="0dp"
+        android:background="@drawable/bg_curved"
         android:elevation="12dp"
         android:orientation="vertical"
-        android:background="@drawable/bg_curved">
+        android:paddingLeft="@dimen/space_unholy"
+        android:paddingTop="@dimen/space_unholy"
+        android:paddingBottom="@dimen/space_large">
 
         <TextView
             android:id="@+id/boreas-welcome"
             android:layout_width="match_parent"
-            android:maxWidth="275dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:textSize="12sp"
             android:layout_marginBottom="-2dp"
             android:fontFamily="@font/text"
+            android:maxWidth="275dp"
+            android:text="LOG IN AND CONTINUE TO"
             android:textColor="@color/colorTitle"
-            android:text="SIGN UP AND CONTINUE TO" />
+            android:textSize="@dimen/text_sub" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:maxWidth="275dp"
-            android:orientation="horizontal"
             android:layout_gravity="center"
-            android:layout_marginBottom="30dp">
+            android:layout_marginBottom="@dimen/space_massive"
+            android:maxWidth="275dp"
+            android:orientation="horizontal">
+
             <ImageView
                 android:layout_width="30sp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="1dp"
                 android:adjustViewBounds="true"
-                android:src="@drawable/ic_send"/>
+                android:src="@drawable/ic_send" />
 
             <TextView
-                android:id="@+id/eager-title"
+                android:id="@+id/boreas-title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="30sp"
-                android:textColor="@color/colorTitle"
-                android:layout_marginLeft="5dp"
+                android:layout_marginLeft="@dimen/space_mini"
                 android:fontFamily="@font/title"
-                android:text="BOREAS" />
+                android:text="BOREAS"
+                android:textColor="@color/colorTitle"
+                android:textSize="30sp" />
         </LinearLayout>
 
         <EditText
             android:id="@+id/login_userid"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="User ID"
-            android:paddingBottom="15dp"
-            android:paddingTop="15dp"
-            android:textSize="18sp"
+            android:layout_gravity="center"
             android:background="@drawable/bg_edittext"
-            android:layout_gravity="center"/>
+            android:hint="User ID"
+            android:paddingTop="@dimen/space_standard"
+            android:paddingBottom="@dimen/space_small"
+            android:textSize="@dimen/text_standard" />
 
         <EditText
-            android:inputType="textPassword"
             android:id="@+id/login_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Password"
-            android:paddingBottom="15dp"
-            android:paddingTop="15dp"
-            android:textSize="18sp"
+            android:layout_gravity="center"
             android:background="@drawable/bg_edittext"
-            android:layout_gravity="center"/>
+            android:hint="Password"
+            android:inputType="textPassword"
+            android:paddingTop="@dimen/space_standard"
+            android:paddingBottom="@dimen/space_small"
+            android:textSize="@dimen/text_standard" />
 
 
         <Button
             android:id="@+id/login_button"
+            style="?android:attr/borderlessButtonStyle"
             android:layout_width="100dp"
             android:layout_height="40dp"
+            android:layout_gravity="left"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/bg_button"
+            android:fontFamily="@font/button"
             android:text="Login*"
             android:textAllCaps="false"
-            android:fontFamily="@font/button"
-            android:textColor="@color/background"
-            android:background="@drawable/bg_button"
-            style="?android:attr/borderlessButtonStyle"
-            android:layout_marginTop="20dp"
-            android:layout_gravity="left"/>
-
-        <Button
-            android:id="@+id/sign_button"
-            android:layout_width="100dp"
-            android:layout_height="40dp"
-            android:text="Signup*"
-            android:textAllCaps="false"
-            android:fontFamily="@font/button"
-            android:textColor="@color/background"
-            android:background="@drawable/bg_button"
-            style="?android:attr/borderlessButtonStyle"
-            android:layout_marginTop="20dp"
-            android:layout_gravity="left"/>
+            android:textColor="@color/colorButtonText" />
 
         <TextView
-            android:id="@+id/permission_text"
+            android:id="@+id/register_login_act"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:paddingRight="10dp"
-            android:gravity="left"
-            android:textSize="10dp"
-            android:fontFamily="@font/subtext"
-            android:text="*Boreas requires location permission to generate your unique ID." />
+            android:layout_marginTop="@dimen/space_large"
+            android:layout_marginBottom="@dimen/space_massive"
+            android:clickable="true"
+            android:focusable="true"
+            android:text="@string/signup_message_on_login"
+            android:textSize="@dimen/text_sub" />
+
+<!--        <TextView-->
+<!--            android:id="@+id/permission_text"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginTop="10dp"-->
+<!--            android:gravity="start"-->
+<!--            android:paddingRight="@dimen/space_standard"-->
+<!--            android:text="*Boreas requires location permission to generate your unique ID."-->
+<!--            android:textColor="@color/colorSubtext"-->
+<!--            android:textSize="@dimen/text_mini"/>-->
 
     </LinearLayout>
 
