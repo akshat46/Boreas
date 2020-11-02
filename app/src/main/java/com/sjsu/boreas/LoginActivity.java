@@ -2,12 +2,18 @@ package com.sjsu.boreas;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.method.PasswordTransformationMethod;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.sjsu.boreas.Database.LocalDatabaseReference;
 import com.sjsu.boreas.Database.Contacts.User;
@@ -23,7 +29,8 @@ public class LoginActivity extends AppCompatActivity {
     private EditText userID;
     private EditText password;
     private Button loginButton;
-    private Button signupButton;
+    private TextView signupButton;
+    private LinearLayout loginLayout;
 
     private LocalDatabaseReference localDatabaseReference;
 
@@ -34,6 +41,14 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        int width = displayMetrics.widthPixels;
+        int margin = (width/6);
+        loginLayout = (LinearLayout) findViewById(R.id.login_layout);
+        ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) loginLayout.getLayoutParams();
+        params.setMargins(margin,0,0,0);
+
         Log.e(TAG, SUB_TAG+"onCreate");
 
         localDatabaseReference = LocalDatabaseReference.get();
@@ -42,7 +57,10 @@ public class LoginActivity extends AppCompatActivity {
         userID = findViewById(R.id.login_userid);
         password = findViewById(R.id.login_password);
         loginButton = findViewById(R.id.login_button);
-        signupButton = findViewById(R.id.sign_button);
+        signupButton = findViewById(R.id.register_login_act);
+
+        password.setTypeface(Typeface.DEFAULT);
+        password.setTransformationMethod(new PasswordTransformationMethod());
 
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
