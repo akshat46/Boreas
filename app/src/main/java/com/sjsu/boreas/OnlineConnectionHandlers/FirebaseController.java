@@ -62,7 +62,7 @@ public class FirebaseController { //This is class should be used to access fireb
 
     }
 
-    private static void pushFirebaseToken(final User user){
+    public static void pushFirebaseToken(final User user){
         FirebaseInstanceId.getInstance().getInstanceId()
                 .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
                     @Override
@@ -160,8 +160,15 @@ public class FirebaseController { //This is class should be used to access fireb
                         if(user.getPassword().equals(password)){
                             Log.e(TAG, SUB_TAG+"The login info was correct");
                             loggedInUser = user;
-                            synchContactsForUser(loggedInUser, context);
+//                            localDatabaseReference.wipeAllPreviousUserData();
+                            localDatabaseReference.registerUser(loggedInUser);
+//                            synchContactsForUser(loggedInUser, context);
+                        }else{
+                            Log.e(TAG, SUB_TAG+"The provide ()()()()()() password wrong.");
                         }
+                    }
+                    else{
+                        Log.e(TAG, SUB_TAG+"user is actually empty dude !!!!!!!!!!!!!!!");
                     }
                 }
             }
@@ -175,7 +182,7 @@ public class FirebaseController { //This is class should be used to access fireb
         return loggedInUser;
     }
 
-    private static void synchContactsForUser(LoggedInUser user, Context context){
+    public static void synchContactsForUser(LoggedInUser user, Context context){
         Log.e(TAG, SUB_TAG+"Synch the contacts for the provided user");
 
         if(!networkIsAvailable()){

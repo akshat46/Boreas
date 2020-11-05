@@ -328,7 +328,7 @@ public class RegisterActivity extends AppCompatActivity implements LocationListe
         Log.e(TAG, SUB_TAG+"User: " + myUser);
         System.out.println(myUser);
 
-        localDatabaseReference.wipeAllPreviousUserData();
+//        localDatabaseReference.wipeAllPreviousUserData();
         MainActivity.context.onActivityResult(0, MainActivity.REGISTER_ACTIVITY_DONE_CODE, null);
     }
 

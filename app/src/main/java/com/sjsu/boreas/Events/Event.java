@@ -49,7 +49,7 @@ public class Event {
     }
 
     public void trigger(HashMap<String, Object> packet){
-        Log.e(TAG, SUB_TAG+"Trigger");
+        Log.e(TAG, SUB_TAG+"Trigger++*************************************");
         int i = 0;
         for(EventListener l : listeners){
             Log.e(TAG, SUB_TAG+"In the loop, listener: " + l  + ", " + i++);
