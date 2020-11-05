@@ -13,8 +13,11 @@ import com.sjsu.boreas.Database.PotentialContacts.PotentialContacts;
 import com.sjsu.boreas.Database.Contacts.User;
 import com.sjsu.boreas.Events.Event;
 import com.sjsu.boreas.Events.EventEmitter;
+import com.sjsu.boreas.LandingPage;
+import com.sjsu.boreas.LoginActivity;
 import com.sjsu.boreas.Messages.LongDistanceMessage;
 import com.sjsu.boreas.Notifications.CustomNotification;
+import com.sjsu.boreas.OnlineConnectionHandlers.FirebaseController;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -85,8 +88,13 @@ public class LocalDatabaseReference implements EventEmitter{
                     Log.e(TAG, SUB_TAG+"User is already registered");
                     return;
                 }
-                database.loggedInUserDao().clearLoggedInUserTable();
+                wipeAllPreviousUserData();
+                Log.e(TAG, SUB_TAG+"Returned from register-----------------");
                 database.loggedInUserDao().insertNewUser(user);
+                FirebaseController.synchContactsForUser(user, null);
+                user.logUserIn();
+                Log.e(TAG, SUB_TAG+"-----Just changed the state to login---------"+user);
+                database.loggedInUserDao().logUserIn(user);
             }
         });
     }
@@ -123,6 +131,7 @@ public class LocalDatabaseReference implements EventEmitter{
         Log.e(TAG, SUB_TAG+"getting the user of this app");
         LoggedInUser user = null;
         user = database.loggedInUserDao().getRegisteredUser();
+        Log.e(TAG, SUB_TAG+".................>This is the user: " + user + "<...................");
         return user;
     }
 
@@ -288,13 +297,18 @@ public class LocalDatabaseReference implements EventEmitter{
 
     public void wipeAllPreviousUserData(){
         Log.e(TAG, SUB_TAG+"Wiping the contacts/users table");
-        AsyncTask.execute(new Runnable() {
-            @Override
-            public void run() {
-                database.userDao().clearUserTable();
-                database.potentialContactsDao().clearPotentialContactsTable();
-                database.chatMessageDao().clearAllMessages();
-            }
-        });
+//        AsyncTask.execute(new Runnable() {
+//            @Override
+//            public void run() {
+//                database.userDao().clearUserTable();
+//                database.potentialContactsDao().clearPotentialContactsTable();
+//                database.chatMessageDao().clearAllMessages();
+//                database.loggedInUserDao().clearLoggedInUserTable();
+//            }
+//        });
+        database.userDao().clearUserTable();
+        database.potentialContactsDao().clearPotentialContactsTable();
+        database.chatMessageDao().clearAllMessages();
+        database.loggedInUserDao().clearLoggedInUserTable();
     }
 }
