@@ -20,6 +20,7 @@ import com.sjsu.boreas.Database.Contacts.User;
 import com.sjsu.boreas.Messages.AdjacencyListMessage;
 import com.sjsu.boreas.Messages.LongDistanceMessage;
 import com.sjsu.boreas.Messages.TextMessage;
+import com.sjsu.boreas.OfflineConnectionHandlers.offline_messages.NeighborRequestMessage;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -30,6 +31,7 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.security.KeyFactory;
 import java.security.spec.PKCS8EncodedKeySpec;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -163,6 +165,37 @@ public class NearbyCallbackHandler {
                                 connectionHandler.getClient().sendPayload(connectionHandler.neighbors.get(user.uid), forwardPayload);
                             }
                         }
+                    }
+                }
+
+
+
+                //Sub-neighbor List
+                else if(result instanceof NeighborRequestMessage){
+                    NeighborRequestMessage message = (NeighborRequestMessage) result;
+                    if(!connectionHandler.subNeighbors.containsKey(message.neighbor.uid))
+                        connectionHandler.subNeighbors.put(message.neighbor.uid, new ArrayList<String>());
+
+                    for(User subNeighbor : message.subNeighbors) {
+                        connectionHandler.subNeighbors.get(message.neighbor.uid).add(subNeighbor.uid);
+                        localDatabaseReference.addContact(subNeighbor);
+                    }
+                    localDatabaseReference.addContact(message.neighbor);
+                }
+
+
+                //String Message
+                else if(result instanceof String){
+                    String message = (String) result;
+
+                    //Request to get list of neighbors
+                    if(message.equals(NearbyConnectionHandler.REQUEST_GET_NEIGHBORS)){
+                        List<User> myNeighbors = new ArrayList<>();
+                        for(String userId : connectionHandler.neighbors.values()) {
+                            myNeighbors.add(localDatabaseReference.getUserById(userId));
+                        }
+                        NeighborRequestMessage response = new NeighborRequestMessage(MainActivity.currentUser, myNeighbors.toArray(new User[]{}));
+                        connectionHandler.getClient().sendPayload(endpointId, Payload.fromStream(constructStreamFromSerializable(response)));
                     }
                 }
             }catch(Exception e){
