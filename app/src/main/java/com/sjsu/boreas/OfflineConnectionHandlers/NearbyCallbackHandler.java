@@ -172,6 +172,7 @@ public class NearbyCallbackHandler {
 
                 //Sub-neighbor List
                 else if(result instanceof NeighborRequestMessage){
+                    connectionHandler.isSubNeighborsUpdate = true;
                     NeighborRequestMessage message = (NeighborRequestMessage) result;
                     if(!connectionHandler.subNeighbors.containsKey(message.neighbor.uid))
                         connectionHandler.subNeighbors.put(message.neighbor.uid, new ArrayList<String>());
