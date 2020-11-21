@@ -35,6 +35,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
@@ -50,8 +51,9 @@ public class NearbyConnectionHandler {
     private static final int DISCOVER_PERIOD = 120000; //2 minutes
     private static final int MAX_GROUPCHAT_FORWARDS = 3; //max hops a group chat message will be propagated
 
-    private static String TAG = "BOREAS";
-    private static String SUB_TAG = "---NearbyConnectionHandler ";
+    private final static String TAG = "BOREAS";
+    private final static String SUB_TAG = "---NearbyConnectionHandler ";
+    protected final static String REQUEST_GET_NEIGHBORS = "getNeighborsRequest";
     private LocalDatabaseReference localDatabaseReference = LocalDatabaseReference.get();
 
     private Activity context;
@@ -74,6 +76,8 @@ public class NearbyConnectionHandler {
 
     protected HashMap<String, HashSet<String>> meshMembers; //Members of current connection mesh (userId neighbor -> mesh member userIds)
     protected HashMap<String, String> neighbors; //neighbor userId to endpointId
+    protected HashMap<String, List<String>> subNeighbors; //List of neighbors for each of this device's neighbors; neighbor id to ids of their neighbors
+    protected boolean isSubNeighborsUpdate = false; //Whether there's a new update to the subNeighbors map for the front-end to read
 
     public NearbyConnectionHandler(Activity context){
         Log.e(TAG, SUB_TAG+"NearbyConnectionHandler");
@@ -89,6 +93,7 @@ public class NearbyConnectionHandler {
         timer = new Timer();
         meshMembers = new HashMap<>();
         neighbors = new HashMap();
+        subNeighbors = new HashMap<>();
 
         //startAdvertising();
         //startDiscovering();
@@ -312,5 +317,31 @@ public class NearbyConnectionHandler {
     public void receiveMessage(String sender, String text) {
         Log.e(TAG, SUB_TAG+"receiveMessage");
         chatActivity.addMessage(sender == null, sender, text);
+    }
+
+    /**
+     * Sends messages to get neighbor's neighbor lists
+     */
+    public void getNeighborsIn2Hops(){
+        for(String neighbor : neighbors.keySet()){
+            client.sendPayload(neighbors.get(neighbor), Payload.fromBytes(REQUEST_GET_NEIGHBORS.getBytes()));
+        }
+    }
+
+    public Set<String> getSubNeighborsList(){
+        isSubNeighborsUpdate = false;
+
+        Set<String> toret = new HashSet<>();
+        for(List<String> subs: subNeighbors.values()){
+            toret.addAll(subs);
+        }
+        for(String nb : subNeighbors.keySet())
+            toret.add(nb);
+
+        return toret;
+    }
+
+    public boolean isNeighborListUpdate(){
+        return isSubNeighborsUpdate;
     }
 }
