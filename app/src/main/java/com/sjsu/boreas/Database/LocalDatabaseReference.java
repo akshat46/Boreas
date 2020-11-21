@@ -118,6 +118,13 @@ public class LocalDatabaseReference implements EventEmitter{
         return false;
     }
 
+    public User getUserById(String id){
+        List<User> users = database.userDao().getSpecificUser(id);
+        if(users.size() > 0)
+            return users.get(0);
+        return null;
+    }
+
     //This function at the moment needs to be called inside a Async thread (a sperate thread)
     public List<ChatMessage> getLastTwentyMessagesForSpecificUser(User specificUser){
         Log.e(TAG, SUB_TAG+"get last 20 mssgs for a specific user");
