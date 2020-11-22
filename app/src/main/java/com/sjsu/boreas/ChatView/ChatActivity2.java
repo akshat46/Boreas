@@ -1,10 +1,18 @@
 package com.sjsu.boreas.ChatView;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+import android.database.Cursor;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
@@ -22,12 +30,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.Toolbar;
 
 //import com.sjsu.boreas.ChatViewRelatedStuff.MessageListViewStuff.OneOnOneMessageAdapter;
+import com.sjsu.boreas.ChatView.MediaFilesRecyclerItems.FileItem;
+import com.sjsu.boreas.ChatView.MediaFilesRecyclerItems.FileItemClickedAction;
+import com.sjsu.boreas.ChatView.MediaFilesRecyclerItems.MediaFileListAdapter;
 import com.sjsu.boreas.Database.Contacts.User;
 import com.sjsu.boreas.Database.LocalDatabaseReference;
 import com.sjsu.boreas.Database.Messages.ChatMessage;
@@ -49,24 +61,38 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-public class ChatActivity2 extends AppCompatActivity implements EventListener {
+public class ChatActivity2 extends AppCompatActivity implements EventListener, FileItemClickedAction {
 
     private RecyclerView recyclerView;
+    private RecyclerView fileSelectedView;
+    private LinearLayout getFileSelectedParentLayout;
     private ImageButton btnSend;
     private EditText mssgText;
     private TextView userName;
     private ArrayList<ChatMessage> chatMessages;
+    private ArrayList<FileItem> fileSelectedList;
     private MessageAdapter adapter;
+    private MediaFileListAdapter mediaFileListAdapter;
     private RecyclerView.LayoutManager layoutManager;
+    private RecyclerView.LayoutManager mediaListLayoutManager;
     private User myChatPartner;
     private Context mContext;
     private ChatActivity2 mActivity;
     private Toolbar toolbar;
     private ImageButton dynamicButton;
     private ImageButton dynamicButton2;
+    private ImageButton btnChatMedia;
+    private String[] FILE;
+
+    private static final int REQUEST_EXTERNAL_STORAGE = 1;
+    private static String[] PERMISSIONS_STORAGE = {
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+    };
 
     private enum SendMode{
         ONLINE("ONLINE"),
@@ -88,6 +114,8 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener {
 
     private static String TAG = "BOREAS";
     private static String SUB_TAG = "----------------ChatActivity2 ";
+
+    private static int MEDIA_RESULT = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -144,10 +172,14 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener {
     private void initUI(){
         Log.e(TAG, SUB_TAG+"Initializig the ui");
         recyclerView = findViewById(R.id.list_msg);
+        fileSelectedView = findViewById(R.id.files_selected);
+        getFileSelectedParentLayout = findViewById(R.id.files_selected_parent_layout);
         btnSend = findViewById(R.id.btn_chat_send);
         mssgText = findViewById(R.id.msg_type);
+        btnChatMedia = findViewById(R.id.btn_chat_media);
         initNewUI();
         initSendButton();
+        initChatMediaButton();
         initAdapter();
     }
 
@@ -167,6 +199,162 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener {
                 }
             }
         });
+    }
+
+    private void initChatMediaButton(){
+        Log.e(TAG, SUB_TAG+"Init chat media button");
+
+        //Also gotta initialize the array list for the items selected
+        fileSelectedList = new ArrayList<FileItem>();
+        //Hide the linear layout view by default
+        getFileSelectedParentLayout.setVisibility(View.GONE);
+
+        btnChatMedia.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.e(TAG, SUB_TAG+"Onclick chat media");
+                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                intent.setType("image/*");
+                startActivityForResult(Intent.createChooser(intent, "Select Picture"), MEDIA_RESULT);
+//                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION|Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+//                if (Build.VERSION.SDK_INT < 19) {
+//                    intent = new Intent();
+//                    intent.setAction(Intent.ACTION_GET_CONTENT);
+//                    intent.setType("*/*");
+//                    startActivityForResult(Intent.createChooser(intent, "Select file to upload "),MEDIA_RESULT);
+//                } else {
+//                    intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+//                    intent.addCategory(Intent.CATEGORY_OPENABLE);
+//                    intent.setType("*/*");
+//                    startActivityForResult(Intent.createChooser(intent, "Select file to upload "),MEDIA_RESULT);
+//                }
+//                startActivityForResult(intent, MEDIA_RESULT);
+//                loadImages();
+            }
+        });
+    }
+
+    private void loadImages() {
+        Log.e(TAG, SUB_TAG + "Loading images yo");
+        try {
+            FILE = new String[]{
+                    MediaStore.Images.ImageColumns._ID,
+                    MediaStore.Images.ImageColumns.DATA,
+                    MediaStore.Images.ImageColumns.BUCKET_DISPLAY_NAME,
+                    MediaStore.Images.ImageColumns.DATE_TAKEN,
+                    MediaStore.Images.ImageColumns.MIME_TYPE,
+            };
+
+            Cursor cursor = getApplicationContext().getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                    FILE, null, null, null);
+
+            if (cursor == null) {
+                Log.e(TAG, SUB_TAG + "Cursor is null");
+                return;
+            }
+            fileSelectedList = new ArrayList<FileItem>();
+            while (cursor.moveToNext()) {
+                int columnIndex = cursor.getColumnIndex(FILE[0]);
+                String imageDecode = cursor.getString(columnIndex);
+//                    cursor.close();
+                FileItem fileItem = new FileItem(BitmapFactory.decodeFile(imageDecode));
+                fileSelectedList.add(fileItem);
+//                imageViewLoad.setImageBitmap(BitmapFactory.decodeFile(imageDecode));
+            }
+
+            //Setting up the recycler view for the media files selected
+            Log.e(TAG, SUB_TAG + "setting up the file list adapter");
+            mediaFileListAdapter = new MediaFileListAdapter(fileSelectedList, this);
+            fileSelectedView.setAdapter(mediaFileListAdapter);
+            mediaListLayoutManager = new LinearLayoutManager(mActivity, LinearLayoutManager.HORIZONTAL, false);
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    fileSelectedView.setLayoutManager(mediaListLayoutManager);
+                }
+            });
+
+        } catch (Exception e) {
+            Log.e(TAG, SUB_TAG + "Exception: " + e.toString());
+            Toast.makeText(this, "Please try again", Toast.LENGTH_LONG)
+                    .show();
+        }
+    }
+
+    public static void verifyStoragePermissions(Activity activity) {
+        // Check if we have write permission
+        int permission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            // We don't have permission so prompt the user
+            ActivityCompat.requestPermissions(
+                    activity,
+                    PERMISSIONS_STORAGE,
+                    REQUEST_EXTERNAL_STORAGE
+            );
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.e(TAG, SUB_TAG+"Result received");
+        try {
+            if (requestCode == MEDIA_RESULT && resultCode == RESULT_OK
+                    && null != data) {
+                verifyStoragePermissions(this);
+                inflateSelectedFilesView();
+                Log.e(TAG, SUB_TAG+data.getDataString());
+                Uri URI = data.getData();
+
+//                List<ResolveInfo> resInfoList = this.getPackageManager().queryIntentActivities(data, PackageManager.MATCH_DEFAULT_ONLY);
+//                for (ResolveInfo resolveInfo : resInfoList) {
+//                    String packageName = resolveInfo.activityInfo.packageName;
+//                    this.grantUriPermission(packageName, URI, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+//                }
+
+                String[] FILE = {MediaStore.Images.Media.DATA};
+
+                Cursor cursor = getApplicationContext().getContentResolver().query(URI,
+                        FILE, null, null, null);
+
+                if(cursor == null) {
+                    Log.e(TAG, SUB_TAG+"Cursor is null");
+                    return;
+                }
+
+                ArrayList<FileItem> fl= new ArrayList<FileItem>();
+                while (cursor.moveToNext()) {
+                    int columnIndex = cursor.getColumnIndex(FILE[0]);
+                    String imageDecode = cursor.getString(columnIndex);
+//                    cursor.close();
+                    FileItem fileItem = new FileItem(BitmapFactory.decodeFile(imageDecode));
+                    fl.add(fileItem);
+//                imageViewLoad.setImageBitmap(BitmapFactory.decodeFile(imageDecode));
+                }
+                fileSelectedList.addAll(fl);
+                //Setting up the recycler view for the media files selected
+                Log.e(TAG, SUB_TAG+"setting up the file list adapter");
+                mediaFileListAdapter = new MediaFileListAdapter(fileSelectedList, mActivity);
+                fileSelectedView.setAdapter(mediaFileListAdapter);
+                mediaListLayoutManager = new LinearLayoutManager(mActivity, LinearLayoutManager.HORIZONTAL, false);
+                fileSelectedView.setLayoutManager(mediaListLayoutManager);
+
+                if(fileSelectedList.size() > 0){
+                    Log.e(TAG, SUB_TAG+"Some stuff is selected");
+                    getFileSelectedParentLayout.setVisibility(View.VISIBLE);
+                }
+            }
+        } catch (Exception e) {
+            Log.e(TAG, SUB_TAG+"Exception: " + e.toString());
+            Toast.makeText(this, "Please try again", Toast.LENGTH_LONG)
+                    .show();
+        }
+    }
+
+    private void inflateSelectedFilesView(){
+        Log.e(TAG, SUB_TAG+"Inflate selected files view");
+
     }
 
     private void initNewUI(){
@@ -285,7 +473,12 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener {
                 adapter = new MessageAdapter(chatMessages);
                 recyclerView.setAdapter(adapter);
                 layoutManager = new LinearLayoutManager(mActivity);
-                recyclerView.setLayoutManager(layoutManager);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        recyclerView.setLayoutManager(layoutManager);
+                    }
+                });
                 recyclerView.scrollToPosition(adapter.getItemCount() - 1);
             }
         });
@@ -415,6 +608,19 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener {
             Log.e(TAG, SUB_TAG+"this is a chat message event");
             ChatMessage mssg = MessageUtility.convertHashMapToChatMessage(packet);
             addMessageOnScreen(mssg);
+        }
+    }
+
+    public void onItemClicked(int position){
+        Log.e(TAG, SUB_TAG+"clicked on something: " + position);
+
+        //Remove the clicked item
+        fileSelectedList.remove(position);
+        mediaFileListAdapter.notifyItemRemoved(position);
+
+        if(fileSelectedList.size() <= 0){
+            Log.e(TAG, SUB_TAG+"Nothing is selected, hiding");
+            getFileSelectedParentLayout.setVisibility(View.GONE);
         }
     }
 }

@@ -102,6 +102,32 @@
             android:transcriptMode="alwaysScroll"
             android:divider="@null" />
 
+
+    <LinearLayout
+        android:id="@+id/files_selected_parent_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/space_mini"
+        android:layout_marginLeft="@dimen/space_standard"
+        android:layout_marginRight="@dimen/space_standard"
+        android:orientation="horizontal">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/files_selected"
+            android:layout_width="match_parent"
+            android:layout_weight="0.8"
+            android:layout_height="100dp"
+            android:layout_alignParentLeft="false"
+            android:layout_alignParentTop="false"
+            android:layout_marginBottom="@dimen/space_small"
+            android:layout_marginTop="@dimen/space_small"
+            android:listSelector="@android:color/transparent"
+            android:transcriptMode="alwaysScroll"
+            android:divider="@null"
+            tools:listitem="@layout/item_image_thumbnail"/>
+
+    </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
