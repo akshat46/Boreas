@@ -202,7 +202,7 @@ public class FirebaseController { //This is class should be used to access fireb
 
     //This function downloads the image from Firebase Storage and returns the uri of the file
     //  where the image is downloaded to locally
-    public static String downloadImageGetUri(final ChatMessage chatMssg){
+    public static String downloadImageAndGetUri(final ChatMessage chatMssg){
         Log.e(TAG, SUB_TAG+"Loading media from storage for the given mssg");
         ContextHelper contextHelper = ContextHelper.get();
         File path = new File(contextHelper.getApplicationContext().getFilesDir(), "Boreas" + File.separator + "Images");
@@ -213,19 +213,22 @@ public class FirebaseController { //This is class should be used to access fireb
         final Uri uri = Uri.fromFile(outFile);
 
         storage_ref.child("images")
-                    .child("oneOnOneChat")
+                    .child("oneOnOneChats")
                     .child(chatMssg.mssgId+".jpg")
                     .getFile(outFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
                                         @Override
                                         public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
                                             Log.e(TAG, SUB_TAG+"File downloaded");
                                             chatMssg.imgUri = uri.toString();
+                                            Log.e(TAG, SUB_TAG+"\n\t-----" + chatMssg.imgUri);
+                                            localDatabaseReference.saveChatMessageLocally(chatMssg);
                                         }
                                     }).addOnFailureListener(new OnFailureListener() {
                                         @Override
                                         public void onFailure(@NonNull Exception exception) {
                                             Log.e(TAG, SUB_TAG+"\n"+exception);
                                             chatMssg.imgUri = null;
+                                            //TODO: Save the message but save with a place holder "pic couldn't be loaded" image
                                         }
                                     });
         Log.e(TAG, SUB_TAG+"\n\t:" + chatMssg.imgUri);
