@@ -66,6 +66,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import javax.security.auth.Subject;
+
 public class ChatActivity2 extends AppCompatActivity implements EventListener, FileItemClickedAction {
 
     private RecyclerView recyclerView;
@@ -87,6 +89,7 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener, F
     private ImageButton dynamicButton;
     private ImageButton dynamicButton2;
     private ImageButton btnChatMedia;
+    private ImageButton btnBack;
     private String[] FILE;
 
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
@@ -178,10 +181,14 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener, F
         btnSend = findViewById(R.id.btn_chat_send);
         mssgText = findViewById(R.id.msg_type);
         btnChatMedia = findViewById(R.id.btn_chat_media);
+        btnBack = findViewById(R.id.btn_back);
+
         initNewUI();
+
         initSendButton();
         initChatMediaButton();
         initAdapter();
+        initBackButton();
     }
 
     private void initSendButton() {
@@ -198,6 +205,17 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener, F
                     //add message to list
                     sendMessage(mssgText.getText().toString());
                 }
+            }
+        });
+    }
+
+    private void initBackButton(){
+        Log.e(TAG, SUB_TAG+"Initializing the back button");
+
+        btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mActivity.finish();
             }
         });
     }
