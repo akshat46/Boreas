@@ -155,6 +155,11 @@ public class LocalDatabaseReference implements EventEmitter{
         database.loggedInUserDao().logUserOut(user);
     }
 
+    public void updateName(String user, String uid){
+        Log.e(TAG, SUB_TAG+"Loggin user out");
+        database.loggedInUserDao().updateName(user, uid);
+    }
+
     public List<User> getContacts(){
         Log.e(TAG, SUB_TAG+"get contacts");
         return database.userDao().getUsers();
