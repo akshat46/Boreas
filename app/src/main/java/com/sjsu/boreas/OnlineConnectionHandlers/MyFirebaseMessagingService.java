@@ -32,9 +32,11 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             if(chatMssg != null) {
                 if(chatMssg.contains_img){
                     Log.e(TAG, SUB_TAG+"This message contains imge yo");
-                    chatMssg.imgUri = FirebaseController.downloadImageGetUri(chatMssg);
+                    chatMssg.imgUri = FirebaseController.downloadImageAndGetUri(chatMssg);
                 }
-                localDb.saveChatMessageLocally(chatMssg);
+                else {
+                    localDb.saveChatMessageLocally(chatMssg);
+                }
             }
 
         }
