@@ -29,9 +29,14 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             return;
         }else{
             chatMssg = MessageUtility.convertJsonToMessage(mssg.getData().get("body"));
-            if(chatMssg != null)
-//                newMessageReceived(chatMssg);
+            if(chatMssg != null) {
+                if(chatMssg.contains_img){
+                    Log.e(TAG, SUB_TAG+"This message contains imge yo");
+                    chatMssg.imgUri = FirebaseController.downloadImageGetUri(chatMssg);
+                }
                 localDb.saveChatMessageLocally(chatMssg);
+            }
+
         }
 
         Log.e(TAG, SUB_TAG+"<><><><><><><><><><> Leaving hera");

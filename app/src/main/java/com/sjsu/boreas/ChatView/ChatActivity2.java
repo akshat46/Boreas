@@ -5,9 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.database.Cursor;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -20,15 +18,14 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -37,6 +34,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.Toolbar;
 
 //import com.sjsu.boreas.ChatViewRelatedStuff.MessageListViewStuff.OneOnOneMessageAdapter;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.OnProgressListener;
+import com.google.firebase.storage.StorageMetadata;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.sjsu.boreas.ChatView.MediaFilesRecyclerItems.FileItem;
 import com.sjsu.boreas.ChatView.MediaFilesRecyclerItems.FileItemClickedAction;
 import com.sjsu.boreas.ChatView.MediaFilesRecyclerItems.MediaFileListAdapter;
@@ -49,7 +52,6 @@ import com.sjsu.boreas.Database.PotentialContacts.PotentialContacts;
 import com.sjsu.boreas.Events.Event;
 import com.sjsu.boreas.Events.EventListener;
 //import com.sjsu.boreas.HelperStuff.ContextHelper;
-import com.sjsu.boreas.Database.LocalDatabaseReference;
 import com.sjsu.boreas.Misc.ContextHelper;
 import com.sjsu.boreas.OnlineConnectionHandlers.FirebaseController;
 import com.sjsu.boreas.MainActivity;
@@ -61,7 +63,6 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -203,7 +204,6 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener, F
 
     private void initChatMediaButton(){
         Log.e(TAG, SUB_TAG+"Init chat media button");
-
         //Also gotta initialize the array list for the items selected
         fileSelectedList = new ArrayList<FileItem>();
         //Hide the linear layout view by default
@@ -212,6 +212,7 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener, F
         btnChatMedia.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                verifyStoragePermissions(mActivity);
                 Log.e(TAG, SUB_TAG+"Onclick chat media");
                 Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
                 intent.setType("image/*");
@@ -234,53 +235,6 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener, F
         });
     }
 
-    private void loadImages() {
-        Log.e(TAG, SUB_TAG + "Loading images yo");
-        try {
-            FILE = new String[]{
-                    MediaStore.Images.ImageColumns._ID,
-                    MediaStore.Images.ImageColumns.DATA,
-                    MediaStore.Images.ImageColumns.BUCKET_DISPLAY_NAME,
-                    MediaStore.Images.ImageColumns.DATE_TAKEN,
-                    MediaStore.Images.ImageColumns.MIME_TYPE,
-            };
-
-            Cursor cursor = getApplicationContext().getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                    FILE, null, null, null);
-
-            if (cursor == null) {
-                Log.e(TAG, SUB_TAG + "Cursor is null");
-                return;
-            }
-            fileSelectedList = new ArrayList<FileItem>();
-            while (cursor.moveToNext()) {
-                int columnIndex = cursor.getColumnIndex(FILE[0]);
-                String imageDecode = cursor.getString(columnIndex);
-//                    cursor.close();
-                FileItem fileItem = new FileItem(BitmapFactory.decodeFile(imageDecode));
-                fileSelectedList.add(fileItem);
-//                imageViewLoad.setImageBitmap(BitmapFactory.decodeFile(imageDecode));
-            }
-
-            //Setting up the recycler view for the media files selected
-            Log.e(TAG, SUB_TAG + "setting up the file list adapter");
-            mediaFileListAdapter = new MediaFileListAdapter(fileSelectedList, this);
-            fileSelectedView.setAdapter(mediaFileListAdapter);
-            mediaListLayoutManager = new LinearLayoutManager(mActivity, LinearLayoutManager.HORIZONTAL, false);
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    fileSelectedView.setLayoutManager(mediaListLayoutManager);
-                }
-            });
-
-        } catch (Exception e) {
-            Log.e(TAG, SUB_TAG + "Exception: " + e.toString());
-            Toast.makeText(this, "Please try again", Toast.LENGTH_LONG)
-                    .show();
-        }
-    }
-
     public static void verifyStoragePermissions(Activity activity) {
         // Check if we have write permission
         int permission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
@@ -295,6 +249,8 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener, F
         }
     }
 
+    //This is the returned response from the intent that was started in the
+    //  initChatMediaButton function
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -302,8 +258,6 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener, F
         try {
             if (requestCode == MEDIA_RESULT && resultCode == RESULT_OK
                     && null != data) {
-                verifyStoragePermissions(this);
-                inflateSelectedFilesView();
                 Log.e(TAG, SUB_TAG+data.getDataString());
                 Uri URI = data.getData();
 
@@ -327,11 +281,11 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener, F
                 while (cursor.moveToNext()) {
                     int columnIndex = cursor.getColumnIndex(FILE[0]);
                     String imageDecode = cursor.getString(columnIndex);
-//                    cursor.close();
-                    FileItem fileItem = new FileItem(BitmapFactory.decodeFile(imageDecode));
+                    FileItem fileItem = new FileItem(imageDecode);
                     fl.add(fileItem);
-//                imageViewLoad.setImageBitmap(BitmapFactory.decodeFile(imageDecode));
                 }
+                cursor.close();
+
                 fileSelectedList.addAll(fl);
                 //Setting up the recycler view for the media files selected
                 Log.e(TAG, SUB_TAG+"setting up the file list adapter");
@@ -347,14 +301,9 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener, F
             }
         } catch (Exception e) {
             Log.e(TAG, SUB_TAG+"Exception: " + e.toString());
-            Toast.makeText(this, "Please try again", Toast.LENGTH_LONG)
+            Toast.makeText(mActivity, "Please try again", Toast.LENGTH_LONG)
                     .show();
         }
-    }
-
-    private void inflateSelectedFilesView(){
-        Log.e(TAG, SUB_TAG+"Inflate selected files view");
-
     }
 
     private void initNewUI(){
@@ -471,11 +420,11 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener, F
                 chatMessages = new ArrayList<ChatMessage>(localDatabaseReference.getLastTwentyMessagesForSpecificUser(myChatPartner));
                 //set ListView adapter first
                 adapter = new MessageAdapter(chatMessages);
-                recyclerView.setAdapter(adapter);
-                layoutManager = new LinearLayoutManager(mActivity);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        recyclerView.setAdapter(adapter);
+                        layoutManager = new LinearLayoutManager(mActivity);
                         recyclerView.setLayoutManager(layoutManager);
                     }
                 });
@@ -495,57 +444,58 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener, F
             Toast.makeText(ChatActivity2.this, "Sending Offline.", Toast.LENGTH_SHORT).show();
         }
 
-        long time  = Calendar.getInstance().getTimeInMillis();
-        ChatMessage chatMessage = null;
+        //Check if any files are attached/selected
+        if(fileSelectedList.size() > 0){
+            sendMessagesWithMedia(mssg);
+        }else {
+            mssgText.setText("");
 
-        //TODO: this if was used for debugging and testing different types of mssges being sent,
-        //  during the times we were testing with radio stuff, gotta decide on whether to keep this or remove it
-        //  (most likely remove it)
-        if(!(mssg.equals("4"))) {
-            chatMessage = new ChatMessage(MainActivity.currentUser, myChatPartner, UUID.randomUUID().toString(),
+            long time  = Calendar.getInstance().getTimeInMillis();
+            ChatMessage chatMessage = new ChatMessage(MainActivity.currentUser, myChatPartner, UUID.randomUUID().toString(),
                     mssg, time, true, ChatMessage.ChatTypes.ONEONONEONLINECHAT.getValue());
+
+            FirebaseController.pushMessageToFirebase(chatMessage, mActivity);
+            saveMessageLocally(chatMessage);
         }
-
-        mssgText.setText("");
-
-        pushMessageToFirebase(chatMessage);
-        saveMessageLocally(chatMessage);
 
         //TODO: gotta add a way to send stuff thru the radio
 //        sendMessageThruRadio(chatMessage);
     }
 
-    private void pushMessageToFirebase(ChatMessage chatMessage){  
-        Log.e(TAG, SUB_TAG+"Push message to firebase");
-        String oneOnOneChatId = "";
+    private void sendMessagesWithMedia(String mssg){
+        Log.e(TAG, SUB_TAG+"Sending media related messages");
 
-        String firstUser = MainActivity.currentUser.getUid();
-        String secondUser = myChatPartner.getUid();
+        //Every attached item will be sent in its own message
+        int fl_size = fileSelectedList.size();
+        for(int i = 0; i < fl_size; i++){
+            FileItem fi_tmp = fileSelectedList.get(i);
 
-        Map<String, Object> new_chat_mssg = chatMessage.toMap();
+            long time  = Calendar.getInstance().getTimeInMillis();
+            ChatMessage chatMessage = new ChatMessage(MainActivity.currentUser, myChatPartner, UUID.randomUUID().toString(),
+                    mssg, time, true, ChatMessage.ChatTypes.ONEONONEONLINECHAT.getValue());
 
-        Map<String, Object> firebase_child_update = new HashMap<>();
+            chatMessage.imgData = FileItem.picBitmapToString(fi_tmp.getPic());
+            chatMessage.contains_img = true;
 
-        if(getOneOnOneChatFirebaseID(firstUser, secondUser)){
-            oneOnOneChatId = firstUser + secondUser;
-            firebase_child_update.put("/oneOnOneChats/" + oneOnOneChatId + "/user1", firstUser);
-            firebase_child_update.put("/oneOnOneChats/" + oneOnOneChatId + "/user2", secondUser);
+            //The text typed (if there is any) should only appear in the first mssg of the list
+            if(i > 0) {chatMessage.mssgText = "";}
+
+            FirebaseController.pushMessageToFirebase(chatMessage, mActivity);
+
+            //Add the local uri and clear the data before saving message locally
+            chatMessage.imgUri = fi_tmp.getPicUri().toString();
+            chatMessage.imgData = "";
+            saveMessageLocally(chatMessage);
         }
-        else{
-            oneOnOneChatId = secondUser + firstUser;
-            firebase_child_update.put("/oneOnOneChats/" + oneOnOneChatId + "/user1", secondUser);
-            firebase_child_update.put("/oneOnOneChats/" + oneOnOneChatId + "/user2", firstUser);
-        }
 
-        //We are putting this data under the users branch of the firebase database
-        firebase_child_update.put("/oneOnOneChats/" + oneOnOneChatId + "/messages/" + chatMessage.mssgId, new_chat_mssg);
-
-        //Do the actual writing of the data onto firebase
-        FirebaseController.getDatabaseReference().updateChildren(firebase_child_update);
+        clearSelectedFileList();
+        mssgText.setText("");
     }
 
+
+
     private void saveMessageLocally(final ChatMessage chatMessage){
-        Log.e(TAG, SUB_TAG+"Saving message locally");
+        Log.e(TAG, SUB_TAG+"Saving message locally: " + chatMessage);
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
@@ -566,18 +516,6 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener, F
                     mssgText.setText("");
             }
         });
-    }
-
-    //This message creates a unique id which will be used to identify the chat between the 2 users
-    //  to whom the 2 ID's belong to
-    private boolean getOneOnOneChatFirebaseID(String user1ID, String user2ID){
-        Log.e(TAG, SUB_TAG+"getting the ID to be used on firebase");
-        if((user2ID.compareTo(user1ID)) > 0){
-            Log.e(TAG, SUB_TAG+"This is the id: " + user1ID+user2ID);
-            return true;
-        }
-        Log.e(TAG, SUB_TAG+"This is the id: " + user2ID+user1ID);
-        return false;
     }
 
     private void sendMessageThruRadio(ChatMessage chatMessage){
@@ -609,6 +547,15 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener, F
             ChatMessage mssg = MessageUtility.convertHashMapToChatMessage(packet);
             addMessageOnScreen(mssg);
         }
+    }
+
+    private void clearSelectedFileList(){
+        Log.e(TAG, SUB_TAG+"Clearing all the selected files in list");
+        int fl_size = fileSelectedList.size();
+
+        fileSelectedList.clear();
+        mediaFileListAdapter.notifyItemRangeRemoved(0,fl_size);
+        getFileSelectedParentLayout.setVisibility(View.GONE);
     }
 
     public void onItemClicked(int position){
