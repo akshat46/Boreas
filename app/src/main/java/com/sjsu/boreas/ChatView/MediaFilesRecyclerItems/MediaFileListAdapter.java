@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.sjsu.boreas.ChatView.MessageRecyclerItems.MessageViewHolder;
 import com.sjsu.boreas.Database.Messages.ChatMessage;
 import com.sjsu.boreas.MainActivity;
 import com.sjsu.boreas.R;
