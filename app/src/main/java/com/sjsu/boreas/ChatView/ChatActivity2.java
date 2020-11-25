@@ -101,8 +101,8 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener, F
 
     private enum SendMode{
         ONLINE("ONLINE"),
-        OFFLINE_CONNECT_API("OFFLINE_CONNECT_API"),
-        OFFLINE_RADIO("OFFLINE_RADIO");
+        OFFLINE_CONNECT_API("OFFLINE"),
+        OFFLINE_RADIO("RADIO");
 
         public final String label;
 
@@ -375,6 +375,12 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener, F
                             btnSend.setBackgroundResource(R.drawable.bg_button);
                             mode =SendMode.ONLINE;
                         }
+                        else if(item.getTitle().toString().toUpperCase().equals(SendMode.OFFLINE_RADIO.getValue())){
+                            Log.e(TAG, SUB_TAG+"Changing the mode to radio");
+                            btnSend.setImageResource(R.drawable.ic_online_send_f);
+                            btnSend.setBackgroundResource(R.drawable.bg_button);
+                            mode =SendMode.OFFLINE_RADIO;
+                        }
                         return true;
                     }
                 });
@@ -548,17 +554,16 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener, F
 
     private void sendMessageThruRadio(ChatMessage chatMessage){
         Log.e(TAG, SUB_TAG+"Sending message thru radio.");
-        String mssgForRadio = "";
-        int mssgType = 0;
-        if(chatMessage != null) {
-            mssgForRadio = convertMessageToString(chatMessage);
-            mssgType = chatMessage.mssgType;
-        }
-        else{
-            mssgType = ChatMessage.ChatTypes.GETMESSAGESFROMRADIO.getValue();
-        }
-        Log.e(TAG, SUB_TAG+mssgForRadio.getBytes());
-        BlueTerm.sendMessage(mssgForRadio, mssgType);
+//        String mssgForRadio = "";
+//        int mssgType = 0;
+//        if(chatMessage != null) {
+//            mssgForRadio = convertMessageToString(chatMessage);
+//            mssgType = chatMessage.mssgType;
+//        }
+//        else{
+//            mssgType = ChatMessage.ChatTypes.GETMESSAGESFROMRADIO.getValue();
+//        }
+        BlueTerm.sendMessage(chatMessage);
     }
 
     private String convertMessageToString(ChatMessage mssg){
