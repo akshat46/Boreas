@@ -44,6 +44,11 @@ public class BlueTerm{
 
         Log.e(TAG, SUB_TAG+"get blue tooth device: " + name);
         Set<BluetoothDevice> devices = mBluetoothAdapter.getBondedDevices();
+
+        //If no name is given then fall back to the default device name
+        if(name == null || name.isEmpty())
+            name = default_bluetooth_device_name;
+
         for (BluetoothDevice device : devices) {
             Log.e(TAG, "\n  Device: " + device.getName() + ", " + device.getAddress());
             if(device.getName().equals(name)) {
@@ -56,11 +61,11 @@ public class BlueTerm{
     }
 
     //This function connects to whatever device name which is in default_bluetooth_device_name variable
-    private static void connectToBluetoothDevice(){
+    private static boolean connectToBluetoothDevice(){
         Log.e(TAG, SUB_TAG+"connected to blth function");
         if (mBluetoothAdapter == null) {
             Log.e(TAG, SUB_TAG+"This device doesn't have bluetooth.");
-            return;
+            return false;
         }
 
         default_device_pi = getBluetoothDeviceWithName(default_bluetooth_device_name);
@@ -71,15 +76,26 @@ public class BlueTerm{
         //Get the rasperry pi
 
         mSerialService.connect(default_device_pi);
+        //TODO:need better check here for whether the connection is actually established
+        return true;
+    }
+
+    public static boolean getSerialConnectionStatus(){
+        Log.e(TAG, SUB_TAG+"Check if a serial connection is established");
+        if(mSerialService == null || mSerialService.getState() != BluetoothSerialService.STATE_CONNECTED){
+            Log.e(TAG, SUB_TAG+"The device isn't connected to anything yet, gonna try to change that and connect to: " + default_bluetooth_device_name);
+            return connectToBluetoothDevice();
+        }
+        return false;
     }
 
     //This function is the one that sends the data out
     private static void sendByte(final byte[] out){
         Log.e(TAG, SUB_TAG+"Sending mssg");
 
-        if(mSerialService == null || mSerialService.getState() != BluetoothSerialService.STATE_CONNECTED){
-            Log.e(TAG, SUB_TAG+"The device isn't connected to anything yet, gonna try to change that and connect to: " + default_bluetooth_device_name);
-            connectToBluetoothDevice();
+        if(!getSerialConnectionStatus()){
+            Log.e(TAG, SUB_TAG + "No radio connected, please try again");
+            return;
         }
 
         Log.e(TAG, SUB_TAG+"Serial state is: "+ mSerialService.getState());
@@ -126,7 +142,7 @@ public class BlueTerm{
         int radio_packgs_list_len = radio_packgs_to_send.size();
         for(int i = 0; i < radio_packgs_list_len; i++){
             String radio_packg_str = radio_packgs_to_send.toString();
-            //sendByte(radio_packg_str.getBytes(Charset.forName("UTF-8")));
+            sendByte(radio_packg_str.getBytes(Charset.forName("UTF-8")));
         }
     }
 }
