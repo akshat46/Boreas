@@ -5,8 +5,11 @@ import android.bluetooth.BluetoothDevice;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.sjsu.boreas.Database.Messages.ChatMessage;
+
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.Set;
 
 
@@ -71,7 +74,7 @@ public class BlueTerm{
     }
 
     //This function is the one that sends the data out
-    private static void send(final byte[] out) throws UnsupportedEncodingException {
+    private static void sendByte(final byte[] out){
         Log.e(TAG, SUB_TAG+"Sending mssg");
 
         if(mSerialService == null || mSerialService.getState() != BluetoothSerialService.STATE_CONNECTED){
@@ -110,22 +113,20 @@ public class BlueTerm{
     }
 
     //This function is the function which will b used by outside classes to send stuff using radio
-    //  it receives a mssg (ChatMessage converted into string) and a mssg type header which is useful for the pi
-    //  to understand what the pi should do with this mssg
-    public static void sendMessage(String mssg, int mssgType) {
+    public static void sendMessage(ChatMessage chatMessage) {
         Log.e(TAG, SUB_TAG+"getting ready to send mssg");
 
-        if(mssg == null || mssg.isEmpty())
-            mssg = "BOREAS";
+        if(chatMessage == null) {
+            Log.e(TAG, SUB_TAG+"Chatmessage empty yo, what the heck yo?");
+            return;
+        }
 
-        String mssgToBeSent = String.valueOf(mssgType) + "-\n" + mssg;
-        byte[] bytesToSend = mssgToBeSent.getBytes(Charset.forName("UTF-8"));
+        ArrayList<RadioPackage> radio_packgs_to_send = RadioPackage.getRadioPackgsToSend(chatMessage);
 
-        try {
-            send(bytesToSend);
-        } catch (UnsupportedEncodingException e) {
-            Log.e(TAG, SUB_TAG+"There was an issue sending the mssg hea");
-            e.printStackTrace();
+        int radio_packgs_list_len = radio_packgs_to_send.size();
+        for(int i = 0; i < radio_packgs_list_len; i++){
+            String radio_packg_str = radio_packgs_to_send.toString();
+            //sendByte(radio_packg_str.getBytes(Charset.forName("UTF-8")));
         }
     }
 }
