@@ -24,6 +24,7 @@ import android.util.Log;
 
 import com.sjsu.boreas.Database.Messages.ChatMessage;
 import com.sjsu.boreas.Database.Messages.MessageUtility;
+import com.sjsu.boreas.Events.Event;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -64,6 +65,10 @@ public class BluetoothSerialService {
     public static final int STATE_LISTEN = 1;     // now listening for incoming connections
     public static final int STATE_CONNECTING = 2; // now initiating an outgoing connection
     public static final int STATE_CONNECTED = 3;  // now connected to a remote device
+
+    //Use radio events to update listeners
+    private Event event_radio_connected = Event.get(Event.radioConnected);
+    private Event event_radio_disconnected = Event.get(Event.radioDisconnected);
 
     /**
      * Constructor. Prepares a new BluetoothChat session.
@@ -216,7 +221,9 @@ public class BluetoothSerialService {
      * Indicate that the connection attempt failed and notify the UI Activity.
      */
     private void connectionFailed() {
+        Log.e(TAG, SUB_TAG + "Connection failed");
         setState(STATE_NONE);
+        event_radio_disconnected.trigger(null);
 
         // Send a failure message back to the Activity
 //        Message msg = mHandler.obtainMessage(BlueTerm.MESSAGE_TOAST);
@@ -230,6 +237,7 @@ public class BluetoothSerialService {
      * Indicate that the connection was lost and notify the UI Activity.
      */
     private void connectionLost() {
+        Log.e(TAG, SUB_TAG+"Connection lost");
         setState(STATE_NONE);
 
         // Send a failure message back to the Activity
@@ -285,12 +293,16 @@ public class BluetoothSerialService {
                 // This is a blocking call and will only return on a
                 // successful connection or an exception
 
-                if(mmSocket != null)
+                if(mmSocket != null) {
+                    Log.e(TAG, SUB_TAG + "outter try of connect thread");
+                    event_radio_connected.trigger(null);
                     mmSocket.connect();
+                }
             } catch (IOException e) {
                 connectionFailed();
                 // Close the socket
                 try {
+                    Log.e(TAG, SUB_TAG + "outter catch clause of run of connect thread: " + e);
                     mmSocket.close();
                 } catch (IOException e2) {
                     Log.e(TAG, SUB_TAG+"unable to close() socket during connection failure", e2);
