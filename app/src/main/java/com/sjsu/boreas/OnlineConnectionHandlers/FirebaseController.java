@@ -129,14 +129,20 @@ public class FirebaseController { //This is class should be used to access fireb
     //This function is called for sending a oneOnOne message
     public static void pushMessageToFirebase(ChatMessage chatMessage, Context mActivity){
         Log.e(TAG, SUB_TAG+"Push message to firebase");
-        String oneOnOneChatId = "";
-
         if(chatMessage.contains_img){
-            pushMessageMediaToFirebase(chatMessage, mActivity);
+            pushMessageMediaToFirebaseStorage(chatMessage, mActivity);
             //The local uri shouldne be stored in the firbase database
             chatMessage.imgUri = "";
             chatMessage.imgData = "";
         }
+        else
+            pushMessageToFirebaseDatabase(chatMessage);
+    }
+
+    private static void pushMessageToFirebaseDatabase(ChatMessage chatMessage){
+        Log.e(TAG, SUB_TAG+"Pushing the message to firebase database");
+        String oneOnOneChatId = "";
+
 
         String firstUser = MainActivity.currentUser.getUid();
         String secondUser = chatMessage.recipient.getUid();
@@ -162,9 +168,10 @@ public class FirebaseController { //This is class should be used to access fireb
         Log.e(TAG, SUB_TAG+"--------\n\n\t------");
         //Do the actual writing of the data onto firebase
         database_ref.updateChildren(firebase_child_update);
+
     }
 
-    private static void pushMessageMediaToFirebase(ChatMessage chatMessage, final Context mActivity){
+    private static void pushMessageMediaToFirebaseStorage(final ChatMessage chatMessage, final Context mActivity){
         Log.e(TAG, SUB_TAG+"Pusing mssg media to firebase");
         Bitmap bitmap = FileItem.stringToBitMap(chatMessage.imgData);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -178,6 +185,8 @@ public class FirebaseController { //This is class should be used to access fireb
                         // Image uploaded successfully
                         // Dismiss dialog
                         Toast .makeText(mActivity, 	"Image Uploaded!!", Toast.LENGTH_SHORT) .show();
+                        //Send the message to firebase database once the image is done uplodaing
+                        pushMessageToFirebaseDatabase(chatMessage);
                     }}
                 ).addOnFailureListener(new OnFailureListener() {
                     @Override

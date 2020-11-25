@@ -58,6 +58,7 @@ import com.sjsu.boreas.MainActivity;
 import com.sjsu.boreas.PhoneBluetoothRadio.BlueTerm;
 import com.sjsu.boreas.R;
 
+import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -188,6 +189,7 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener, F
         initSendButton();
         initChatMediaButton();
         initAdapter();
+        initFileListAdapter();
         initBackButton();
     }
 
@@ -222,8 +224,6 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener, F
 
     private void initChatMediaButton(){
         Log.e(TAG, SUB_TAG+"Init chat media button");
-        //Also gotta initialize the array list for the items selected
-        fileSelectedList = new ArrayList<FileItem>();
         //Hide the linear layout view by default
         getFileSelectedParentLayout.setVisibility(View.GONE);
 
@@ -295,22 +295,14 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener, F
                     return;
                 }
 
-                ArrayList<FileItem> fl= new ArrayList<FileItem>();
                 while (cursor.moveToNext()) {
                     int columnIndex = cursor.getColumnIndex(FILE[0]);
                     String imageDecode = cursor.getString(columnIndex);
                     FileItem fileItem = new FileItem(imageDecode);
-                    fl.add(fileItem);
+                    fileSelectedList.add(fileItem);
+                    mediaFileListAdapter.notifyDataSetChanged();
                 }
                 cursor.close();
-
-                fileSelectedList.addAll(fl);
-                //Setting up the recycler view for the media files selected
-                Log.e(TAG, SUB_TAG+"setting up the file list adapter");
-                mediaFileListAdapter = new MediaFileListAdapter(fileSelectedList, mActivity);
-                fileSelectedView.setAdapter(mediaFileListAdapter);
-                mediaListLayoutManager = new LinearLayoutManager(mActivity, LinearLayoutManager.HORIZONTAL, false);
-                fileSelectedView.setLayoutManager(mediaListLayoutManager);
 
                 if(fileSelectedList.size() > 0){
                     Log.e(TAG, SUB_TAG+"Some stuff is selected");
@@ -449,6 +441,16 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener, F
                 recyclerView.scrollToPosition(adapter.getItemCount() - 1);
             }
         });
+    }
+
+    private void initFileListAdapter(){
+        //Setting up the recycler view for the media files selected
+        Log.e(TAG, SUB_TAG+"setting up the file list adapter");
+        fileSelectedList = new ArrayList<FileItem>();
+        mediaFileListAdapter = new MediaFileListAdapter(fileSelectedList, mActivity);
+        fileSelectedView.setAdapter(mediaFileListAdapter);
+        mediaListLayoutManager = new LinearLayoutManager(mActivity, LinearLayoutManager.HORIZONTAL, false);
+        fileSelectedView.setLayoutManager(mediaListLayoutManager);
     }
 
     private void sendMessage(String mssg){
