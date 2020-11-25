@@ -101,7 +101,8 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener, F
 
     private enum SendMode{
         ONLINE("ONLINE"),
-        OFFLINE("OFFLINE");
+        OFFLINE_CONNECT_API("OFFLINE_CONNECT_API"),
+        OFFLINE_RADIO("OFFLINE_RADIO");
 
         public final String label;
 
@@ -362,11 +363,11 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener, F
                     public boolean onMenuItemClick(MenuItem item) {
                         Log.e(TAG, SUB_TAG+"Inside popup");
                         // cant use switch. doesn't work with enum.values
-                        if(item.getTitle().toString().toUpperCase().equals(SendMode.OFFLINE.getValue())) {
+                        if(item.getTitle().toString().toUpperCase().equals(SendMode.OFFLINE_CONNECT_API.getValue())) {
                             Log.e(TAG, SUB_TAG+"changing the mode to offline");
                             btnSend.setImageResource(R.drawable.ic_offline_send_f);
                             btnSend.setBackgroundResource(R.drawable.bg_button_send_offline);
-                            mode =SendMode.OFFLINE;
+                            mode =SendMode.OFFLINE_CONNECT_API;
                         }
                         else if(item.getTitle().toString().toUpperCase().equals(SendMode.ONLINE.getValue())){
                             Log.e(TAG, SUB_TAG+"Changing the mode to online");
@@ -454,35 +455,25 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener, F
     }
 
     private void sendMessage(String mssg){
-        Log.e(TAG, SUB_TAG+"sending message");
-
-        // TODO: add correct online/offline implementations here
-        if(mode.getValue().equals(SendMode.ONLINE.getValue())){
-            Toast.makeText(ChatActivity2.this, "Sending Online.", Toast.LENGTH_SHORT).show();
-        }
-        else if(mode.getValue().equals(SendMode.OFFLINE.getValue())){
-            Toast.makeText(ChatActivity2.this, "Sending Offline.", Toast.LENGTH_SHORT).show();
-        }
+        Log.e(TAG, SUB_TAG+"Getting ready to send message");
 
         //Check if any files are attached/selected
         if(fileSelectedList.size() > 0){
-            sendMessagesWithMedia(mssg);
+            setUpMediaChatMessages(mssg);
         }else {
+            //Clear the text box on the screen
             mssgText.setText("");
 
             long time  = Calendar.getInstance().getTimeInMillis();
             ChatMessage chatMessage = new ChatMessage(MainActivity.currentUser, myChatPartner, UUID.randomUUID().toString(),
                     mssg, time, true, ChatMessage.ChatTypes.ONEONONEONLINECHAT.getValue());
 
-            FirebaseController.pushMessageToFirebase(chatMessage, mActivity);
-            saveMessageLocally(chatMessage);
+            actuallySendingTheMessage(chatMessage);
         }
-
-        //TODO: gotta add a way to send stuff thru the radio
-//        sendMessageThruRadio(chatMessage);
     }
 
-    private void sendMessagesWithMedia(String mssg){
+    //This function is where messages containing media will be readied up before sending
+    private void setUpMediaChatMessages(String mssg){
         Log.e(TAG, SUB_TAG+"Sending media related messages");
 
         //Every attached item will be sent in its own message
@@ -494,25 +485,42 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener, F
             ChatMessage chatMessage = new ChatMessage(MainActivity.currentUser, myChatPartner, UUID.randomUUID().toString(),
                     mssg, time, true, ChatMessage.ChatTypes.ONEONONEONLINECHAT.getValue());
 
+            //The image data is used to push the image online
             chatMessage.imgData = FileItem.picBitmapToString(fi_tmp.getPic());
             chatMessage.contains_img = true;
+            chatMessage.imgUri = fi_tmp.getPicUri().toString();
 
             //The text typed (if there is any) should only appear in the first mssg of the list
             if(i > 0) {chatMessage.mssgText = "";}
 
-            FirebaseController.pushMessageToFirebase(chatMessage, mActivity);
-
-            //Add the local uri and clear the data before saving message locally
-            chatMessage.imgUri = fi_tmp.getPicUri().toString();
-            chatMessage.imgData = "";
-            saveMessageLocally(chatMessage);
+            actuallySendingTheMessage(chatMessage);
         }
 
         clearSelectedFileList();
         mssgText.setText("");
     }
 
+    //This function is the function that will push the message to the
+    //  outside world, whether thats offline or online
+    private void actuallySendingTheMessage(ChatMessage chatMessage){
+        Log.e(TAG, SUB_TAG+"This function sends the message, actually!!!!");
 
+        // TODO: add correct online/offline implementations here
+        if(mode.getValue().equals(SendMode.ONLINE.getValue())){
+            Toast.makeText(ChatActivity2.this, "Sending Online.", Toast.LENGTH_SHORT).show();
+            FirebaseController.pushMessageToFirebase(chatMessage, mActivity);
+        }
+        else if(mode.getValue().equals(SendMode.OFFLINE_CONNECT_API.getValue())){
+            Toast.makeText(ChatActivity2.this, "Sending Offline.", Toast.LENGTH_SHORT).show();
+        }
+        else if(mode.getValue().equals(SendMode.OFFLINE_RADIO.getValue())){
+            Toast.makeText(ChatActivity2.this, "Sending thru the radio.", Toast.LENGTH_SHORT).show();
+            sendMessageThruRadio(chatMessage);
+        }
+
+        //Then save a local copy
+        saveMessageLocally(chatMessage);
+    }
 
     private void saveMessageLocally(final ChatMessage chatMessage){
         Log.e(TAG, SUB_TAG+"Saving message locally: " + chatMessage);

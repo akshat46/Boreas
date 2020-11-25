@@ -129,12 +129,8 @@ public class FirebaseController { //This is class should be used to access fireb
     //This function is called for sending a oneOnOne message
     public static void pushMessageToFirebase(ChatMessage chatMessage, Context mActivity){
         Log.e(TAG, SUB_TAG+"Push message to firebase");
-        if(chatMessage.contains_img){
+        if(chatMessage.contains_img)
             pushMessageMediaToFirebaseStorage(chatMessage, mActivity);
-            //The local uri shouldne be stored in the firbase database
-            chatMessage.imgUri = "";
-            chatMessage.imgData = "";
-        }
         else
             pushMessageToFirebaseDatabase(chatMessage);
     }
@@ -185,7 +181,11 @@ public class FirebaseController { //This is class should be used to access fireb
                         // Image uploaded successfully
                         // Dismiss dialog
                         Toast .makeText(mActivity, 	"Image Uploaded!!", Toast.LENGTH_SHORT) .show();
+
                         //Send the message to firebase database once the image is done uplodaing
+                        //The local uri shouldne be stored in the firbase database
+                        chatMessage.imgUri = "";
+                        chatMessage.imgData = "";
                         pushMessageToFirebaseDatabase(chatMessage);
                     }}
                 ).addOnFailureListener(new OnFailureListener() {
