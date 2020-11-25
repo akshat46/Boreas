@@ -38,7 +38,12 @@ public class FileItem {
 
     public FileItem(String picPath){
         this.picUri.fromFile(new File(picPath));
+
+        //Create the thumbnail
+        final int THUMBNAIL_SIZE = 64;
         this.pic = BitmapFactory.decodeFile(picPath);
+        this.pic = Bitmap.createScaledBitmap(this.pic, THUMBNAIL_SIZE, THUMBNAIL_SIZE, false);
+
         this.picUri = Uri.fromFile(new File(picPath));
     }
 
