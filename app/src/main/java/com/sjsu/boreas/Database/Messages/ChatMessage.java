@@ -1,5 +1,6 @@
 package com.sjsu.boreas.Database.Messages;
 
+import android.net.Uri;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -9,6 +10,7 @@ import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
+import com.sjsu.boreas.ChatView.MediaFilesRecyclerItems.FileItem;
 import com.sjsu.boreas.Database.Contacts.User;
 import com.sjsu.boreas.Events.messageListener;
 
@@ -58,6 +60,7 @@ public class ChatMessage implements Serializable {
 
         this.sender = sender;
         this.recipient = recipient;
+        this.contains_img = false;
 
         forwarderIds = new LinkedList<>();
     }
@@ -93,6 +96,15 @@ public class ChatMessage implements Serializable {
     @ColumnInfo(name = "mssgType")
     public int mssgType;
 
+//    @ColumnInfo(name = "imgData")
+    public String imgData;
+
+    @ColumnInfo(name = "imgUri")
+    public String imgUri;
+
+    @ColumnInfo(name = "contains_img")
+    public boolean contains_img;
+
     @Embedded(prefix = "sender_")
     public User sender;
 
@@ -115,7 +127,10 @@ public class ChatMessage implements Serializable {
                 +   "\"recipient\": "+ recipient.toString() + ","
                 +   "\"time\": " + String.valueOf(time) + ","
                 +   "\"isMyMssg\": " + String.valueOf(isMyMssg) + ","
-                +   "\"mssgType\": " + String.valueOf(mssgType)
+                +   "\"mssgType\": " + String.valueOf(mssgType) + ","
+                +   "\"imgData\": " + imgData + ","
+                +   "\"imgUri\": " + imgUri + ","
+                +   "\"contains_img\": " + contains_img
                 + "} \n";
         return mssgStr;
     }
@@ -128,6 +143,12 @@ public class ChatMessage implements Serializable {
         mssgType = (Integer) chatMessage.get("mssgType");
         isMyMssg = (Boolean) chatMessage.get("isMyMssg");
         time = (Long) chatMessage.get("time");
+        imgUri = (String) chatMessage.get("imgUri");
+        contains_img = (boolean) chatMessage.get("contains_img");
+
+        if(contains_img){
+            imgData = (String) chatMessage.get("imgData");
+        }
     }
 
     public Map<String, Object> toMap(){
@@ -139,6 +160,26 @@ public class ChatMessage implements Serializable {
         result.put("time", time);
         result.put("isMyMssg", isMyMssg);
         result.put("mssgType", mssgType);
+        //We don't push the imgUri to online since thats only in the scope of local storage
+        String tmp = "";
+        if(imgData != null) {
+            Log.e(TAG, SUB_TAG+"\n" + imgData);
+            tmp = imgData;
+        }
+        result.put("imgData", tmp);
+        result.put("imgUri", imgUri);
+        result.put("contains_img", contains_img);
+        return result;
+    }
+
+    //This function at the moment is only being used by the firebase storage call
+    //  function in chatactivity2
+    public Map<String, Object> imgDataMap(){
+        Log.e(TAG, SUB_TAG+"only getting the mapped object in mssg");
+        HashMap<String, Object> result = new HashMap<>();
+
+        result.put("mssgId", mssgId);
+        result.put("imgData", imgData);
         return result;
     }
 
