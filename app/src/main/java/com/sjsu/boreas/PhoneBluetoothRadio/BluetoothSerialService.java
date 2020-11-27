@@ -19,18 +19,22 @@ package com.sjsu.boreas.PhoneBluetoothRadio;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.sjsu.boreas.Database.LocalDatabaseReference;
 import com.sjsu.boreas.Database.Messages.ChatMessage;
 import com.sjsu.boreas.Database.Messages.MessageUtility;
 import com.sjsu.boreas.Events.Event;
+import com.sjsu.boreas.Misc.ContextHelper;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.UUID;
 
 /**
@@ -69,6 +73,13 @@ public class BluetoothSerialService {
     //Use radio events to update listeners
     private Event event_radio_connected = Event.get(Event.radioConnected);
     private Event event_radio_disconnected = Event.get(Event.radioDisconnected);
+
+    private ContextHelper contextHelper = ContextHelper.get();
+
+    private ArrayList<RadioPackage> radio_pckg_list = new ArrayList<RadioPackage>();
+
+    private LocalDatabaseReference localDatabaseReference = LocalDatabaseReference.get();
+
 
     /**
      * Constructor. Prepares a new BluetoothChat session.
@@ -363,8 +374,10 @@ public class BluetoothSerialService {
 
         public void run() {
             Log.e(TAG, SUB_TAG+"BEGIN mConnectedThread");
-            byte[] buffer = new byte[1024];
+            byte[] buffer = new byte[2048];
             int bytes;
+
+            String chat_mssg_str = "";
 
             // Keep listening to the InputStream while connected
             while (true) {
@@ -377,18 +390,43 @@ public class BluetoothSerialService {
 //                    mEmulatorView.write(buffer, bytes);
                         // Send the obtained bytes to the UI Activity
                         //mHandler.obtainMessage(BlueTerm.MESSAGE_READ, bytes, -1, buffer).sendToTarget();
-                        String str = new String(buffer, "UTF-8"); // for UTF-8 encoding
-                        Log.i(TAG, "\t\tReceived: " + str.substring(0,bytes));
-                        ChatMessage mssg = MessageUtility.convertJsonToMessage(str.substring(0,bytes));
-                        if(mssg != null)
-                            ChatMessage.notifyListener(mssg);
-                        else
-                            Log.e(TAG, SUB_TAG+"[[[[[[[[[[[[[[[[[[[[[[[[[[[[[The chat mssg returned was null bruh -------------------");
+                        String str = new String(buffer, "UTF-8").trim(); // for UTF-8 encoding
+                        Log.e(TAG, "\t\tReceived: " + str);
+
+                        if(!(str.substring(0,4).equals("DONE"))) {
+                            RadioPackage radioPackage = RadioPackage.stringToRadioPackg(str.trim());
+//                            chat_mssg_str = chat_mssg_str + radioPackage.packg_data;
+                            radio_pckg_list.add(radioPackage);
+                        }
+                        else{
+                            Log.e(TAG, SUB_TAG+"Last message received: " + str);
+                            RadioPackage.sortOutThePackagesReceived(radio_pckg_list);
+//                            AsyncTask.execute(new Runnable() {
+//                                @Override
+//                                public void run() {
+//                                    Log.e(TAG, SUB_TAG+"sending this over the radio package class");
+//                                    //Pass the array over to the radio package class
+//
+//                                }
+//                            });
+                            //Clear it up
+                            ChatMessage chatMessage = MessageUtility.convertJsonToMessage(chat_mssg_str);
+                            Log.e(TAG, SUB_TAG+"\n\t\nmssg: \n\n"+chatMessage);
+                            localDatabaseReference.saveChatMessageLocally(chatMessage);
+                            radio_pckg_list.clear();
+                        }
+
+//                        ChatMessage mssg = MessageUtility.convertJsonToMessage(str.substring(0,bytes));
+//                        if(mssg != null)
+//                            ChatMessage.notifyListener(mssg);
+//                        else
+//                            Log.e(TAG, SUB_TAG+"[[[[[[[[[[[[[[[[[[[[[[[[[[[[[The chat mssg returned was null bruh -------------------");
                     }else{
                         Log.e(TAG, "mmInstream is null");
                     }
                 } catch (IOException e) {
                     Log.e(TAG, SUB_TAG+"disconnected", e);
+//                    RadioPackage.sortOutThePackagesReceived(mssges_received);
                     connectionLost();
                     break;
                 }
@@ -428,6 +466,7 @@ public class BluetoothSerialService {
     public boolean getAllowInsecureConnections() {
         return mAllowInsecureConnections;
     }
+
 
 }
 
