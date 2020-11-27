@@ -22,7 +22,7 @@ public class BlueTerm{
     private static BluetoothSerialService mSerialService;
     private static BluetoothDevice default_device_pi;
 
-    private static String default_bluetooth_device_name = "raspberrypi";
+    public static String default_bluetooth_device_name = "raspberrypi";
 
     // Message types sent from the BluetoothReadService Handler
     public static final int MESSAGE_STATE_CHANGE = 1;
@@ -32,8 +32,14 @@ public class BlueTerm{
     public static final int MESSAGE_TOAST = 5;
 
     // Key names received from the BluetoothChatService Handler
-    public static final String DEVICE_NAME = "device_name";
+    public static String DEVICE_NAME = default_bluetooth_device_name;
     public static final String TOAST = "toast";
+
+
+    public static void setDefaultDeviceName(String deviceName){
+        Log.e(TAG, SUB_TAG+"Setting device name");
+        default_bluetooth_device_name = deviceName;
+    }
 
     public BlueTerm() {
         Log.e(TAG, SUB_TAG+ "+++ Constructor+++");
@@ -46,12 +52,12 @@ public class BlueTerm{
         Set<BluetoothDevice> devices = mBluetoothAdapter.getBondedDevices();
 
         //If no name is given then fall back to the default device name
-        if(name == null || name.isEmpty())
-            name = default_bluetooth_device_name;
+        if(name != null && !(name.isEmpty()))
+            DEVICE_NAME = default_bluetooth_device_name;
 
         for (BluetoothDevice device : devices) {
             Log.e(TAG, "\n  Device: " + device.getName() + ", " + device.getAddress());
-            if(device.getName().equals(name)) {
+            if(device.getName().equals(DEVICE_NAME)) {
                 temp = device;
             }
         }
@@ -137,12 +143,21 @@ public class BlueTerm{
             return;
         }
 
+        if(chatMessage.mssgType == ChatMessage.ChatTypes.GETMESSAGESFROMRADIO.getValue()){
+            Log.e(TAG, SUB_TAG+"Calling the radio and asking for your mssgs yo");
+            final String ANYTHINGFORME = "ANYTHINGFORME";
+            sendByte(ANYTHINGFORME.getBytes(Charset.forName("UTF-8")));
+            return;
+        }
+
         ArrayList<RadioPackage> radio_packgs_to_send = RadioPackage.getRadioPackgsToSend(chatMessage);
 
         int radio_packgs_list_len = radio_packgs_to_send.size();
         for(int i = 0; i < radio_packgs_list_len; i++){
-            String radio_packg_str = radio_packgs_to_send.toString();
+            String radio_packg_str = radio_packgs_to_send.get(i).toString();
             sendByte(radio_packg_str.getBytes(Charset.forName("UTF-8")));
         }
+        final String DONE = "DONE";
+        sendByte(DONE.getBytes(Charset.forName("UTF-8")));
     }
 }
