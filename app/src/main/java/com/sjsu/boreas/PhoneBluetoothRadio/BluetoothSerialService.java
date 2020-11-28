@@ -76,7 +76,7 @@ public class BluetoothSerialService {
 
     private ContextHelper contextHelper = ContextHelper.get();
 
-    private ArrayList<RadioPackage> radio_pckg_list = new ArrayList<RadioPackage>();
+    private String radio_pckg_list_str = "";
 
     private LocalDatabaseReference localDatabaseReference = LocalDatabaseReference.get();
 
@@ -374,7 +374,7 @@ public class BluetoothSerialService {
 
         public void run() {
             Log.e(TAG, SUB_TAG+"BEGIN mConnectedThread");
-            byte[] buffer = new byte[2048];
+            byte[] buffer = new byte[200];
             int bytes;
 
             String chat_mssg_str = "";
@@ -390,30 +390,22 @@ public class BluetoothSerialService {
 //                    mEmulatorView.write(buffer, bytes);
                         // Send the obtained bytes to the UI Activity
                         //mHandler.obtainMessage(BlueTerm.MESSAGE_READ, bytes, -1, buffer).sendToTarget();
-                        String str = new String(buffer, "UTF-8").trim(); // for UTF-8 encoding
-                        Log.e(TAG, "\t\tReceived: " + str);
+                        String str = new String(buffer, "UTF-8").trim() + '\0'; // for UTF-8 encoding
+//                        Log.e(TAG, "\t\tReceived: " + str);
+//                        RadioPackage.parseAllPackages(str);
 
-                        if(!(str.substring(0,4).equals("DONE"))) {
-                            RadioPackage radioPackage = RadioPackage.stringToRadioPackg(str.trim());
-//                            chat_mssg_str = chat_mssg_str + radioPackage.packg_data;
-                            radio_pckg_list.add(radioPackage);
+                        if(str.substring(0,4).equals("DONE")){
+                            Log.e(TAG, SUB_TAG+"Done recieved ---=-=-=-=-=_+_+_+-=-=_+_=-+_=_+_\n\n\n" + radio_pckg_list_str);
+                            RadioPackage.parseAllPackages(radio_pckg_list_str);
                         }
-                        else{
-                            Log.e(TAG, SUB_TAG+"Last message received: " + str);
-                            RadioPackage.sortOutThePackagesReceived(radio_pckg_list);
-//                            AsyncTask.execute(new Runnable() {
-//                                @Override
-//                                public void run() {
-//                                    Log.e(TAG, SUB_TAG+"sending this over the radio package class");
-//                                    //Pass the array over to the radio package class
-//
-//                                }
-//                            });
-                            //Clear it up
-                            ChatMessage chatMessage = MessageUtility.convertJsonToMessage(chat_mssg_str);
-                            Log.e(TAG, SUB_TAG+"\n\t\nmssg: \n\n"+chatMessage);
-                            localDatabaseReference.saveChatMessageLocally(chatMessage);
-                            radio_pckg_list.clear();
+                        else {
+                            radio_pckg_list_str = radio_pckg_list_str + str;
+//                            chat_mssg_str = chat_mssg_str + radioPackage.packg_data;
+//                            if(radioPackage != null) {
+//                                Log.e(TAG, SUB_TAG+"*****************************");
+//                                Log.i(TAG, SUB_TAG+"*****************************");
+//                                radio_pckg_list.add(radioPackage);
+//                            }
                         }
 
 //                        ChatMessage mssg = MessageUtility.convertJsonToMessage(str.substring(0,bytes));
@@ -423,6 +415,7 @@ public class BluetoothSerialService {
 //                            Log.e(TAG, SUB_TAG+"[[[[[[[[[[[[[[[[[[[[[[[[[[[[[The chat mssg returned was null bruh -------------------");
                     }else{
                         Log.e(TAG, "mmInstream is null");
+                        Log.i(TAG, "mmInstream is null");
                     }
                 } catch (IOException e) {
                     Log.e(TAG, SUB_TAG+"disconnected", e);

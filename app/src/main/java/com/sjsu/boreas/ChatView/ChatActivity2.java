@@ -534,6 +534,7 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener, F
         }
         else if(mode.getValue().equals(SendMode.OFFLINE_RADIO.getValue())){
             Toast.makeText(ChatActivity2.this, "Sending thru the radio.", Toast.LENGTH_SHORT).show();
+            chatMessage.mssgType = ChatMessage.ChatTypes.ONEONONEOFFLINERADIO.getValue();
             sendMessageThruRadio(chatMessage);
         }
 

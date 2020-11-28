@@ -123,7 +123,7 @@ public class ChatMessage implements Serializable {
     public String toString(){
        String mssgStr = "{" +
                 "mssgId: \"" + mssgId + "\","
-                +   "\"mssgText\": " + mssgText + ","
+                +   "\"mssgText\": \"" + mssgText + "\","
                 +   "\"sender\": "+ sender.toString() + ","
                 +   "\"recipient\": "+ recipient.toString() + ","
                 +   "\"time\": " + String.valueOf(time) + ","

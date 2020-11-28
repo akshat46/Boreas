@@ -18,14 +18,17 @@ public class RadioPackage {
     private double sub_packg_position;
     public String packg_data;
 
-    private static final String PCKG_ID = "<packg_id>";
-    private static final String NUM_SUB_PCKGS = "<number_or_sub_packgs>";
-    private static final String POSITION = "<sub_packg_position>";
-    private static final String DATA = "<packg_data>";
+    private static final String PCKG_ID = "<p_id>";
+    private static final String NUM_SUB_PCKGS = "<num_sub_ps>";
+    private static final String POSITION = "<sub_p_pos>";
+    private static final String DATA = "<p_data>";
+    private static final String END_TAG = "</e_tag>";
 
 
     private static String TAG = "BOREAS";
     private static String SUB_TAG = "-------RadioPackage-- ";
+
+    private static int CHAT_MSSG_DIV_LEN = 50;
 
     private static LocalDatabaseReference localDatabaseReference = LocalDatabaseReference.get();
 
@@ -38,7 +41,8 @@ public class RadioPackage {
         String radioPackgStr = PCKG_ID + packg_id
                                 +   NUM_SUB_PCKGS + String.valueOf(number_or_sub_packgs)
                                 +   POSITION + String.valueOf(sub_packg_position)
-                                +   DATA + packg_data;
+                                +   DATA + packg_data
+                                +   END_TAG;
         return radioPackgStr;
     }
 
@@ -56,45 +60,59 @@ public class RadioPackage {
         String str_chat_mssg = "";
 
         RadioPackage radioPackage = new RadioPackage();
-        int pacg_len = strRadioPackg.length();
+//        int pacg_len = strRadioPackg.length();
 
         int packg_id = strRadioPackg.indexOf(PCKG_ID);
-        int num_sub_pck_id = strRadioPackg.indexOf(NUM_SUB_PCKGS);
-        int pos_id = strRadioPackg.indexOf(POSITION);
-        int data_id = strRadioPackg.indexOf(DATA);
+
+        int num_sub_pck_id = 0;
+        int pos_id = 0;
+        int data_id = 0;
 
 //        try {
             if (packg_id != -1) {
+                //Remove everything before the tag
+                strRadioPackg = strRadioPackg.substring(packg_id, strRadioPackg.length());
+
+                //Once that extra stuff is removed from, then get the indexes
+                num_sub_pck_id = strRadioPackg.indexOf(NUM_SUB_PCKGS);
+                pos_id = strRadioPackg.indexOf(POSITION);
+                data_id = strRadioPackg.indexOf(DATA);
+
                 int pckg_len = PCKG_ID.length();
-                int amnt = num_sub_pck_id - packg_id - pckg_len;
-                String data = strRadioPackg.substring(packg_id + pckg_len, num_sub_pck_id);
-                Log.e(TAG, SUB_TAG + "found the index: " + packg_id + "\n" + data);
+                String data = strRadioPackg.substring(0 + pckg_len, num_sub_pck_id);
                 radioPackage.packg_id = data;
             }
+            else
+                return null;
 //
-            if (num_sub_pck_id != -1) {
+            if (num_sub_pck_id != -1 && !(num_sub_pck_id > pos_id)) {
                 int num_pckgs_len = NUM_SUB_PCKGS.length();
 //                int amnt = pos_id - num_sub_pck_id - num_pckgs_len;
                 String data = strRadioPackg.substring(num_sub_pck_id + num_pckgs_len, pos_id);
-                Log.e(TAG, SUB_TAG + "found the index: " + num_sub_pck_id + "\n" + data);
                 radioPackage.number_or_sub_packgs = Double.parseDouble(data);
             }
+            else
+                return null;
 
-            if (pos_id != -1) {
+            if (pos_id != -1 && !(pos_id > data_id)) {
                 int pos_id_len = POSITION.length();
 //                int amnt = data_id - pos_id - pos_id_len;
                 String data = strRadioPackg.substring(pos_id + pos_id_len, data_id);
-                Log.e(TAG, SUB_TAG + "found the index: " + pos_id + "\n" + data);
                 radioPackage.sub_packg_position = Double.parseDouble(data);
             }
+            else
+                return null;
 
             if (data_id != -1) {
                 int data_id_len = DATA.length();
 //                int amnt = strRadioPackg.length() - packg_id - data_id_len;
                 String data = strRadioPackg.substring(data_id + data_id_len, strRadioPackg.length());
-                Log.e(TAG, SUB_TAG + "found the index: " + data_id + "\n" + data);
                 radioPackage.packg_data = data;
             }
+            else
+                return null;
+
+            Log.e(TAG, SUB_TAG+"\n\t -- Final -- : " + radioPackage.packg_data + "\n" + radioPackage.packg_data.length() + "\n");
 //        }
 //        catch (Exception e){
 //            Log.e(TAG, SUB_TAG+e);
@@ -120,29 +138,46 @@ public class RadioPackage {
         return radioPackage;
     }
 
-    public static void sortOutThePackagesReceived(ArrayList<RadioPackage> radioPackages){
-        Log.e(TAG, SUB_TAG+"Sorting out the received packages");
+    public static void parseAllPackages(String allStrPackges){
+        Log.e(TAG, SUB_TAG+"parseAll packages");
+        String [] rad_str_packgs = allStrPackges.split(END_TAG);
+        int rad_str_packgs_len = rad_str_packgs.length;
+        ArrayList<RadioPackage> radioPackageArrayList = new ArrayList<RadioPackage>();
 
+        for(int i = 0; i < rad_str_packgs_len; i++){
+            RadioPackage radioPackage = stringToRadioPackg(rad_str_packgs[i]);
+            if(radioPackage != null)
+                radioPackageArrayList.add(radioPackage);
+        }
+
+        sortOutThePackagesReceived(radioPackageArrayList);
+    }
+
+    public static void sortOutThePackagesReceived(ArrayList<RadioPackage> radioPackages){
         int num_of_pckgs = radioPackages.size();
+
+        Log.e(TAG, SUB_TAG+"Sorting out the received packages: " + num_of_pckgs);
+
         String str_chat_mssg = "";
         for(int i = 0; i < num_of_pckgs; i++){
 
-//            String str_pckg = radioPackages.get(i);
-            if(!(str_chat_mssg.isEmpty())) {
-                Log.e(TAG, SUB_TAG + "\t" + radioPackages.get(i).packg_data);
+//            str_chat_mssg = radioPackages.get(i).packg_data;
+            Log.e(TAG, SUB_TAG + "\t" + radioPackages.get(i).packg_data);
 //                RadioPackage radioPackage = jsonStringToRadioPackg(str_pckg);
-//                str_chat_mssg = str_chat_mssg + radioPackage.packg_data;
-            }
+            str_chat_mssg = str_chat_mssg + radioPackages.get(i).packg_data;
         }
 
-        Log.e(TAG, SUB_TAG+"\n\t" + str_chat_mssg);
+        Log.e(TAG, SUB_TAG+"\t:" + str_chat_mssg);
         ChatMessage chatMessage = MessageUtility.convertJsonToMessage(str_chat_mssg);
-
-        localDatabaseReference.saveChatMessageLocally(chatMessage);
+//
+        if(chatMessage != null) {
+            Log.e(TAG, SUB_TAG+"\n\t" + chatMessage);
+            localDatabaseReference.saveChatMessageLocally(chatMessage);
+        }
     }
 
     public static ArrayList<RadioPackage> getRadioPackgsToSend(ChatMessage chatMessage){
-        Log.e(TAG, SUB_TAG+"Getting the list of radio packages to send out");
+        Log.e(TAG, SUB_TAG+"Getting the list of radio packages to send out: " + chatMessage);
         ArrayList<RadioPackage> radio_packgs_to_send = new ArrayList<RadioPackage>();
         ArrayList<String> divided_chat_mssg = divideTheChatMessage(chatMessage.toString());
 
@@ -164,11 +199,11 @@ public class RadioPackage {
 
     //This function takes a chatmessage string and divides it into an arraylist of strings
     private static ArrayList<String> divideTheChatMessage(String chat_mssg_str){
-        Log.e(TAG, SUB_TAG+"Dividing up the chat message");
+        Log.e(TAG, SUB_TAG+"Dividing up the chat message: " + chat_mssg_str);
         ArrayList<String> divided_chat_mssg = new ArrayList<String>();
 
         //Dividing the string into sub parts of 50
-        int sub_str_len = 40;
+        int sub_str_len = CHAT_MSSG_DIV_LEN;
         int sub_str_ind = 0;
         int chat_mssg_str_len = chat_mssg_str.length();
 
