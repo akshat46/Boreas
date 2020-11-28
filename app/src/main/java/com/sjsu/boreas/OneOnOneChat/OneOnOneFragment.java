@@ -16,7 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.sjsu.boreas.ChatView.ChatActivity2;
+import com.sjsu.boreas.ChatView.ChatActivity;
 import com.sjsu.boreas.Database.LocalDatabaseReference;
 import com.sjsu.boreas.Database.Messages.ChatMessage;
 import com.sjsu.boreas.Database.PotentialContacts.PotentialContacts;
@@ -36,15 +36,15 @@ import java.util.HashMap;
 public class OneOnOneFragment extends Fragment implements EventListener, UserListItemClickAction {
     public static final String EXTRA_TAB_NAME = "tab_name";
     private String mTabName;
-    private RecyclerView recyclerView;
-    private UserListAdapter mAdapter;
+    protected RecyclerView recyclerView;
+    protected UserListAdapter mAdapter;
     private RecyclerView.LayoutManager layoutManager;
     private LandingPage mParent;
     private View rootView;
-    private Context mContext;
+    protected Context mContext;
     public static AppDatabase database;
-    private ArrayList<User> contactArrayList;
-    private UserListItemClickAction userListItemClickAction = this;
+    protected ArrayList<User> adapterContentList;
+    protected UserListItemClickAction userListItemClickAction = this;
     private LocalDatabaseReference localDatabaseReference = LocalDatabaseReference.get();
 
     private static String TAG = "BOREAS";
@@ -111,7 +111,7 @@ public class OneOnOneFragment extends Fragment implements EventListener, UserLis
         initUI();
     }
 
-    private void initUI() {
+    protected void initUI() {
         Log.e(TAG, SUB_TAG+"initUI");
         recyclerView = (RecyclerView) rootView.findViewById(R.id.my_recycler_view);
         recyclerView.setHasFixedSize(true);
@@ -134,7 +134,7 @@ public class OneOnOneFragment extends Fragment implements EventListener, UserLis
         recyclerView.setAdapter(mAdapter);
     }
 
-    private void initializeAdapter() {
+    protected void initializeAdapter() {
         super.onStart();
         Log.e(TAG, SUB_TAG+"---- custom local list adapter");
 
@@ -142,10 +142,10 @@ public class OneOnOneFragment extends Fragment implements EventListener, UserLis
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
-                contactArrayList = new ArrayList<User>(localDatabaseReference.getContacts());
+                adapterContentList = new ArrayList<User>(localDatabaseReference.getContacts());
                 //Also add any potential contacts chats
-                contactArrayList.addAll(localDatabaseReference.getPotentialContacts());
-                mAdapter=new UserListAdapter(contactArrayList, mContext, userListItemClickAction);
+                adapterContentList.addAll(localDatabaseReference.getPotentialContacts());
+                mAdapter=new UserListAdapter(adapterContentList, mContext, userListItemClickAction);
                 mParent.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -156,7 +156,7 @@ public class OneOnOneFragment extends Fragment implements EventListener, UserLis
         });
     }
 
-    private void manageMessage(ChatMessage mssg){
+    protected void manageMessage(ChatMessage mssg){
         Log.e(TAG, SUB_TAG+"Handling new message event");
 
         User user = mssg.sender;
@@ -164,9 +164,9 @@ public class OneOnOneFragment extends Fragment implements EventListener, UserLis
 
         //First check if the user is even in our contacts or not?
         if(i>=0){
-            contactArrayList.get(i).newMessage = true;
-            contactArrayList.get(i).lastMessage = mssg.mssgText;
-            localDatabaseReference.updateContactItem(contactArrayList.get(i));
+            adapterContentList.get(i).newMessage = true;
+            adapterContentList.get(i).lastMessage = mssg.mssgText;
+            localDatabaseReference.updateContactItem(adapterContentList.get(i));
             mParent.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -178,10 +178,10 @@ public class OneOnOneFragment extends Fragment implements EventListener, UserLis
             Log.e(TAG, SUB_TAG+"The sender (" + user.name + ") of the mssg: " + mssg.mssgText + ", is not in the contacts");
             PotentialContacts potentialContact = new PotentialContacts(user.uid, user.name, user.latitude, user.longitude, user.publicKey);
             localDatabaseReference.addPotentialContact(potentialContact);
-            contactArrayList.add(potentialContact);
-            final int position = contactArrayList.size() - 1;
-            contactArrayList.get(position).newMessage = true;
-            contactArrayList.get(position).lastMessage = mssg.mssgText;
+            adapterContentList.add(potentialContact);
+            final int position = adapterContentList.size() - 1;
+            adapterContentList.get(position).newMessage = true;
+            adapterContentList.get(position).lastMessage = mssg.mssgText;
 
             mParent.runOnUiThread(new Runnable() {
                 @Override
@@ -193,7 +193,7 @@ public class OneOnOneFragment extends Fragment implements EventListener, UserLis
         }
     }
 
-    private void removeUserFromList(PotentialContacts potentialContacts){
+    protected void removeUserFromList(PotentialContacts potentialContacts){
         Log.e(TAG, SUB_TAG+"remove user from list");
 
         final int i = indexInContact(potentialContacts);
@@ -203,7 +203,7 @@ public class OneOnOneFragment extends Fragment implements EventListener, UserLis
             return;
         }
 
-        contactArrayList.remove(i);
+        adapterContentList.remove(i);
         mParent.runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -220,11 +220,11 @@ public class OneOnOneFragment extends Fragment implements EventListener, UserLis
 //    });
 
     // index: of user in Contact list / -1 if user not in Contact
-    private int indexInContact(User user){
+    protected int indexInContact(User user){
         Log.e(TAG, SUB_TAG+"Finding the index of the given user/chat instance");
 
-        for(int i = 0; i < contactArrayList.size(); i++){
-            if(contactArrayList.get(i).getUid().equals(user.getUid())){
+        for(int i = 0; i < adapterContentList.size(); i++){
+            if(adapterContentList.get(i).getUid().equals(user.getUid())){
                 Log.e(TAG, SUB_TAG+"The given user is found in the arraylist");
                 return i;
             }
@@ -235,13 +235,7 @@ public class OneOnOneFragment extends Fragment implements EventListener, UserLis
 
     private void newContactAdded(User contact){
         Log.e(TAG, SUB_TAG+"new contact added");
-        if(contact instanceof PotentialContacts){
-            Log.e(TAG, SUB_TAG+"Potential contact in hea ---------");
-        }
-        else{
-            Log.e(TAG, SUB_TAG+ "Not potential yo -----------------");
-        }
-        contactArrayList.add(contact);
+        adapterContentList.add(contact);
         mParent.runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -336,8 +330,8 @@ public class OneOnOneFragment extends Fragment implements EventListener, UserLis
     public void onItemClicked(final User model, final int position) {
         Log.e(TAG, SUB_TAG+"on item clicked");
         if(model.newMessage) {
-            contactArrayList.get(position).newMessage = false;
-            localDatabaseReference.updateContactItem(contactArrayList.get(position));
+            adapterContentList.get(position).newMessage = false;
+            localDatabaseReference.updateContactItem(adapterContentList.get(position));
             mParent.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -346,7 +340,7 @@ public class OneOnOneFragment extends Fragment implements EventListener, UserLis
             });
         }
 
-        Intent intent = new Intent(getActivity(), ChatActivity2.class);
+        Intent intent = new Intent(getActivity(), ChatActivity.class);
         //Passing the user object using intent
         intent.putExtra("ReceiverObj", model);
         startActivity(intent);
