@@ -33,6 +33,7 @@ import com.sjsu.boreas.Database.LoggedInUser.LoggedInUser;
 import com.sjsu.boreas.GroupChats.OfflineGroupFragment;
 import com.sjsu.boreas.Misc.AppBarButtonsHandler;
 import com.sjsu.boreas.Misc.ContextHelper;
+import com.sjsu.boreas.OneOnOneChat.NearbyListFragment;
 import com.sjsu.boreas.OneOnOneChat.OneOnOneFragment;
 import com.sjsu.boreas.Database.Contacts.User;
 import com.squareup.picasso.Picasso;
@@ -145,9 +146,9 @@ public class LandingPage extends FragmentActivity {
         Log.e(TAG, SUB_TAG + " Initializing bottom app bar.");
 
         ArrayList<String> imageButtonIDs = new ArrayList<String>(
-                Arrays.asList("bottombar_contacts", "bottombar_groups"));
+                Arrays.asList("bottombar_contacts", "bottombar_nearby"));
         ImageButton b;
-        final String[] fragmentTitles = new String[]{"CHATS", "GROUPS"};
+        final String[] fragmentTitles = new String[]{"CHATS", "NEARBY"};
 
         Log.e(TAG, SUB_TAG + " Initializing bottom app bar: Buttons");
         for (int i = 0; i < imageButtonIDs.size(); i++) {
@@ -207,7 +208,7 @@ public class LandingPage extends FragmentActivity {
         List<Fragment> mFragments;
         mFragments = new ArrayList<Fragment>();
         mFragments.add(OneOnOneFragment.newInstance(""));
-        mFragments.add(OfflineGroupFragment.newInstance(""));
+        mFragments.add(NearbyListFragment.newInstance(""));
         return mFragments;
     }
 

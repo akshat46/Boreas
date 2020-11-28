@@ -12,9 +12,6 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
@@ -37,7 +34,6 @@ import com.sjsu.boreas.Database.PotentialContacts.PotentialContacts;
 import com.sjsu.boreas.Events.Event;
 import com.sjsu.boreas.Events.EventListener;
 //import com.sjsu.boreas.HelperStuff.ContextHelper;
-import com.sjsu.boreas.Database.LocalDatabaseReference;
 import com.sjsu.boreas.Misc.ContextHelper;
 import com.sjsu.boreas.OnlineConnectionHandlers.FirebaseController;
 import com.sjsu.boreas.MainActivity;
@@ -52,7 +48,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class ChatActivity2 extends AppCompatActivity implements EventListener {
+public class ChatActivity extends AppCompatActivity implements EventListener {
 
     private RecyclerView recyclerView;
     private ImageButton btnSend;
@@ -63,7 +59,7 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener {
     private RecyclerView.LayoutManager layoutManager;
     private User myChatPartner;
     private Context mContext;
-    private ChatActivity2 mActivity;
+    private ChatActivity mActivity;
     private Toolbar toolbar;
     private ImageButton dynamicButton;
     private ImageButton dynamicButton2;
@@ -129,7 +125,7 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener {
                     Log.e(TAG, SUB_TAG+"We our here tryna detect enter key.");
                     if (mssgText.getText().toString().trim().equals("")) {
                         // TODO: disable button
-                        Toast.makeText(ChatActivity2.this, "Please input some text...", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(ChatActivity.this, "Please input some text...", Toast.LENGTH_SHORT).show();
                     } else {
                         //add message to list
                         sendMessage(mssgText.getText().toString());
@@ -157,10 +153,10 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener {
         btnSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.e(TAG, "Hea too");
                 if (mssgText.getText().toString().trim().equals("")) {
                     // TODO: disable button
-                    Toast.makeText(ChatActivity2.this, "Please input some text...", Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, "button send clicked with no text");
+                   // Toast.makeText(ChatActivity2.this, "Please input some text...", Toast.LENGTH_SHORT).show();
                 } else {
                     //add message to list
                     sendMessage(mssgText.getText().toString());
@@ -186,13 +182,13 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener {
 
         if(myChatPartner instanceof PotentialContacts){
             Log.e(TAG, SUB_TAG+"my chatpartner is not my contact, adding the option to ignore or add contact");
-            setUpTheIgnoreButton();
-            setUpTheAddToContactsButton();
+            setUpIgnoreButton();
+            setUpAddToContactsButton();
         }
         btnSend.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                PopupMenu popup = new PopupMenu(ChatActivity2.this, btnSend);
+                PopupMenu popup = new PopupMenu(ChatActivity.this, btnSend);
                 popup.inflate(R.menu.menu_send);
                 try {
                     Field[] fields = popup.getClass().getDeclaredFields();
@@ -236,7 +232,7 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener {
         });
     }
 
-    private void setUpTheIgnoreButton(){
+    private void setUpIgnoreButton(){
         Log.e(TAG, SUB_TAG+"Setting up the ignore button");
         dynamicButton.setImageResource(R.drawable.ic_block_contact);
         dynamicButton.setOnClickListener(new View.OnClickListener() {
@@ -244,7 +240,7 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener {
             public void onClick(View v) {
                 Log.e(TAG, SUB_TAG+"Ignoring this user burr");
                 localDatabaseReference.removePotentialContact((PotentialContacts) myChatPartner);
-                ChatActivity2.this.finish();
+                ChatActivity.this.finish();
                 //TODO: gotta remove this user and then go to the previous screen
                 // and also update the oneOnOne Fragment
                 //localDatabaseReference.removePotentialUser(myChatPartner);
@@ -254,7 +250,7 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener {
         dynamicButton.setVisibility(View.VISIBLE);
     }
 
-    private void setUpTheAddToContactsButton(){
+    private void setUpAddToContactsButton(){
         Log.e(TAG, SUB_TAG+"Setting up the adding to contact button");
         dynamicButton2.setImageResource(R.drawable.ic_add_contact);
         dynamicButton2.setOnClickListener(new View.OnClickListener() {
@@ -296,10 +292,10 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener {
 
         // TODO: add correct online/offline implementations here
         if(mode.getValue().equals(SendMode.ONLINE.getValue())){
-            Toast.makeText(ChatActivity2.this, "Sending Online.", Toast.LENGTH_SHORT).show();
+            Log.e(TAG, SUB_TAG+"sending message online");
         }
         else if(mode.getValue().equals(SendMode.OFFLINE.getValue())){
-            Toast.makeText(ChatActivity2.this, "Sending Offline.", Toast.LENGTH_SHORT).show();
+            Log.e(TAG, SUB_TAG+"sending message offline5");
         }
 
         long time  = Calendar.getInstance().getTimeInMillis();

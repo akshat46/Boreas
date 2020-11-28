@@ -125,13 +125,13 @@
                 android:layout_weight="0.1" />
 
             <ImageButton
-                android:id="@+id/bottombar_groups"
+                android:id="@+id/bottombar_nearby"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/space_standard"
                 android:layout_weight="1"
                 android:background="@null"
-                android:src="@drawable/ic_groups"
+                android:src="@drawable/ic_nearby"
                 android:tint="@color/colorAccent" />
         </LinearLayout>
     </com.google.android.material.bottomappbar.BottomAppBar>

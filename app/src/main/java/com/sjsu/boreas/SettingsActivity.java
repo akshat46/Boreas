@@ -41,12 +41,13 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     private void initView(){
-        Log.e(TAG, SUB_TAG+"Initializing view");
+        Log.e(TAG, SUB_TAG+"Initializing view: " + currentUser.getUid());
         userNameLabel = findViewById(R.id.settings_user_name);
         logoutButton = findViewById(R.id.logout_button);
         userToken = findViewById(R.id.user_token);
 
         userNameLabel.setText(currentUser.name);
+
         userToken.setText(currentUser.getUid());
 
         logoutButton.setOnClickListener(new View.OnClickListener() {
