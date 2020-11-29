@@ -59,7 +59,7 @@ public class LoggedInUser extends User implements Serializable {
         return result;
     }
 
-    public String toString(){
-        return name+": "+uid+"\n"+latitude + " , " + longitude+ ", " + isLoggedIn  +"\n";
-    }
+//    public String toString(){
+//        return name+": "+uid+"\n"+latitude + " , " + longitude+ ", " + isLoggedIn  +"\n";
+//    }
 }

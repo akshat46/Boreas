@@ -57,6 +57,7 @@ import com.sjsu.boreas.OnlineConnectionHandlers.FirebaseController;
 import com.sjsu.boreas.MainActivity;
 import com.sjsu.boreas.PhoneBluetoothRadio.BlueTerm;
 import com.sjsu.boreas.R;
+import com.sjsu.boreas.SettingsActivity;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -65,6 +66,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.security.auth.Subject;
@@ -91,6 +93,7 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener, F
     private ImageButton dynamicButton2;
     private ImageButton btnChatMedia;
     private ImageButton btnBack;
+    private PopupMenu popup;
     private String[] FILE;
 
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
@@ -101,8 +104,8 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener, F
 
     private enum SendMode{
         ONLINE("ONLINE"),
-        OFFLINE_CONNECT_API("OFFLINE_CONNECT_API"),
-        OFFLINE_RADIO("OFFLINE_RADIO");
+        OFFLINE_CONNECT_API("OFFLINE"),
+        OFFLINE_RADIO("RADIO");
 
         public final String label;
 
@@ -129,7 +132,11 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener, F
         setContentView(R.layout.activity_chat2);
 
         Event event = Event.get(Event.chatMssgEventID);
+        Event event_radio_connected = Event.get(Event.radioConnected);
+        Event event_radio_disconnected = Event.get(Event.radioDisconnected);
         event.addListener(this);
+//        event_radio_connected.addListener(this);
+//        event_radio_disconnected.addListener(this);
 
         mContext = this;
         mActivity = this;
@@ -340,8 +347,14 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener, F
         btnSend.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                PopupMenu popup = new PopupMenu(ChatActivity2.this, btnSend);
+                popup = new PopupMenu(ChatActivity2.this, btnSend);
                 popup.inflate(R.menu.menu_send);
+
+                if(!(SettingsActivity.radio_is_connected)){
+                    Log.e(TAG, SUB_TAG+"The radio isn't connected yet");
+                    popup.getMenu().findItem(R.id.action_send_radio).setVisible(false);
+                }
+
                 try {
                     Field[] fields = popup.getClass().getDeclaredFields();
                     for (Field field : fields) {
@@ -374,6 +387,12 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener, F
                             btnSend.setImageResource(R.drawable.ic_online_send_f);
                             btnSend.setBackgroundResource(R.drawable.bg_button);
                             mode =SendMode.ONLINE;
+                        }
+                        else if(item.getTitle().toString().toUpperCase().equals(SendMode.OFFLINE_RADIO.getValue())){
+                            Log.e(TAG, SUB_TAG+"Changing the mode to radio");
+                            btnSend.setImageResource(R.drawable.ic_online_send_f);
+                            btnSend.setBackgroundResource(R.drawable.bg_button);
+                            mode =SendMode.OFFLINE_RADIO;
                         }
                         return true;
                     }
@@ -515,6 +534,7 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener, F
         }
         else if(mode.getValue().equals(SendMode.OFFLINE_RADIO.getValue())){
             Toast.makeText(ChatActivity2.this, "Sending thru the radio.", Toast.LENGTH_SHORT).show();
+            chatMessage.mssgType = ChatMessage.ChatTypes.ONEONONEOFFLINERADIO.getValue();
             sendMessageThruRadio(chatMessage);
         }
 
@@ -548,23 +568,27 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener, F
 
     private void sendMessageThruRadio(ChatMessage chatMessage){
         Log.e(TAG, SUB_TAG+"Sending message thru radio.");
-        String mssgForRadio = "";
-        int mssgType = 0;
-        if(chatMessage != null) {
-            mssgForRadio = convertMessageToString(chatMessage);
-            mssgType = chatMessage.mssgType;
-        }
-        else{
-            mssgType = ChatMessage.ChatTypes.GETMESSAGESFROMRADIO.getValue();
-        }
-        Log.e(TAG, SUB_TAG+mssgForRadio.getBytes());
-        BlueTerm.sendMessage(mssgForRadio, mssgType);
+        BlueTerm.sendMessage(chatMessage);
     }
 
-    private String convertMessageToString(ChatMessage mssg){
-        if(mssg == null)
-            return null;
-        return mssg.toString();
+    private void showRadioPopupButton(){
+        Log.e(TAG, SUB_TAG+"Showing radio popup button");
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+//                popup.getMenu().getItem(2).getActionView().setVisibility(View.VISIBLE);
+            }
+        });
+    }
+
+    private void hideRadioPopupButton(){
+        Log.e(TAG, SUB_TAG+"Hide radio popup button");
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+//                popup.getMenu().getItem(2).getActionView().setVisibility(View.VISIBLE);
+            }
+        });
     }
 
     @Override
@@ -574,6 +598,14 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener, F
             Log.e(TAG, SUB_TAG+"this is a chat message event");
             ChatMessage mssg = MessageUtility.convertHashMapToChatMessage(packet);
             addMessageOnScreen(mssg);
+        }
+        else if(type.equals(Event.radioConnected)){
+            Log.e(TAG, SUB_TAG+"Radio device connected");
+            showRadioPopupButton();
+        }
+        else if(type.equals(Event.radioDisconnected)){
+            Log.e(TAG, SUB_TAG+"Radio device disconnected");
+            hideRadioPopupButton();
         }
     }
 
