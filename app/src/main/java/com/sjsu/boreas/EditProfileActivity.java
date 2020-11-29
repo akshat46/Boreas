@@ -1,6 +1,5 @@
 package com.sjsu.boreas;
 
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
@@ -16,7 +15,6 @@ public class EditProfileActivity extends AppCompatActivity {
 
     EditText userNameLabel;
     Button update;
-    //private LoggedInUser currentUser = null;
     private LocalDatabaseReference localDatabaseReference;
 
     @Override
@@ -26,8 +24,6 @@ public class EditProfileActivity extends AppCompatActivity {
         userNameLabel = findViewById(R.id.settings_user_name);
         update = findViewById(R.id.update);
         localDatabaseReference = LocalDatabaseReference.get();
-       /* Intent intent = getIntent();
-        currentUser = (LoggedInUser) intent.getSerializableExtra("currentUser");*/
         userNameLabel.setText(LandingPage.currentUser.name);
         update.setOnClickListener(new View.OnClickListener() {
             @Override
