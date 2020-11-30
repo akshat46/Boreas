@@ -44,6 +44,11 @@ public class NearbyListFragment extends OneOnOneFragment {
 //        });
     }
 
+    // nearby people has 3 types:
+    // 1. people who are also in your contacts -- show up as a normal user
+    // 2. people who are in your potentialcontacts -- highlight in magenta
+    // 3. people who have not had any contact with you -- new highlight
+
     @Override
     protected void manageMessage(ChatMessage mssg) {
         User user = mssg.sender;

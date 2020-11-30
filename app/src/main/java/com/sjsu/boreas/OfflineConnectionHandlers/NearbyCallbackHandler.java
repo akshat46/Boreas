@@ -37,6 +37,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import javax.crypto.Cipher;
 
@@ -168,22 +169,30 @@ public class NearbyCallbackHandler {
                     }
                 }
 
-
-
                 //Sub-neighbor List
                 else if(result instanceof NeighborRequestMessage){
                     connectionHandler.isSubNeighborsUpdate = true;
+                    // Event triggered here
                     NeighborRequestMessage message = (NeighborRequestMessage) result;
-                    if(!connectionHandler.subNeighbors.containsKey(message.neighbor.uid))
-                        connectionHandler.subNeighbors.put(message.neighbor.uid, new ArrayList<String>());
-
+                    // message.neighbor = our direct neighbor N
+                    // message.subNeighbors = list of N's neighbors
+                    // connectionHandler.subNeighbors = hasmap linking multiple [N -> N's neighbors]
+                    if(!connectionHandler.subNeighbors.containsKey(message.neighbor.uid)) {
+                        connectionHandler.subNeighbors.put(message.neighbor, new ArrayList<User>(){
+                            @Override
+                            public boolean add(User user) {
+                                if(!this.contains(user)) return super.add(user);
+                                else return false;
+                            }
+                        });
+                    }
+                    // checks if response neighbor is already in our list of subneighbors
                     for(User subNeighbor : message.subNeighbors) {
-                        connectionHandler.subNeighbors.get(message.neighbor.uid).add(subNeighbor.uid);
+                        connectionHandler.subNeighbors.get(message.neighbor).add(subNeighbor);
                         localDatabaseReference.addContact(subNeighbor);
                     }
                     localDatabaseReference.addContact(message.neighbor);
                 }
-
 
                 //String Message
                 else if(result instanceof String){
