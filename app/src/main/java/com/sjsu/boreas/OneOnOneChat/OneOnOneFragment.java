@@ -56,6 +56,8 @@ public class OneOnOneFragment extends Fragment implements EventListener, UserLis
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        // TODO: this class is inherited by NearbyListFragment.
+        //  Following events should be moved to a different subclass
         Event event = Event.get(Event.CHAT_MSSG);
         Event event_users = Event.get(Event.USER_ADDED);
         Event event_user_removed = Event.get(Event.USER_REMOVED);
@@ -63,8 +65,8 @@ public class OneOnOneFragment extends Fragment implements EventListener, UserLis
         event_users.addListener(this);
         event_user_removed.addListener(this);
         Log.e(TAG, SUB_TAG+"On create");
-        super.onCreate(savedInstanceState);
         mParent = (LandingPage) getActivity();
+        super.onCreate(savedInstanceState);
     }
 
     public static OneOnOneFragment newInstance(String tabName) {

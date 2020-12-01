@@ -338,28 +338,9 @@ public class NearbyConnectionHandler {
 
     public void triggerNeighborRequest(){
         subNeighbors.clear();
+        Log.e(TAG, SUB_TAG+" requesting neighbors...");
         for(String neighbor : neighbors.keySet()){
             client.sendPayload(neighbors.get(neighbor), Payload.fromBytes(REQUEST_GET_NEIGHBORS.getBytes()));
         }
     }
-
-//    public List<User> getSubNeighborsList(){
-//        isSubNeighborsUpdate = false;
-//
-//        List<User> arr = new ArrayList<User>(){
-//            @Override
-//            public boolean add(User user) {
-//                if(!this.contains(user)) return super.add(user);
-//                else return false;
-//            }
-//        };
-//
-//        for(Map.Entry<User, List<User>> e : subNeighbors.entrySet()){
-//            arr.add(e.getKey());
-//            for(User u : e.getValue()){
-//                arr.add(u); // can replace with addAll() but not sure if addAll() uses (overriden) add() or not
-//            }
-//        }
-//        return arr;
-//    }
 }
