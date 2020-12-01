@@ -1,6 +1,7 @@
 package com.sjsu.boreas.OfflineConnectionHandlers;
 
 import android.util.Base64;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -43,6 +44,8 @@ import java.util.concurrent.TimeUnit;
 import javax.crypto.Cipher;
 
 public class NearbyCallbackHandler implements EventEmitter {
+    private final static String TAG = "BOREAS";
+    private final static String SUB_TAG = "---NearbyCallbackHandler ";
 
     private NearbyConnectionHandler connectionHandler;
     private HashMap<String, String> connectedUsers; //Map endpointId to userId
@@ -174,8 +177,10 @@ public class NearbyCallbackHandler implements EventEmitter {
 
                 //Sub-neighbor List
                 else if(result instanceof NeighborRequestMessage){
+                    Log.e(TAG, SUB_TAG+" processing NeighborRequestMessage response..");
                     // Event triggered here
                     if(connectionHandler.neighborsResponseTracker==0){
+                        Log.e(TAG, SUB_TAG+" first response of a request");
                         event_neighbors.started(null);
                         connectionHandler.neighborsResponseTimer = System.nanoTime();
                     }
@@ -201,18 +206,22 @@ public class NearbyCallbackHandler implements EventEmitter {
 //                        localDatabaseReference.addContact(subNeighbor);
 //                    }
                     connectionHandler.subNeighbors.add(message.neighbor);
+                    Log.e(TAG, SUB_TAG+" adding message neighbor: " + message.neighbor.name);
                     localDatabaseReference.addContact(message.neighbor);
                     for(User u : message.subNeighbors){
+                        Log.e(TAG, SUB_TAG+" adding message sub-neighbor: " + u.name);
                         // can replace with addAll() but not sure if addAll() will use (overriden) add() or not
                         connectionHandler.subNeighbors.add(u);
                         localDatabaseReference.addContact(u);
                     }
+                    Log.e(TAG, SUB_TAG+" added message.neighbor, and message.subneighbors");
                     HashMap<String, Object> eventPkt = new HashMap<>();
                     eventPkt.put("neighbors", connectionHandler.subNeighbors);
                     //check if all neighbors replied or NBRS_REQUEST_TTL have passed since request made (stale request)
                     // TODO: stale request responser should be handled too somehow?
                     if(connectionHandler.neighborsResponseTracker == connectionHandler.neighbors.size()
                         || TimeUnit.SECONDS.convert(connectionHandler.neighborsResponseTimer, TimeUnit.NANOSECONDS)>NBRS_REQUEST_TTL){
+                        Log.e(TAG, SUB_TAG+" Detected last response/stale request");
                         connectionHandler.neighborsResponseTracker = 0;
                         event_neighbors.ended(eventPkt);
                     }
@@ -222,15 +231,17 @@ public class NearbyCallbackHandler implements EventEmitter {
                 //String Message
                 else if(result instanceof String){
                     String message = (String) result;
-
                     //Request to get list of neighbors
                     if(message.equals(NearbyConnectionHandler.REQUEST_GET_NEIGHBORS)){
+                        Log.e(TAG, SUB_TAG+" received request to send neighbors");
                         List<User> myNeighbors = new ArrayList<>();
                         for(String userId : connectionHandler.neighbors.values()) {
+                            Log.e(TAG, SUB_TAG+" adding neighbor: " + userId);
                             myNeighbors.add(localDatabaseReference.getUserById(userId));
                         }
                         NeighborRequestMessage response = new NeighborRequestMessage(MainActivity.currentUser, myNeighbors.toArray(new User[]{}));
                         connectionHandler.getClient().sendPayload(endpointId, Payload.fromStream(constructStreamFromSerializable(response)));
+                        Log.e(TAG, SUB_TAG+" sending response..");
                     }
                 }
             }catch(Exception e){

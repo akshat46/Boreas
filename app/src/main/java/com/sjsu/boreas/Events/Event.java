@@ -17,7 +17,6 @@ public class Event {
     public static final String USER_REMOVED = "user_removed";
     public static final String NBR_UPDATED = "neighbor_response";
 
-
     private String event_id;
     private List<EventListener> listeners = new ArrayList<>();
 

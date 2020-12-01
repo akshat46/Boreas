@@ -2,6 +2,7 @@ package com.sjsu.boreas;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -54,6 +56,9 @@ public class LandingPage extends FragmentActivity {
     private ViewPager2 mViewPager;
     private TextView fragmentTitle;
     private ImageView avatar;
+    public ImageButton refreshList;
+    public ProgressBar loading;
+    CustomFragmentStateAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +66,8 @@ public class LandingPage extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_landing_page);
         fragmentTitle= findViewById(R.id.fragmentTitle);
+        refreshList = findViewById(R.id.refresh_button);
+        loading = findViewById(R.id.loading);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
             Window window = getWindow();
@@ -138,7 +145,7 @@ public class LandingPage extends FragmentActivity {
     private void initViewPager() {
         mViewPager = findViewById(R.id.viewpager);
         mViewPager.setUserInputEnabled(false);
-        CustomFragmentStateAdapter mAdapter = new CustomFragmentStateAdapter(this);
+        mAdapter = new CustomFragmentStateAdapter(this);
         mViewPager.setAdapter(mAdapter);
     }
 
@@ -163,6 +170,8 @@ public class LandingPage extends FragmentActivity {
                     mViewPager.setCurrentItem(temp);
                     fragmentTitle.setText(fragmentTitles[temp]);
                     mbuttonsHandler.setState(temp);
+                    if(temp==1) refreshList.setVisibility(View.VISIBLE);
+                    else refreshList.setVisibility(View.GONE);
                 }
             });
         }

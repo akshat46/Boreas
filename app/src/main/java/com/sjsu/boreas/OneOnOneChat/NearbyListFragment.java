@@ -1,8 +1,11 @@
 package com.sjsu.boreas.OneOnOneChat;
 
 import android.content.Intent;
+import android.media.Image;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.ImageButton;
 
 import com.sjsu.boreas.ChatView.ChatActivity;
 import com.sjsu.boreas.ContactRecyclerItems.UserListAdapter;
@@ -13,6 +16,7 @@ import com.sjsu.boreas.Events.Event;
 import com.sjsu.boreas.LandingPage;
 import com.sjsu.boreas.MainActivity;
 import com.sjsu.boreas.OfflineConnectionHandlers.NearbyConnectionHandler;
+import com.sjsu.boreas.SettingsActivity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,21 +28,24 @@ public class NearbyListFragment extends OneOnOneFragment {
     Event nbr_event;
     private boolean loading = false;
     private static String TAG = "BOREAS";
+    private ImageButton im;
     private static String SUB_TAG = "---Nearby___Frag ";
     @Override
     public void onCreate(Bundle savedInstanceState) {
         Event.get(Event.CHAT_MSSG).addListener(this);
         nbr_event = Event.get(Event.NBR_UPDATED);
         nbr_event.addListener(this);
-        super.onCreate(savedInstanceState);
         mParent = (LandingPage) getActivity();
-        new Timer().scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                refreshNeighbors();
-            }
-        }, 0, 30000);//refresh neighbors every 30 seconds
 
+        // TODO: timer disabled for testing
+//        new Timer().scheduleAtFixedRate(new TimerTask() {
+//            @Override
+//            public void run() {
+//                refreshNeighbors();
+//            }
+//        }, 0, 30000);//refresh neighbors every 30 seconds
+
+        super.onCreate(savedInstanceState);
     }
 
     public static NearbyListFragment newInstance(String tabName){
@@ -60,6 +67,12 @@ public class NearbyListFragment extends OneOnOneFragment {
             @Override
             public void run() {
                 recyclerView.setAdapter(mAdapter);
+            }
+        });
+        mParent.refreshList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                refreshNeighbors();
             }
         });
     }
@@ -84,8 +97,14 @@ public class NearbyListFragment extends OneOnOneFragment {
         });
     }
 
-    private void refreshNeighbors(){
-        if(!loading) MainActivity.nearbyConnectionHandler.triggerNeighborRequest();
+    public void refreshNeighbors(){
+        Log.e(TAG, SUB_TAG+"Refreshing neighbors list.. " + loading);
+        if(!loading) {
+            MainActivity.nearbyConnectionHandler.triggerNeighborRequest();
+            mParent.refreshList.setVisibility(View.GONE);
+            mParent.loading.setVisibility(View.VISIBLE);
+            loading = true;
+        }
         // only refresh if not loading already
     }
 
@@ -97,7 +116,7 @@ public class NearbyListFragment extends OneOnOneFragment {
             ChatMessage mssg = MessageUtility.convertHashMapToChatMessage(packet);
             manageMessage(mssg);
         } else if(type.equals(Event.NBR_UPDATED)){
-            Log.e(TAG, SUB_TAG+"this is a neighbors list updated event");
+            Log.e(TAG, SUB_TAG+" neighbors list updating...");
             try {
                 neighbors_updated((ArrayList<User>) packet.get("neighbors"), false);
             }
@@ -105,20 +124,23 @@ public class NearbyListFragment extends OneOnOneFragment {
                 Log.e(TAG, SUB_TAG+"!! ERROR !! Neighbors updated event giving some weird ass packet.");
             }
         } else if(type.equals((nbr_event.getStarted()))){
-            Log.e(TAG, SUB_TAG+"neighbors list updating started");
+            Log.e(TAG, SUB_TAG+" neighbors list updating started");
             loading = true;
-            // TODO: show loading symbol here
         }
         else if(type.equals((nbr_event.getEnded()))){
-            Log.e(TAG, SUB_TAG+"neighbors list updating ended");
+            Log.e(TAG, SUB_TAG+" neighbors list updating ended");
             loading = false;
-            // TODO: stop showing loading symbol here
+            mParent.refreshList.setVisibility(View.VISIBLE);
+            mParent.loading.setVisibility(View.GONE);
             neighbors_updated((ArrayList<User>) packet.get("neighbors"), true);
         }
     }
 
     private void neighbors_updated(ArrayList<User> neighbors, boolean last){
-        if(adapterContentList.isEmpty()) adapterContentList.addAll(neighbors);
+        if(adapterContentList.isEmpty()) {
+            Log.e(TAG, SUB_TAG+" filling adapterContentList with neighbors first time");
+            adapterContentList.addAll(neighbors);
+        }
         else{
             if(last){
                 // remove the ones that are no longer in neighbors list
@@ -127,6 +149,7 @@ public class NearbyListFragment extends OneOnOneFragment {
                 }
             }
             adapterContentList.addAll(neighbors);
+            Log.e(TAG, SUB_TAG+" updating adapterContentList with neighbors");
             mParent.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {

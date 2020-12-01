@@ -57,16 +57,40 @@
                 android:textSize="@dimen/text_sub"
                 android:layout_marginTop="@dimen/space_small"/>
 
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true">
+            <ImageButton
+                android:id="@+id/refresh_button"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginTop="@dimen/space_small"
+                android:layout_marginRight="@dimen/space_standard"
+                android:src="@drawable/ic_refresh"
+                android:tint="@color/colorButtonText"
+                android:visibility="gone" />
+
+            <ProgressBar
+                android:id="@+id/loading"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginTop="@dimen/space_small"
+                android:layout_marginRight="@dimen/space_standard"
+                android:indeterminate="true"
+                android:visibility="gone"/>
+
             <ImageButton
                 android:id="@+id/settings_button"
                 style="?android:attr/borderlessButtonStyle"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:layout_alignParentRight="true"
                 android:layout_marginTop="@dimen/space_small"
                 android:layout_marginRight="@dimen/space_small"
                 android:src="@drawable/ic_settings"
                 android:tint="@color/colorButtonText" />
+        </LinearLayout>
 
         </RelativeLayout>
 
