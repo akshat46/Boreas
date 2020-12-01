@@ -11,9 +11,12 @@ public class Event {
     private static String TAG = "BOREAS";
     private static String SUB_TAG = "-----Event class-- ";
 
-    public static final String chatMssgEventID = "chatmessages";
-    public static final String usersEventID = "user";
-    public static final String userRemoved = "userremoved";
+    // replace with enums
+    public static final String CHAT_MSSG = "chat_messages";
+    public static final String USER_ADDED = "user_added";
+    public static final String USER_REMOVED = "user_removed";
+    public static final String NBR_UPDATED = "neighbor_response";
+
 
     private String event_id;
     private List<EventListener> listeners = new ArrayList<>();
@@ -48,12 +51,32 @@ public class Event {
         return this.event_id;
     }
 
+    public String getStarted(){
+        return this.event_id+"_started";
+    }
+
+    public String getEnded(){
+        return this.event_id+"_ended";
+    }
+
     public void trigger(HashMap<String, Object> packet){
         Log.e(TAG, SUB_TAG+"Trigger++*************************************");
+        trigger(packet, this.event_id);
+    }
+
+    private void trigger(HashMap<String, Object> packet, String id){
         int i = 0;
         for(EventListener l : listeners){
             Log.e(TAG, SUB_TAG+"In the loop, listener: " + l  + ", " + i++);
             l.eventTriggered(packet, event_id);
         }
+    }
+
+    public void started(HashMap<String, Object> packet){
+        trigger(packet, this.event_id + "_started");
+    }
+
+    public void ended(HashMap<String, Object> packet){
+        trigger(packet, this.event_id + "_ended");
     }
 }

@@ -16,7 +16,6 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -90,7 +89,7 @@ public class ChatActivity extends AppCompatActivity implements EventListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat2);
 
-        Event event = Event.get(Event.chatMssgEventID);
+        Event event = Event.get(Event.CHAT_MSSG);
         event.addListener(this);
 
         mContext = this;
@@ -407,7 +406,7 @@ public class ChatActivity extends AppCompatActivity implements EventListener {
     @Override
     public void eventTriggered(HashMap<String, Object> packet, String type) {
         Log.e(TAG, SUB_TAG+"Event is triggered, with type: " + type);
-        if(type.equals(Event.chatMssgEventID)) {
+        if(type.equals(Event.CHAT_MSSG)) {
             Log.e(TAG, SUB_TAG+"this is a chat message event");
             ChatMessage mssg = MessageUtility.convertHashMapToChatMessage(packet);
             addMessageOnScreen(mssg);

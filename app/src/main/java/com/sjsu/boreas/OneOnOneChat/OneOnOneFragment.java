@@ -56,9 +56,9 @@ public class OneOnOneFragment extends Fragment implements EventListener, UserLis
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        Event event = Event.get(Event.chatMssgEventID);
-        Event event_users = Event.get(Event.usersEventID);
-        Event event_user_removed = Event.get(Event.userRemoved);
+        Event event = Event.get(Event.CHAT_MSSG);
+        Event event_users = Event.get(Event.USER_ADDED);
+        Event event_user_removed = Event.get(Event.USER_REMOVED);
         event.addListener(this);
         event_users.addListener(this);
         event_user_removed.addListener(this);
@@ -311,15 +311,15 @@ public class OneOnOneFragment extends Fragment implements EventListener, UserLis
         Log.e(TAG, SUB_TAG+"type: " + type);
         // parse chatmessage from packet
         // try catch for parsing user when new user (not in contact list) messages
-        if(type.equals(Event.chatMssgEventID)) {
+        if(type.equals(Event.CHAT_MSSG)) {
             Log.e(TAG, SUB_TAG+"this is a chat message event");
             ChatMessage mssg = MessageUtility.convertHashMapToChatMessage(packet);
             manageMessage(mssg);
-        }else if(type.equals(Event.usersEventID)){
+        }else if(type.equals(Event.USER_ADDED)){
             Log.e(TAG, SUB_TAG+"this is a new user event");
             User user = User.convertHashMapToUser(packet);
             newContactAdded(user);
-        }else if(type.equals(Event.userRemoved)){
+        }else if(type.equals(Event.USER_REMOVED)){
             Log.e(TAG, SUB_TAG+"This is a user removed event");
             PotentialContacts potentialContact = PotentialContacts.convertHashMapToUser(packet);
             removeUserFromList(potentialContact);

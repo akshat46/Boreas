@@ -5,19 +5,40 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.sjsu.boreas.ChatView.ChatActivity;
+import com.sjsu.boreas.ContactRecyclerItems.UserListAdapter;
 import com.sjsu.boreas.Database.Contacts.User;
 import com.sjsu.boreas.Database.Messages.ChatMessage;
+import com.sjsu.boreas.Database.Messages.MessageUtility;
+import com.sjsu.boreas.Events.Event;
 import com.sjsu.boreas.LandingPage;
+import com.sjsu.boreas.MainActivity;
+import com.sjsu.boreas.OfflineConnectionHandlers.NearbyConnectionHandler;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class NearbyListFragment extends OneOnOneFragment {
     private LandingPage mParent;
+    Event nbr_event;
+    private boolean loading = false;
     private static String TAG = "BOREAS";
     private static String SUB_TAG = "---Nearby___Frag ";
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        // TODO: add event for temp chatmessage,users added/removed
+        Event.get(Event.CHAT_MSSG).addListener(this);
+        nbr_event = Event.get(Event.NBR_UPDATED);
+        nbr_event.addListener(this);
         super.onCreate(savedInstanceState);
         mParent = (LandingPage) getActivity();
+        new Timer().scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                refreshNeighbors();
+            }
+        }, 0, 30000);//refresh neighbors every 30 seconds
+
     }
 
     public static NearbyListFragment newInstance(String tabName){
@@ -33,15 +54,14 @@ public class NearbyListFragment extends OneOnOneFragment {
     protected void initializeAdapter(){
         super.onStart();
         Log.e(TAG, SUB_TAG+"---- custom local list adapter");
-// TODO: Initialize adapter
-//        populate adaptercontentList here. Async?
-//        mAdapter=new UserListAdapter(adapterContentList, mContext, userListItemClickAction);
-//        mParent.runOnUiThread(new Runnable() {
-//            @Override
-//            public void run() {
-//                recyclerView.setAdapter(mAdapter);
-//            }
-//        });
+        adapterContentList = new ArrayList<>();
+        mAdapter=new UserListAdapter(adapterContentList, mContext, userListItemClickAction);
+        mParent.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                recyclerView.setAdapter(mAdapter);
+            }
+        });
     }
 
     // nearby people has 3 types:
@@ -62,6 +82,58 @@ public class NearbyListFragment extends OneOnOneFragment {
                 mAdapter.notifyItemChanged(i);
             }
         });
+    }
+
+    private void refreshNeighbors(){
+        if(!loading) MainActivity.nearbyConnectionHandler.triggerNeighborRequest();
+        // only refresh if not loading already
+    }
+
+    @Override
+    public void eventTriggered(HashMap<String, Object> packet, String type) {
+        Log.e(TAG, SUB_TAG+"I have received a message, my lord. It goes something like: "+ packet.toString());
+        if(type.equals(Event.CHAT_MSSG)) {
+            Log.e(TAG, SUB_TAG+"this is a chat message event");
+            ChatMessage mssg = MessageUtility.convertHashMapToChatMessage(packet);
+            manageMessage(mssg);
+        } else if(type.equals(Event.NBR_UPDATED)){
+            Log.e(TAG, SUB_TAG+"this is a neighbors list updated event");
+            try {
+                neighbors_updated((ArrayList<User>) packet.get("neighbors"), false);
+            }
+            catch (ClassCastException e){
+                Log.e(TAG, SUB_TAG+"!! ERROR !! Neighbors updated event giving some weird ass packet.");
+            }
+        } else if(type.equals((nbr_event.getStarted()))){
+            Log.e(TAG, SUB_TAG+"neighbors list updating started");
+            loading = true;
+            // TODO: show loading symbol here
+        }
+        else if(type.equals((nbr_event.getEnded()))){
+            Log.e(TAG, SUB_TAG+"neighbors list updating ended");
+            loading = false;
+            // TODO: stop showing loading symbol here
+            neighbors_updated((ArrayList<User>) packet.get("neighbors"), true);
+        }
+    }
+
+    private void neighbors_updated(ArrayList<User> neighbors, boolean last){
+        if(adapterContentList.isEmpty()) adapterContentList.addAll(neighbors);
+        else{
+            if(last){
+                // remove the ones that are no longer in neighbors list
+                for(User u : adapterContentList){
+                    if (!neighbors.contains(u)) adapterContentList.remove(u);
+                }
+            }
+            adapterContentList.addAll(neighbors);
+            mParent.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mAdapter.notifyDataSetChanged();
+                }
+            });
+        }
     }
 
     @Override
