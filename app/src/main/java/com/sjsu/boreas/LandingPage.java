@@ -2,8 +2,6 @@ package com.sjsu.boreas;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.media.Image;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -32,13 +31,11 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.sjsu.boreas.AddContacts.AddContactActivity;
 import com.sjsu.boreas.Database.LoggedInUser.LoggedInUser;
-import com.sjsu.boreas.GroupChats.OfflineGroupFragment;
 import com.sjsu.boreas.Misc.AppBarButtonsHandler;
 import com.sjsu.boreas.Misc.ContextHelper;
 import com.sjsu.boreas.OneOnOneChat.NearbyListFragment;
 import com.sjsu.boreas.OneOnOneChat.OneOnOneFragment;
 import com.sjsu.boreas.Database.Contacts.User;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -56,7 +53,8 @@ public class LandingPage extends FragmentActivity {
     private ViewPager2 mViewPager;
     private TextView fragmentTitle;
     private ImageView avatar;
-    public ImageButton refreshList;
+    public ImageButton refreshButton;
+    public ImageButton refreshError;
     public ProgressBar loading;
     CustomFragmentStateAdapter mAdapter;
 
@@ -66,8 +64,16 @@ public class LandingPage extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_landing_page);
         fragmentTitle= findViewById(R.id.fragmentTitle);
-        refreshList = findViewById(R.id.refresh_button);
+        refreshButton = findViewById(R.id.refresh_button);
+        refreshError = findViewById(R.id.error);
         loading = findViewById(R.id.loading);
+
+        refreshError.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.e(TAG, SUB_TAG + "Don't click on error jackass");
+            }
+        });
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
             Window window = getWindow();
@@ -170,8 +176,13 @@ public class LandingPage extends FragmentActivity {
                     mViewPager.setCurrentItem(temp);
                     fragmentTitle.setText(fragmentTitles[temp]);
                     mbuttonsHandler.setState(temp);
-                    if(temp==1) refreshList.setVisibility(View.VISIBLE);
-                    else refreshList.setVisibility(View.GONE);
+                    if(temp==1) {
+                        refreshButton.setVisibility(View.VISIBLE);
+                    }
+                    else {
+                        refreshButton.setVisibility(View.GONE);
+                        refreshError.setVisibility(View.GONE);
+                    }
                 }
             });
         }
