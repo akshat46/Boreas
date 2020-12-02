@@ -6,6 +6,7 @@ import android.util.Log;
 
 import androidx.room.Room;
 
+import com.sjsu.boreas.ChatView.MediaFilesRecyclerItems.FileItem;
 import com.sjsu.boreas.Database.LoggedInUser.LoggedInUser;
 import com.sjsu.boreas.Database.Messages.ChatMessage;
 import com.sjsu.boreas.Database.PotentialContacts.PotentialContacts;
@@ -59,8 +60,13 @@ public class LocalDatabaseReference implements EventEmitter{
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
-                Log.e(TAG, SUB_TAG+"Adding message to database" + message);
                 if(!isMessageAlreadyInDatabase(message)) {
+                    //Before saving the message we have to check if there is any image data in the message
+                    if(message.imgData != null && !(message.imgData.isEmpty())){
+                        Log.e(TAG, SUB_TAG+"There is image data");
+                        String uri = FileItem.saveImageAndGetUri(message);
+                    }
+
                     database.chatMessageDao().insertAll(message);
                     HashMap<String, Object> cm_map = (HashMap<String, Object>) message.toMap();
                     if(!(message.isMyMssg)) {

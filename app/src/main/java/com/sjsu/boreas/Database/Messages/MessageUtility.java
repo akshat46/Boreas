@@ -18,11 +18,11 @@ public class MessageUtility {
         ChatMessage mssg = null;
         JSONObject jsonMssg = null;
 
-        String mssgId, mssgText;
+        String mssgId, mssgText, imgData;
         double latitude, longitude;
         long time;
         int mssgType;
-        boolean isMyMssg;
+        boolean isMyMssg, contains_img;
 
         //First get json object from string
         try {
@@ -32,6 +32,7 @@ public class MessageUtility {
             mssgText = jsonMssg.getString("mssgText");
             User sender = new User(jsonMssg.getJSONObject("sender"));
             User recipient = new User(jsonMssg.getJSONObject("recipient"));
+//            imgData = jsonMssg.getString("imgData");
             //receiverId = jsonMssg.getString("receiverId");
             //receiverName = jsonMssg.getString("receiverName");
             //senderId = jsonMssg.getString("senderId");
@@ -42,9 +43,12 @@ public class MessageUtility {
             //Log.e(TAG, SUB_TAG+"SO far so good 2");
             time = Long.parseLong(jsonMssg.getString("time"));
             isMyMssg = false;
+            contains_img = Boolean.parseBoolean(jsonMssg.getString("contains_img"));
             mssgType = Integer.parseInt(jsonMssg.getString("mssgType"));
 
             mssg = new ChatMessage(sender, recipient, mssgId, mssgText, time, isMyMssg, mssgType);
+            mssg.contains_img = contains_img;
+//            mssg.imgData = imgData;
 
 //            ContextHelper contextHelper = ContextHelper.get(null);
 //            DatabaseReference databaseReference = DatabaseReference.get(contextHelper.getApplicationContext());
