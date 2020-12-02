@@ -19,7 +19,7 @@ public interface UserDao {
     @Query("SELECT * FROM user WHERE uid is :userID")
     List<User> getSpecificUser(String userID);
 
-    @Query("SELECT * FROM user ORDER BY abs(SQUARE(latitude) + SQUARE(longitude) - SQUARE(:lat) - SQUARE(:lon)) ASC")
+    @Query("SELECT * FROM user ORDER BY abs((latitude * latitude) + (longitude * longitude) - (:lat * :lat) - (:lon * :lon)) ASC")
     List<User> getClosestUsers(double lat, double lon);
 
     @Query("DELETE FROM user")
