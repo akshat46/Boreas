@@ -89,14 +89,16 @@ public class NearbyListFragment extends OneOnOneFragment {
         User user = mssg.sender;
         final int i = indexInContact(user);
 
-        adapterContentList.get(i).newMessage = true;
-        adapterContentList.get(i).lastMessage = mssg.mssgText;
-        mParent.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mAdapter.notifyItemChanged(i);
-            }
-        });
+        if(i>=0){
+            adapterContentList.get(i).newMessage = true;
+            adapterContentList.get(i).lastMessage = mssg.mssgText;
+            mParent.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mAdapter.notifyItemChanged(i);
+                }
+            });
+        }
     }
 
     private void setLoading(String status){
