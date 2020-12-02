@@ -3,6 +3,7 @@ package com.sjsu.boreas.OfflineConnectionHandlers;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Build;
+import android.os.Handler;
 import android.util.Base64;
 import android.util.Log;
 import android.widget.Toast;
@@ -358,11 +359,17 @@ public class NearbyConnectionHandler {
      * Sends messages to get neighbor's neighbor lists
      */
 
-    public void triggerNeighborRequest(){
+    public boolean triggerNeighborRequest(){
         subNeighbors.clear();
         Log.e(TAG, SUB_TAG+" requesting neighbors...");
-        for(String neighbor : neighbors.keySet()){
-            client.sendPayload(neighbors.get(neighbor), Payload.fromBytes(REQUEST_GET_NEIGHBORS.getBytes()));
+        if(neighbors.isEmpty()){
+            return false;
         }
+        else{
+            for(String neighbor : neighbors.keySet()){
+                client.sendPayload(neighbors.get(neighbor), Payload.fromBytes(REQUEST_GET_NEIGHBORS.getBytes()));
+            }
+        }
+        return true;
     }
 }
