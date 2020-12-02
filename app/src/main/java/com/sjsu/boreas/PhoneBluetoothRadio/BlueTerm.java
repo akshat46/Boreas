@@ -5,8 +5,11 @@ import android.bluetooth.BluetoothDevice;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.sjsu.boreas.Database.Messages.ChatMessage;
+
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.Set;
 
 
@@ -19,7 +22,7 @@ public class BlueTerm{
     private static BluetoothSerialService mSerialService;
     private static BluetoothDevice default_device_pi;
 
-    private static String default_bluetooth_device_name = "raspberrypi";
+    public static String default_bluetooth_device_name = "raspberrypi";
 
     // Message types sent from the BluetoothReadService Handler
     public static final int MESSAGE_STATE_CHANGE = 1;
@@ -29,8 +32,14 @@ public class BlueTerm{
     public static final int MESSAGE_TOAST = 5;
 
     // Key names received from the BluetoothChatService Handler
-    public static final String DEVICE_NAME = "device_name";
+    public static String DEVICE_NAME = default_bluetooth_device_name;
     public static final String TOAST = "toast";
+
+
+    public static void setDefaultDeviceName(String deviceName){
+        Log.e(TAG, SUB_TAG+"Setting device name");
+        default_bluetooth_device_name = deviceName;
+    }
 
     public BlueTerm() {
         Log.e(TAG, SUB_TAG+ "+++ Constructor+++");
@@ -41,9 +50,14 @@ public class BlueTerm{
 
         Log.e(TAG, SUB_TAG+"get blue tooth device: " + name);
         Set<BluetoothDevice> devices = mBluetoothAdapter.getBondedDevices();
+
+        //If no name is given then fall back to the default device name
+        if(name != null && !(name.isEmpty()))
+            DEVICE_NAME = default_bluetooth_device_name;
+
         for (BluetoothDevice device : devices) {
             Log.e(TAG, "\n  Device: " + device.getName() + ", " + device.getAddress());
-            if(device.getName().equals(name)) {
+            if(device.getName().equals(DEVICE_NAME)) {
                 temp = device;
             }
         }
@@ -53,11 +67,11 @@ public class BlueTerm{
     }
 
     //This function connects to whatever device name which is in default_bluetooth_device_name variable
-    private static void connectToBluetoothDevice(){
+    private static boolean connectToBluetoothDevice(){
         Log.e(TAG, SUB_TAG+"connected to blth function");
         if (mBluetoothAdapter == null) {
             Log.e(TAG, SUB_TAG+"This device doesn't have bluetooth.");
-            return;
+            return false;
         }
 
         default_device_pi = getBluetoothDeviceWithName(default_bluetooth_device_name);
@@ -68,15 +82,26 @@ public class BlueTerm{
         //Get the rasperry pi
 
         mSerialService.connect(default_device_pi);
+        //TODO:need better check here for whether the connection is actually established
+        return true;
+    }
+
+    public static boolean getSerialConnectionStatus(){
+        Log.e(TAG, SUB_TAG+"Check if a serial connection is established");
+        if(mSerialService == null || mSerialService.getState() != BluetoothSerialService.STATE_CONNECTED){
+            Log.e(TAG, SUB_TAG+"The device isn't connected to anything yet, gonna try to change that and connect to: " + default_bluetooth_device_name);
+            return connectToBluetoothDevice();
+        }
+        return false;
     }
 
     //This function is the one that sends the data out
-    private static void send(final byte[] out) throws UnsupportedEncodingException {
+    private static void sendByte(final byte[] out){
         Log.e(TAG, SUB_TAG+"Sending mssg");
 
-        if(mSerialService == null || mSerialService.getState() != BluetoothSerialService.STATE_CONNECTED){
-            Log.e(TAG, SUB_TAG+"The device isn't connected to anything yet, gonna try to change that and connect to: " + default_bluetooth_device_name);
-            connectToBluetoothDevice();
+        if(!getSerialConnectionStatus()){
+            Log.e(TAG, SUB_TAG + "No radio connected, please try again");
+            return;
         }
 
         Log.e(TAG, SUB_TAG+"Serial state is: "+ mSerialService.getState());
@@ -110,22 +135,29 @@ public class BlueTerm{
     }
 
     //This function is the function which will b used by outside classes to send stuff using radio
-    //  it receives a mssg (ChatMessage converted into string) and a mssg type header which is useful for the pi
-    //  to understand what the pi should do with this mssg
-    public static void sendMessage(String mssg, int mssgType) {
+    public static void sendMessage(ChatMessage chatMessage) {
         Log.e(TAG, SUB_TAG+"getting ready to send mssg");
 
-        if(mssg == null || mssg.isEmpty())
-            mssg = "BOREAS";
-
-        String mssgToBeSent = String.valueOf(mssgType) + "-\n" + mssg;
-        byte[] bytesToSend = mssgToBeSent.getBytes(Charset.forName("UTF-8"));
-
-        try {
-            send(bytesToSend);
-        } catch (UnsupportedEncodingException e) {
-            Log.e(TAG, SUB_TAG+"There was an issue sending the mssg hea");
-            e.printStackTrace();
+        if(chatMessage == null) {
+            Log.e(TAG, SUB_TAG+"Chatmessage empty yo, what the heck yo?");
+            return;
         }
+
+        if(chatMessage.mssgType == ChatMessage.ChatTypes.GETMESSAGESFROMRADIO.getValue()){
+            Log.e(TAG, SUB_TAG+"Calling the radio and asking for your mssgs yo");
+            final String ANYTHINGFORME = "ANYTHINGFORME";
+            sendByte(ANYTHINGFORME.getBytes(Charset.forName("UTF-8")));
+            return;
+        }
+
+        ArrayList<RadioPackage> radio_packgs_to_send = RadioPackage.getRadioPackgsToSend(chatMessage);
+
+        int radio_packgs_list_len = radio_packgs_to_send.size();
+        for(int i = 0; i < radio_packgs_list_len; i++){
+            String radio_packg_str = radio_packgs_to_send.get(i).toString();
+            sendByte(radio_packg_str.getBytes(Charset.forName("UTF-8")));
+        }
+        final String DONE = "DONE";
+        sendByte(DONE.getBytes(Charset.forName("UTF-8")));
     }
 }

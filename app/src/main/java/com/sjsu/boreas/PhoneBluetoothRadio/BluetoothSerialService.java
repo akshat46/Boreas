@@ -19,17 +19,22 @@ package com.sjsu.boreas.PhoneBluetoothRadio;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.sjsu.boreas.Database.LocalDatabaseReference;
 import com.sjsu.boreas.Database.Messages.ChatMessage;
 import com.sjsu.boreas.Database.Messages.MessageUtility;
+import com.sjsu.boreas.Events.Event;
+import com.sjsu.boreas.Misc.ContextHelper;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.UUID;
 
 /**
@@ -64,6 +69,17 @@ public class BluetoothSerialService {
     public static final int STATE_LISTEN = 1;     // now listening for incoming connections
     public static final int STATE_CONNECTING = 2; // now initiating an outgoing connection
     public static final int STATE_CONNECTED = 3;  // now connected to a remote device
+
+    //Use radio events to update listeners
+    private Event event_radio_connected = Event.get(Event.radioConnected);
+    private Event event_radio_disconnected = Event.get(Event.radioDisconnected);
+
+    private ContextHelper contextHelper = ContextHelper.get();
+
+    private String radio_pckg_list_str = "";
+
+    private LocalDatabaseReference localDatabaseReference = LocalDatabaseReference.get();
+
 
     /**
      * Constructor. Prepares a new BluetoothChat session.
@@ -216,7 +232,9 @@ public class BluetoothSerialService {
      * Indicate that the connection attempt failed and notify the UI Activity.
      */
     private void connectionFailed() {
+        Log.e(TAG, SUB_TAG + "Connection failed");
         setState(STATE_NONE);
+        event_radio_disconnected.trigger(null);
 
         // Send a failure message back to the Activity
 //        Message msg = mHandler.obtainMessage(BlueTerm.MESSAGE_TOAST);
@@ -230,6 +248,7 @@ public class BluetoothSerialService {
      * Indicate that the connection was lost and notify the UI Activity.
      */
     private void connectionLost() {
+        Log.e(TAG, SUB_TAG+"Connection lost");
         setState(STATE_NONE);
 
         // Send a failure message back to the Activity
@@ -285,12 +304,16 @@ public class BluetoothSerialService {
                 // This is a blocking call and will only return on a
                 // successful connection or an exception
 
-                if(mmSocket != null)
+                if(mmSocket != null) {
+                    Log.e(TAG, SUB_TAG + "outter try of connect thread");
+                    event_radio_connected.trigger(null);
                     mmSocket.connect();
+                }
             } catch (IOException e) {
                 connectionFailed();
                 // Close the socket
                 try {
+                    Log.e(TAG, SUB_TAG + "outter catch clause of run of connect thread: " + e);
                     mmSocket.close();
                 } catch (IOException e2) {
                     Log.e(TAG, SUB_TAG+"unable to close() socket during connection failure", e2);
@@ -351,8 +374,10 @@ public class BluetoothSerialService {
 
         public void run() {
             Log.e(TAG, SUB_TAG+"BEGIN mConnectedThread");
-            byte[] buffer = new byte[1024];
+            byte[] buffer = new byte[200];
             int bytes;
+
+            String chat_mssg_str = "";
 
             // Keep listening to the InputStream while connected
             while (true) {
@@ -365,18 +390,36 @@ public class BluetoothSerialService {
 //                    mEmulatorView.write(buffer, bytes);
                         // Send the obtained bytes to the UI Activity
                         //mHandler.obtainMessage(BlueTerm.MESSAGE_READ, bytes, -1, buffer).sendToTarget();
-                        String str = new String(buffer, "UTF-8"); // for UTF-8 encoding
-                        Log.i(TAG, "\t\tReceived: " + str.substring(0,bytes));
-                        ChatMessage mssg = MessageUtility.convertJsonToMessage(str.substring(0,bytes));
-                        if(mssg != null)
-                            ChatMessage.notifyListener(mssg);
-                        else
-                            Log.e(TAG, SUB_TAG+"[[[[[[[[[[[[[[[[[[[[[[[[[[[[[The chat mssg returned was null bruh -------------------");
+                        String str = new String(buffer, "UTF-8").trim() + '\0'; // for UTF-8 encoding
+//                        Log.e(TAG, "\t\tReceived: " + str);
+//                        RadioPackage.parseAllPackages(str);
+
+                        if(str.substring(0,4).equals("DONE")){
+                            Log.e(TAG, SUB_TAG+"Done recieved ---=-=-=-=-=_+_+_+-=-=_+_=-+_=_+_\n\n\n" + radio_pckg_list_str);
+                            RadioPackage.parseAllPackages(radio_pckg_list_str);
+                        }
+                        else {
+                            radio_pckg_list_str = radio_pckg_list_str + str;
+//                            chat_mssg_str = chat_mssg_str + radioPackage.packg_data;
+//                            if(radioPackage != null) {
+//                                Log.e(TAG, SUB_TAG+"*****************************");
+//                                Log.i(TAG, SUB_TAG+"*****************************");
+//                                radio_pckg_list.add(radioPackage);
+//                            }
+                        }
+
+//                        ChatMessage mssg = MessageUtility.convertJsonToMessage(str.substring(0,bytes));
+//                        if(mssg != null)
+//                            ChatMessage.notifyListener(mssg);
+//                        else
+//                            Log.e(TAG, SUB_TAG+"[[[[[[[[[[[[[[[[[[[[[[[[[[[[[The chat mssg returned was null bruh -------------------");
                     }else{
                         Log.e(TAG, "mmInstream is null");
+                        Log.i(TAG, "mmInstream is null");
                     }
                 } catch (IOException e) {
                     Log.e(TAG, SUB_TAG+"disconnected", e);
+//                    RadioPackage.sortOutThePackagesReceived(mssges_received);
                     connectionLost();
                     break;
                 }
@@ -416,6 +459,7 @@ public class BluetoothSerialService {
     public boolean getAllowInsecureConnections() {
         return mAllowInsecureConnections;
     }
+
 
 }
 
