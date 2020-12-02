@@ -34,12 +34,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.Toolbar;
 
 //import com.sjsu.boreas.ChatViewRelatedStuff.MessageListViewStuff.OneOnOneMessageAdapter;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.storage.OnProgressListener;
-import com.google.firebase.storage.StorageMetadata;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
+//import com.google.android.gms.tasks.OnFailureListener;
+//import com.google.android.gms.tasks.OnSuccessListener;
+//import com.google.firebase.storage.OnProgressListener;
+//import com.google.firebase.storage.StorageMetadata;
+//import com.google.firebase.storage.StorageReference;
+//import com.google.firebase.storage.UploadTask;
 import com.sjsu.boreas.ChatView.MediaFilesRecyclerItems.FileItem;
 import com.sjsu.boreas.ChatView.MediaFilesRecyclerItems.FileItemClickedAction;
 import com.sjsu.boreas.ChatView.MediaFilesRecyclerItems.MediaFileListAdapter;
@@ -521,25 +521,37 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener, F
 
     //This function is the function that will push the message to the
     //  outside world, whether thats offline or online
-    private void actuallySendingTheMessage(ChatMessage chatMessage){
+    private void actuallySendingTheMessage(final ChatMessage chatMessage){
         Log.e(TAG, SUB_TAG+"This function sends the message, actually!!!!");
 
         // TODO: add correct online/offline implementations here
         if(mode.getValue().equals(SendMode.ONLINE.getValue())){
             Toast.makeText(ChatActivity2.this, "Sending Online.", Toast.LENGTH_SHORT).show();
             FirebaseController.pushMessageToFirebase(chatMessage, mActivity);
+            saveMessageLocally(chatMessage);
         }
         else if(mode.getValue().equals(SendMode.OFFLINE_CONNECT_API.getValue())){
             Toast.makeText(ChatActivity2.this, "Sending Offline.", Toast.LENGTH_SHORT).show();
+            chatMessage.mssgType = ChatMessage.ChatTypes.ONEONONEOFFLINECHAT.getValue();
+            AsyncTask.execute(new Runnable() {
+                @Override
+                public void run() {
+                    if(MainActivity.nearbyConnectionHandler.send1to1Message(mActivity, chatMessage)){
+                        Log.e(TAG, SUB_TAG+"Message was sent yo");
+                        saveMessageLocally(chatMessage);
+                    }else{
+                        Log.e(TAG, SUB_TAG+"\tMssg didn't happen");
+                    }
+                }
+            });
         }
         else if(mode.getValue().equals(SendMode.OFFLINE_RADIO.getValue())){
             Toast.makeText(ChatActivity2.this, "Sending thru the radio.", Toast.LENGTH_SHORT).show();
             chatMessage.mssgType = ChatMessage.ChatTypes.ONEONONEOFFLINERADIO.getValue();
             sendMessageThruRadio(chatMessage);
+            saveMessageLocally(chatMessage);
         }
 
-        //Then save a local copy
-        saveMessageLocally(chatMessage);
     }
 
     private void saveMessageLocally(final ChatMessage chatMessage){

@@ -184,7 +184,7 @@ public class NearbyConnectionHandler {
     }
 
     public ConnectionsClient getClient(){
-        Log.e(TAG, SUB_TAG+"ConnectionsClient");
+        Log.e(TAG, SUB_TAG+"ConnectionsClient: " + client);
         return client;
     }
 
@@ -216,18 +216,64 @@ public class NearbyConnectionHandler {
         return messages;
     }
 
-    public void send1to1Message(Context activity, User recipient, String text){
-        String encryptedText = text;
+    public boolean send1to1Message(Context activity, ChatMessage message){
+        String encryptedText = "";
         boolean isEncrypted = false;
+
+//        encryptedText = getEncryptedMessage(message);
+
+//        ChatMessage message = new ChatMessage(MainActivity.currentUser, recipient, UUID.randomUUID().toString(),
+//                encryptedText, System.currentTimeMillis(), true, ChatMessage.ChatTypes.ONEONONEOFFLINECHAT.getValue());
+//        message.isEncrypted = isEncrypted;
+
+        if(!(encryptedText.equals(""))){
+            Log.e(TAG, SUB_TAG+"Message was encrypted");
+            message.isEncrypted = true;
+        }
+
+        int forwardCount = 0;
+        List<User> nearestUsers = localDatabaseReference.getClosestUsers(message.recipient);
+        message.addForwarder(MainActivity.currentUser.getUid());
+        for(User user : nearestUsers){
+            Log.e(TAG, SUB_TAG+"Nearest user: \t" + user.name);
+            //Complete message forwarding once messages have been sent to at most 3 users
+            if(forwardCount >= 3)
+                break;
+            if(neighbors.containsKey(user.uid)){
+                Log.e(TAG, SUB_TAG+"In the contains user id function");
+                //Don't resend to person who sent this message here OR someone who has forwarded this message before
+                //First of above is subset of second, so only need to check second clause
+                if(!message.isForwarder(user.getUid())){
+                    Log.e(TAG, SUB_TAG+"Message sending yo: " + neighbors.get(user.uid));
+                    //Send message to user and increment
+                    forwardCount++;
+                    Payload forwardPayload = Payload.fromStream(handlerNearby.constructStreamFromSerializable(message));
+                    getClient().sendPayload(neighbors.get(user.uid), forwardPayload);
+                    return true;
+                }
+            }
+        }
+
+        if(forwardCount == 0){
+//            Toast.makeText(activity, "Error: No offline connections to send to!", Toast.LENGTH_LONG);
+            Log.e(TAG, SUB_TAG+"Error: No offline connections to send to!");
+        }
+
+        return false;
+    }
+
+    private String getEncryptedMessage(ChatMessage message){
+        Log.e(TAG, SUB_TAG+"Encrypting mssg");
+
+        User recipient = message.recipient;
+        String encryptedText = "";
         try {
             Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
             X509EncodedKeySpec keySpec = new X509EncodedKeySpec(Base64.decode(recipient.publicKey, Base64.DEFAULT));
             KeyFactory fac = KeyFactory.getInstance("RSA");
 
             cipher.init(Cipher.ENCRYPT_MODE, fac.generatePublic(keySpec));
-            encryptedText = Base64.encodeToString(cipher.doFinal(text.getBytes("UTF-8")), Base64.DEFAULT);
-
-            isEncrypted = true;
+            encryptedText = Base64.encodeToString(cipher.doFinal(message.mssgText.getBytes("UTF-8")), Base64.DEFAULT);
         }catch (NoSuchAlgorithmException e){
             Toast.makeText(context, "Error: Could not encrypt text- RSA alg not found", Toast.LENGTH_SHORT);
             e.printStackTrace();
@@ -241,32 +287,8 @@ public class NearbyConnectionHandler {
             Toast.makeText(context, "Error: Could not perform encryption", Toast.LENGTH_SHORT);
             e.printStackTrace();
         }
-        ChatMessage message = new ChatMessage(MainActivity.currentUser, recipient, UUID.randomUUID().toString(),
-                encryptedText, System.currentTimeMillis(), true, ChatMessage.ChatTypes.ONEONONEOFFLINECHAT.getValue());
-        message.isEncrypted = isEncrypted;
 
-        int forwardCount = 0;
-        List<User> nearestUsers = localDatabaseReference.getClosestUsers(message.recipient);
-        message.addForwarder(MainActivity.currentUser.getUid());
-        for(User user : nearestUsers){
-            //Complete message forwarding once messages have been sent to at most 3 users
-            if(forwardCount >= 3)
-                break;
-            if(neighbors.containsKey(user.uid)){
-                //Don't resend to person who sent this message here OR someone who has forwarded this message before
-                //First of above is subset of second, so only need to check second clause
-                if(!message.isForwarder(user.getUid())){
-                    //Send message to user and increment
-                    forwardCount++;
-                    Payload forwardPayload = Payload.fromStream(handlerNearby.constructStreamFromSerializable(message));
-                    getClient().sendPayload(neighbors.get(user.uid), forwardPayload);
-                }
-            }
-        }
-
-        if(forwardCount == 0){
-            Toast.makeText(context, "Error: No offline connections to send to!", Toast.LENGTH_LONG);
-        }
+        return encryptedText;
     }
 
     public void sendGroupMessage(String text){
