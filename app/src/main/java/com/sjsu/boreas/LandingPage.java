@@ -2,6 +2,7 @@ package com.sjsu.boreas;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -33,6 +35,7 @@ import com.sjsu.boreas.Database.LoggedInUser.LoggedInUser;
 import com.sjsu.boreas.GroupChats.OfflineGroupFragment;
 import com.sjsu.boreas.Misc.AppBarButtonsHandler;
 import com.sjsu.boreas.Misc.ContextHelper;
+import com.sjsu.boreas.OneOnOneChat.NearbyListFragment;
 import com.sjsu.boreas.OneOnOneChat.OneOnOneFragment;
 import com.sjsu.boreas.Database.Contacts.User;
 import com.squareup.picasso.Picasso;
@@ -53,6 +56,9 @@ public class LandingPage extends FragmentActivity {
     private ViewPager2 mViewPager;
     private TextView fragmentTitle;
     private ImageView avatar;
+    public ImageButton refreshList;
+    public ProgressBar loading;
+    CustomFragmentStateAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +66,8 @@ public class LandingPage extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_landing_page);
         fragmentTitle= findViewById(R.id.fragmentTitle);
+        refreshList = findViewById(R.id.refresh_button);
+        loading = findViewById(R.id.loading);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
             Window window = getWindow();
@@ -137,7 +145,7 @@ public class LandingPage extends FragmentActivity {
     private void initViewPager() {
         mViewPager = findViewById(R.id.viewpager);
         mViewPager.setUserInputEnabled(false);
-        CustomFragmentStateAdapter mAdapter = new CustomFragmentStateAdapter(this);
+        mAdapter = new CustomFragmentStateAdapter(this);
         mViewPager.setAdapter(mAdapter);
     }
 
@@ -145,9 +153,9 @@ public class LandingPage extends FragmentActivity {
         Log.e(TAG, SUB_TAG + " Initializing bottom app bar.");
 
         ArrayList<String> imageButtonIDs = new ArrayList<String>(
-                Arrays.asList("bottombar_contacts", "bottombar_groups"));
+                Arrays.asList("bottombar_contacts", "bottombar_nearby"));
         ImageButton b;
-        final String[] fragmentTitles = new String[]{"CHATS", "GROUPS"};
+        final String[] fragmentTitles = new String[]{"CHATS", "NEARBY"};
 
         Log.e(TAG, SUB_TAG + " Initializing bottom app bar: Buttons");
         for (int i = 0; i < imageButtonIDs.size(); i++) {
@@ -162,6 +170,8 @@ public class LandingPage extends FragmentActivity {
                     mViewPager.setCurrentItem(temp);
                     fragmentTitle.setText(fragmentTitles[temp]);
                     mbuttonsHandler.setState(temp);
+                    if(temp==1) refreshList.setVisibility(View.VISIBLE);
+                    else refreshList.setVisibility(View.GONE);
                 }
             });
         }
@@ -207,7 +217,7 @@ public class LandingPage extends FragmentActivity {
         List<Fragment> mFragments;
         mFragments = new ArrayList<Fragment>();
         mFragments.add(OneOnOneFragment.newInstance(""));
-        mFragments.add(OfflineGroupFragment.newInstance(""));
+        mFragments.add(NearbyListFragment.newInstance(""));
         return mFragments;
     }
 

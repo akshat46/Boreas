@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import androidx.appcompat.view.menu.SubMenuBuilder;
 import androidx.room.Room;
 
 import com.sjsu.boreas.ChatView.MediaFilesRecyclerItems.FileItem;
@@ -14,21 +13,18 @@ import com.sjsu.boreas.Database.PotentialContacts.PotentialContacts;
 import com.sjsu.boreas.Database.Contacts.User;
 import com.sjsu.boreas.Events.Event;
 import com.sjsu.boreas.Events.EventEmitter;
-import com.sjsu.boreas.LandingPage;
-import com.sjsu.boreas.LoginActivity;
 import com.sjsu.boreas.Messages.LongDistanceMessage;
 import com.sjsu.boreas.Notifications.CustomNotification;
 import com.sjsu.boreas.OnlineConnectionHandlers.FirebaseController;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 public class LocalDatabaseReference implements EventEmitter{
 
-    private Event event_chatmessage = Event.get(Event.chatMssgEventID);
-    private Event event_user = Event.get(Event.usersEventID);
-    private Event event_user_removed = Event.get(Event.userRemoved);
+    private Event event_chatmessage = Event.get(Event.CHAT_MSSG);
+    private Event event_user = Event.get(Event.USER_ADDED);
+    private Event event_user_removed = Event.get(Event.USER_REMOVED);
 
     private static String TAG = "BOREAS";
     private static String SUB_TAG = "------DatabaseReference----- ";

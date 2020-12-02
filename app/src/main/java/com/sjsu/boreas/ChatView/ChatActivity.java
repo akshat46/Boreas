@@ -68,10 +68,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-
 import javax.security.auth.Subject;
 
-public class ChatActivity2 extends AppCompatActivity implements EventListener, FileItemClickedAction {
+public class ChatActivity extends AppCompatActivity implements EventListener, FileItemClickedAction {
 
     private RecyclerView recyclerView;
     private RecyclerView fileSelectedView;
@@ -87,7 +86,7 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener, F
     private RecyclerView.LayoutManager mediaListLayoutManager;
     private User myChatPartner;
     private Context mContext;
-    private ChatActivity2 mActivity;
+    private ChatActivity mActivity;
     private Toolbar toolbar;
     private ImageButton dynamicButton;
     private ImageButton dynamicButton2;
@@ -131,7 +130,7 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener, F
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat2);
 
-        Event event = Event.get(Event.chatMssgEventID);
+        Event event = Event.get(Event.CHAT_MSSG);
         Event event_radio_connected = Event.get(Event.radioConnected);
         Event event_radio_disconnected = Event.get(Event.radioDisconnected);
         event.addListener(this);
@@ -170,7 +169,7 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener, F
                     Log.e(TAG, SUB_TAG+"We our here tryna detect enter key.");
                     if (mssgText.getText().toString().trim().equals("")) {
                         // TODO: disable button
-                        Toast.makeText(ChatActivity2.this, "Please input some text...", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(ChatActivity.this, "Please input some text...", Toast.LENGTH_SHORT).show();
                     } else {
                         //add message to list
                         sendMessage(mssgText.getText().toString());
@@ -207,10 +206,10 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener, F
         btnSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.e(TAG, "Hea too");
                 if (mssgText.getText().toString().trim().equals("")) {
                     // TODO: disable button
-                    Toast.makeText(ChatActivity2.this, "Please input some text...", Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, "button send clicked with no text");
+                   // Toast.makeText(ChatActivity2.this, "Please input some text...", Toast.LENGTH_SHORT).show();
                 } else {
                     //add message to list
                     sendMessage(mssgText.getText().toString());
@@ -341,13 +340,13 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener, F
 
         if(myChatPartner instanceof PotentialContacts){
             Log.e(TAG, SUB_TAG+"my chatpartner is not my contact, adding the option to ignore or add contact");
-            setUpTheIgnoreButton();
-            setUpTheAddToContactsButton();
+            setUpIgnoreButton();
+            setUpAddToContactsButton();
         }
         btnSend.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                popup = new PopupMenu(ChatActivity2.this, btnSend);
+                popup = new PopupMenu(mActivity, btnSend);
                 popup.inflate(R.menu.menu_send);
 
                 if(!(SettingsActivity.radio_is_connected)){
@@ -403,7 +402,7 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener, F
         });
     }
 
-    private void setUpTheIgnoreButton(){
+    private void setUpIgnoreButton(){
         Log.e(TAG, SUB_TAG+"Setting up the ignore button");
         dynamicButton.setImageResource(R.drawable.ic_block_contact);
         dynamicButton.setOnClickListener(new View.OnClickListener() {
@@ -411,7 +410,7 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener, F
             public void onClick(View v) {
                 Log.e(TAG, SUB_TAG+"Ignoring this user burr");
                 localDatabaseReference.removePotentialContact((PotentialContacts) myChatPartner);
-                ChatActivity2.this.finish();
+                ChatActivity.this.finish();
                 //TODO: gotta remove this user and then go to the previous screen
                 // and also update the oneOnOne Fragment
                 //localDatabaseReference.removePotentialUser(myChatPartner);
@@ -421,7 +420,7 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener, F
         dynamicButton.setVisibility(View.VISIBLE);
     }
 
-    private void setUpTheAddToContactsButton(){
+    private void setUpAddToContactsButton(){
         Log.e(TAG, SUB_TAG+"Setting up the adding to contact button");
         dynamicButton2.setImageResource(R.drawable.ic_add_contact);
         dynamicButton2.setOnClickListener(new View.OnClickListener() {
@@ -526,12 +525,12 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener, F
 
         // TODO: add correct online/offline implementations here
         if(mode.getValue().equals(SendMode.ONLINE.getValue())){
-            Toast.makeText(ChatActivity2.this, "Sending Online.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(mActivity, "Sending Online.", Toast.LENGTH_SHORT).show();
             FirebaseController.pushMessageToFirebase(chatMessage, mActivity);
             saveMessageLocally(chatMessage);
         }
         else if(mode.getValue().equals(SendMode.OFFLINE_CONNECT_API.getValue())){
-            Toast.makeText(ChatActivity2.this, "Sending Offline.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(mActivity, "Sending Offline.", Toast.LENGTH_SHORT).show();
             chatMessage.mssgType = ChatMessage.ChatTypes.ONEONONEOFFLINECHAT.getValue();
             AsyncTask.execute(new Runnable() {
                 @Override
@@ -541,7 +540,7 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener, F
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                Toast.makeText(ChatActivity2.this, "Mssg sent.", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(mActivity, "Mssg sent.", Toast.LENGTH_SHORT).show();
                             }
                         });
                         saveMessageLocally(chatMessage);
@@ -549,7 +548,7 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener, F
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                Toast.makeText(ChatActivity2.this, "Mssg NOT sent, please try again.", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(mActivity, "Mssg NOT sent, please try again.", Toast.LENGTH_SHORT).show();
                             }
                         });
                         Log.e(TAG, SUB_TAG+"\tMssg didn't happen");
@@ -558,7 +557,7 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener, F
             });
         }
         else if(mode.getValue().equals(SendMode.OFFLINE_RADIO.getValue())){
-            Toast.makeText(ChatActivity2.this, "Sending thru the radio.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(mActivity, "Sending thru the radio.", Toast.LENGTH_SHORT).show();
             chatMessage.mssgType = ChatMessage.ChatTypes.ONEONONEOFFLINERADIO.getValue();
             sendMessageThruRadio(chatMessage);
             saveMessageLocally(chatMessage);
@@ -618,7 +617,7 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener, F
     @Override
     public void eventTriggered(HashMap<String, Object> packet, String type) {
         Log.e(TAG, SUB_TAG+"Event is triggered, with type: " + type);
-        if(type.equals(Event.chatMssgEventID)) {
+        if(type.equals(Event.CHAT_MSSG)) {
             Log.e(TAG, SUB_TAG+"this is a chat message event");
             ChatMessage mssg = MessageUtility.convertHashMapToChatMessage(packet);
             addMessageOnScreen(mssg);

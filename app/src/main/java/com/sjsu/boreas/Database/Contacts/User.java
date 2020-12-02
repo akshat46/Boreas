@@ -63,6 +63,19 @@ public class User implements Serializable {
     @ColumnInfo(name = "publicKey")
     public String publicKey;
 
+    @Override
+    public boolean equals(Object u){
+        if(u instanceof User){
+            return this.uid.equals(((User)u).uid);
+        }
+        else return false;
+    }
+
+    @Override
+    public int hashCode(){
+        return this.uid.hashCode();
+    }
+
     /**
      *
      * @return JSON representation of this object

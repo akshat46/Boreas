@@ -65,7 +65,7 @@ public class SettingsActivity extends AppCompatActivity implements EventListener
     }
 
     private void initView(){
-        Log.e(TAG, SUB_TAG+"Initializing view");
+        Log.e(TAG, SUB_TAG+"Initializing view: " + currentUser.getUid());
         userNameLabel = findViewById(R.id.settings_user_name);
         logoutButton = findViewById(R.id.logout_button);
         userToken = findViewById(R.id.user_token);
@@ -75,6 +75,7 @@ public class SettingsActivity extends AppCompatActivity implements EventListener
         getMessagesFromRadio = findViewById(R.id.get_mssgs_from_radio);
 
         userNameLabel.setText(currentUser.name);
+
         userToken.setText(currentUser.getUid());
 
         logoutButton.setOnClickListener(new View.OnClickListener() {

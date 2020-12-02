@@ -2,10 +2,12 @@ package com.sjsu.boreas.OfflineConnectionHandlers;
 
 import android.app.Activity;
 import android.content.Context;
+import android.os.Build;
 import android.util.Base64;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.gms.nearby.Nearby;
@@ -35,10 +37,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -76,9 +80,12 @@ public class NearbyConnectionHandler {
 
     protected HashMap<String, HashSet<String>> meshMembers; //Members of current connection mesh (userId neighbor -> mesh member userIds)
     protected HashMap<String, String> neighbors; //neighbor userId to endpointId
-    protected HashMap<String, List<String>> subNeighbors; //List of neighbors for each of this device's neighbors; neighbor id to ids of their neighbors
-    protected boolean isSubNeighborsUpdate = false; //Whether there's a new update to the subNeighbors map for the front-end to read
+    protected List<User> subNeighbors; //List of neighbors for each of this device's neighbors; neighbor id to ids of their neighbors
+    protected int neighborsResponseTracker = 0;
+    protected long neighborsResponseTimer = 0;
+//    protected boolean isSubNeighborsUpdate = false; //Whether there's a new update to the subNeighbors map for the front-end to read
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public NearbyConnectionHandler(Activity context){
         Log.e(TAG, SUB_TAG+"NearbyConnectionHandler");
         this.context = context;
@@ -93,7 +100,13 @@ public class NearbyConnectionHandler {
         timer = new Timer();
         meshMembers = new HashMap<>();
         neighbors = new HashMap();
-        subNeighbors = new HashMap<>();
+        subNeighbors = new ArrayList<User>(){
+            @Override
+            public boolean add(User user) {
+                if(!this.contains(user)) return super.add(user);
+                else return false;
+            }
+        };
 
         //startAdvertising();
         //startDiscovering();
@@ -344,26 +357,12 @@ public class NearbyConnectionHandler {
     /**
      * Sends messages to get neighbor's neighbor lists
      */
-    public void getNeighborsIn2Hops(){
+
+    public void triggerNeighborRequest(){
+        subNeighbors.clear();
+        Log.e(TAG, SUB_TAG+" requesting neighbors...");
         for(String neighbor : neighbors.keySet()){
             client.sendPayload(neighbors.get(neighbor), Payload.fromBytes(REQUEST_GET_NEIGHBORS.getBytes()));
         }
-    }
-
-    public Set<String> getSubNeighborsList(){
-        isSubNeighborsUpdate = false;
-
-        Set<String> toret = new HashSet<>();
-        for(List<String> subs: subNeighbors.values()){
-            toret.addAll(subs);
-        }
-        for(String nb : subNeighbors.keySet())
-            toret.add(nb);
-
-        return toret;
-    }
-
-    public boolean isNeighborListUpdate(){
-        return isSubNeighborsUpdate;
     }
 }

@@ -1,6 +1,5 @@
 package com.sjsu.boreas.OfflineConnectionHandlers;
 
-import android.os.AsyncTask;
 import android.util.Base64;
 import android.util.Log;
 
@@ -15,6 +14,8 @@ import com.google.android.gms.nearby.connection.Payload;
 import com.google.android.gms.nearby.connection.PayloadCallback;
 import com.google.android.gms.nearby.connection.PayloadTransferUpdate;
 import com.sjsu.boreas.Database.LocalDatabaseReference;
+import com.sjsu.boreas.Events.Event;
+import com.sjsu.boreas.Events.EventEmitter;
 import com.sjsu.boreas.MainActivity;
 import com.sjsu.boreas.Database.Messages.ChatMessage;
 import com.sjsu.boreas.Database.Contacts.User;
@@ -38,18 +39,20 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.crypto.Cipher;
 
-public class NearbyCallbackHandler {
+public class NearbyCallbackHandler implements EventEmitter {
+    private final static String TAG = "BOREAS";
+    private final static String SUB_TAG = "---NearbyCallbackHandler ";
 
     private NearbyConnectionHandler connectionHandler;
     private HashMap<String, String> connectedUsers; //Map endpointId to userId
     private HashMap<String, String> endPointNames;
     private LocalDatabaseReference localDatabaseReference = LocalDatabaseReference.get();
-
-    private static String TAG = "BOREAS";
-    private static String SUB_TAG = "-------NearbyCallbackHandler--- ";
+    public long NBRS_REQUEST_TTL = 25;
+    Event event_neighbors = Event.get(Event.NBR_UPDATED);
 
     public NearbyCallbackHandler(NearbyConnectionHandler act){
         connectionHandler = act;
@@ -185,35 +188,73 @@ public class NearbyCallbackHandler {
                     }
                 }
 
-
-
                 //Sub-neighbor List
                 else if(result instanceof NeighborRequestMessage){
-                    connectionHandler.isSubNeighborsUpdate = true;
-                    NeighborRequestMessage message = (NeighborRequestMessage) result;
-                    if(!connectionHandler.subNeighbors.containsKey(message.neighbor.uid))
-                        connectionHandler.subNeighbors.put(message.neighbor.uid, new ArrayList<String>());
-
-                    for(User subNeighbor : message.subNeighbors) {
-                        connectionHandler.subNeighbors.get(message.neighbor.uid).add(subNeighbor.uid);
-                        localDatabaseReference.addContact(subNeighbor);
+                    Log.e(TAG, SUB_TAG+" processing NeighborRequestMessage response..");
+                    // Event triggered here
+                    if(connectionHandler.neighborsResponseTracker==0){
+                        Log.e(TAG, SUB_TAG+" first response of a request");
+                        event_neighbors.started(null);
+                        connectionHandler.neighborsResponseTimer = System.nanoTime();
                     }
-                    localDatabaseReference.addContact(message.neighbor);
-                }
 
+                    connectionHandler.neighborsResponseTracker += 1;
+
+                    NeighborRequestMessage message = (NeighborRequestMessage) result;
+                    // message.neighbor = our direct neighbor N
+                    // message.subNeighbors = list of N's neighbors
+                    // connectionHandler.subNeighbors = hasmap linking multiple [N -> N's neighbors]
+//                    if(!connectionHandler.subNeighbors.containsKey(message.neighbor.uid)) {
+//                        connectionHandler.subNeighbors.put(message.neighbor, new ArrayList<User>(){
+//                            @Override
+//                            public boolean add(User user) {
+//                                if(!this.contains(user)) return super.add(user);
+//                                else return false;
+//                            }
+//                        });
+//                    }
+//                    // checks if response neighbor is already in our list of subneighbors
+//                    for(User subNeighbor : message.subNeighbors) {
+//                        connectionHandler.subNeighbors.get(message.neighbor).add(subNeighbor);
+//                        localDatabaseReference.addContact(subNeighbor);
+//                    }
+                    connectionHandler.subNeighbors.add(message.neighbor);
+                    Log.e(TAG, SUB_TAG+" adding message neighbor: " + message.neighbor.name);
+                    localDatabaseReference.addContact(message.neighbor);
+                    for(User u : message.subNeighbors){
+                        Log.e(TAG, SUB_TAG+" adding message sub-neighbor: " + u.name);
+                        // can replace with addAll() but not sure if addAll() will use (overriden) add() or not
+                        connectionHandler.subNeighbors.add(u);
+                        localDatabaseReference.addContact(u);
+                    }
+                    Log.e(TAG, SUB_TAG+" added message.neighbor, and message.subneighbors");
+                    HashMap<String, Object> eventPkt = new HashMap<>();
+                    eventPkt.put("neighbors", connectionHandler.subNeighbors);
+                    //check if all neighbors replied or NBRS_REQUEST_TTL have passed since request made (stale request)
+                    // TODO: stale request responser should be handled too somehow?
+                    if(connectionHandler.neighborsResponseTracker == connectionHandler.neighbors.size()
+                        || TimeUnit.SECONDS.convert(connectionHandler.neighborsResponseTimer, TimeUnit.NANOSECONDS)>NBRS_REQUEST_TTL){
+                        Log.e(TAG, SUB_TAG+" Detected last response/stale request");
+                        connectionHandler.neighborsResponseTracker = 0;
+                        event_neighbors.ended(eventPkt);
+                    }
+                    else event_neighbors.trigger(eventPkt);
+                }
 
                 //String Message
                 else if(result instanceof String){
                     String message = (String) result;
-
                     //Request to get list of neighbors
                     if(message.equals(NearbyConnectionHandler.REQUEST_GET_NEIGHBORS)){
+                        Log.e(TAG, SUB_TAG+" received request to send neighbors");
                         List<User> myNeighbors = new ArrayList<>();
                         for(String userId : connectionHandler.neighbors.values()) {
+                            Log.e(TAG, SUB_TAG+" adding neighbor: " + userId);
                             myNeighbors.add(localDatabaseReference.getUserById(userId));
                         }
                         NeighborRequestMessage response = new NeighborRequestMessage(MainActivity.currentUser, myNeighbors.toArray(new User[]{}));
                         connectionHandler.getClient().sendPayload(endpointId, Payload.fromStream(constructStreamFromSerializable(response)));
+                        Log.e(TAG, SUB_TAG+" sending response..");
                     }
                 }
             }catch(Exception e){

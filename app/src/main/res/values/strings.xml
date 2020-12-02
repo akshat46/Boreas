@@ -42,7 +42,7 @@
     <string name="login_message_on_signup"><font color="#1b2d45">Already have an account?</font> <font
         color="#00ebc7"><b>Log In</b></font></string>
     <string name="signup_message_on_login"><font color="#1b2d45">Don\'t have an account?</font> <font
-        color="#00ebc7"><b>Sing Up</b></font></string>
+        color="#00ebc7"><b>Sign Up</b></font></string>
 
     <!-- Preference Titles -->
     <string name="messages_header">Messages</string>
