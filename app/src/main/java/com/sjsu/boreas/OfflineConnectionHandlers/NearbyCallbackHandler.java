@@ -2,6 +2,7 @@ package com.sjsu.boreas.OfflineConnectionHandlers;
 
 import android.os.AsyncTask;
 import android.util.Base64;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -44,11 +45,16 @@ public class NearbyCallbackHandler {
 
     private NearbyConnectionHandler connectionHandler;
     private HashMap<String, String> connectedUsers; //Map endpointId to userId
+    private HashMap<String, String> endPointNames;
     private LocalDatabaseReference localDatabaseReference = LocalDatabaseReference.get();
+
+    private static String TAG = "BOREAS";
+    private static String SUB_TAG = "-------NearbyCallbackHandler--- ";
 
     public NearbyCallbackHandler(NearbyConnectionHandler act){
         connectionHandler = act;
         connectedUsers = new HashMap<>();
+        endPointNames = new HashMap<>();
     }
 
     //Receiving payloads
@@ -86,6 +92,7 @@ public class NearbyCallbackHandler {
 
                 //Local chat
                 else if(result instanceof TextMessage){
+                    Log.e(TAG, SUB_TAG+"Textmssg: " + result);
                     TextMessage message = (TextMessage) result;
                     connectionHandler.receiveMessage(message);
                     localDatabaseReference.addContact(message.sender);
@@ -99,22 +106,32 @@ public class NearbyCallbackHandler {
 
 
                 else if(result instanceof ChatMessage){
+                    Log.e(TAG, SUB_TAG+"Chat message: " + result);
                     final ChatMessage message = (ChatMessage) result;
 
                     //Check if this message has already been forwarded by this user
-                    if(message.isForwarder(MainActivity.currentUser.getUid()))
+                    if(message.isForwarder(MainActivity.currentUser.getUid())) {
+                        Log.e(TAG, SUB_TAG+"u already gave this mssg yo");
                         return;
+                    }
 
                     //Check if this is recipient
                     if(message.recipient.getUid().equals(MainActivity.currentUser.getUid())){
+                        Log.e(TAG, SUB_TAG + "\t\tThe message is for me!!!!");
                         //Message has arrived at destination!
                         if(message.isEncrypted){
+                            Log.e(TAG, SUB_TAG+"\t\tencrypted");
                             Cipher cipher = Cipher.getInstance("RSA");
+                            Log.e(TAG, SUB_TAG+"\t\tdecrypting 1");
                             PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(Base64.decode(MainActivity.currentUser.privateKey, Base64.DEFAULT));
+                            Log.e(TAG, SUB_TAG+"\t\tdecrypting 2");
                             KeyFactory kf = KeyFactory.getInstance("RSA");
 
+                            Log.e(TAG, SUB_TAG+"\t\tdecrypting 3");
                             cipher.init(Cipher.DECRYPT_MODE, kf.generatePrivate(spec));
+                            Log.e(TAG, SUB_TAG+"\t\tdecrypting 4");
                             message.mssgText = new String(cipher.doFinal(Base64.decode(message.mssgText, Base64.DEFAULT)), "UTF-8");
+                            Log.e(TAG, SUB_TAG+"Decrypted text: " + message.mssgText);
                         }
                         localDatabaseReference.saveChatMessageLocally(message);
                         return;
@@ -220,6 +237,7 @@ public class NearbyCallbackHandler {
             //connectionHandler.receiveMessage(null, "Network endpoint discovered, connecting to "+discoveredEndpointInfo.getEndpointName());
             connectionHandler.getClient().requestConnection(connectionHandler.getDeviceName(), endpointId, connectionLifecycleCallback);
             System.out.println("Found device!");
+            Log.e(TAG, SUB_TAG + "Found the device: " + connectionHandler.getDeviceName() + "\n\t" + endpointId);
         }
 
         @Override
@@ -232,7 +250,9 @@ public class NearbyCallbackHandler {
         @Override
         public void onConnectionInitiated(@NonNull String endpointId, @NonNull ConnectionInfo connectionInfo) {
             //Map endpointId to userId
-            connectedUsers.put(endpointId, connectionInfo.getEndpointName());
+            Log.e(TAG, SUB_TAG+"Accepted: " + endpointId + "\n\t" + connectionHandler.getDeviceName());
+            endPointNames.put(endpointId, connectionInfo.getEndpointName());
+//            connectedUsers.put(endpointId, connectionInfo.getEndpointName());
             MainActivity.makeLog("Accepting connection with "+endpointId+"/"+connectionInfo.getEndpointName());
             connectionHandler.getClient().acceptConnection(endpointId, payloadCallback);
         }
@@ -242,7 +262,7 @@ public class NearbyCallbackHandler {
             if(result.getStatus().isSuccess()){
                 MainActivity.makeLog("Successful connection to "+endpointId);
                 //connectionHandler.setConnectionEndpointName(endpointId);
-
+                connectedUsers.put(endpointId, endPointNames.get(endpointId));
                 //Add new neighbor to list/map of neighbors
                 connectionHandler.neighbors.put(connectedUsers.get(endpointId), endpointId);
                 //Construct adjacency list message with current user object and set of mesh member userIds
