@@ -389,8 +389,8 @@ public class ChatActivity extends AppCompatActivity implements EventListener, Fi
                         }
                         else if(item.getTitle().toString().toUpperCase().equals(SendMode.OFFLINE_RADIO.getValue())){
                             Log.e(TAG, SUB_TAG+"Changing the mode to radio");
-                            btnSend.setImageResource(R.drawable.ic_online_send_f);
-                            btnSend.setBackgroundResource(R.drawable.bg_button);
+                            btnSend.setImageResource(R.drawable.ic_radio_send_f);
+                            btnSend.setBackgroundResource(R.drawable.bg_button_send_radio);
                             mode =SendMode.OFFLINE_RADIO;
                         }
                         return true;

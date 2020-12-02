@@ -81,7 +81,7 @@
                 android:layout_marginRight="@dimen/space_standard"
                 android:src="@drawable/ic_error"
                 android:visibility="gone"
-                android:tint="@color/colorAccentSecondary"/>
+                android:tint="@color/colorAccentDanger"/>
 
             <ProgressBar
                 android:id="@+id/loading"
