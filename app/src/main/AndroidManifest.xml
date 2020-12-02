@@ -45,7 +45,7 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".wifidirecttest.WDTestActivity" />
         <activity android:name=".ChatMenuActivity" />
-        <activity android:name=".ChatView.ChatActivity2"
+        <activity android:name=".ChatView.ChatActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".RegisterActivity"
