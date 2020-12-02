@@ -72,6 +72,17 @@
                 android:tint="@color/colorButtonText"
                 android:visibility="gone" />
 
+            <ImageButton
+                android:id="@+id/error"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginTop="@dimen/space_small"
+                android:layout_marginRight="@dimen/space_standard"
+                android:src="@drawable/ic_error"
+                android:visibility="gone"
+                android:tint="@color/colorAccentSecondary"/>
+
             <ProgressBar
                 android:id="@+id/loading"
                 android:layout_width="24dp"
@@ -79,6 +90,7 @@
                 android:layout_marginTop="@dimen/space_small"
                 android:layout_marginRight="@dimen/space_standard"
                 android:indeterminate="true"
+                android:indeterminateTint="@color/colorSubtext"
                 android:visibility="gone"/>
 
             <ImageButton

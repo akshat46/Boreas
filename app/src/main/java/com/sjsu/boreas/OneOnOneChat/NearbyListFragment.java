@@ -1,11 +1,15 @@
 package com.sjsu.boreas.OneOnOneChat;
 
 import android.content.Intent;
-import android.media.Image;
+import android.graphics.PorterDuff;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import com.sjsu.boreas.ChatView.ChatActivity;
 import com.sjsu.boreas.ContactRecyclerItems.UserListAdapter;
@@ -15,13 +19,10 @@ import com.sjsu.boreas.Database.Messages.MessageUtility;
 import com.sjsu.boreas.Events.Event;
 import com.sjsu.boreas.LandingPage;
 import com.sjsu.boreas.MainActivity;
-import com.sjsu.boreas.OfflineConnectionHandlers.NearbyConnectionHandler;
-import com.sjsu.boreas.SettingsActivity;
+import com.sjsu.boreas.R;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class NearbyListFragment extends OneOnOneFragment {
     private LandingPage mParent;
@@ -29,6 +30,7 @@ public class NearbyListFragment extends OneOnOneFragment {
     private boolean loading = false;
     private static String TAG = "BOREAS";
     private ImageButton im;
+    Handler handler = new Handler();
     private static String SUB_TAG = "---Nearby___Frag ";
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -69,7 +71,7 @@ public class NearbyListFragment extends OneOnOneFragment {
                 recyclerView.setAdapter(mAdapter);
             }
         });
-        mParent.refreshList.setOnClickListener(new View.OnClickListener() {
+        mParent.refreshButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 refreshNeighbors();
@@ -97,13 +99,64 @@ public class NearbyListFragment extends OneOnOneFragment {
         });
     }
 
+    private void setLoading(String status){
+        switch(status){
+            case "refresh":
+                Log.e(TAG, SUB_TAG+"setting state refresh");
+                handler.removeCallbacksAndMessages(null);
+                mParent.refreshError.setVisibility(View.GONE);
+                mParent.loading.setVisibility(View.GONE);
+                mParent.refreshButton.setVisibility(View.VISIBLE);
+                loading = false;
+                break;
+            case "waiting":
+                Log.e(TAG, SUB_TAG+"setting state waiting");
+                mParent.refreshButton.setVisibility(View.GONE);
+                mParent.refreshError.setVisibility(View.GONE);
+                mParent.loading.setVisibility(View.VISIBLE);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    mParent.loading.getIndeterminateDrawable()
+                            .setColorFilter(mContext.getColor(R.color.colorSubtext), PorterDuff.Mode.SRC_IN );
+                }
+                break;
+            case "loading":
+                Log.e(TAG, SUB_TAG+"setting state loading");
+                mParent.refreshButton.setVisibility(View.GONE);
+                mParent.refreshError.setVisibility(View.GONE);
+                mParent.loading.setVisibility(View.VISIBLE);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    mParent.loading.getIndeterminateDrawable()
+                            .setColorFilter(mContext.getColor(R.color.colorButtonText), PorterDuff.Mode.SRC_IN );
+                }
+                ;
+                loading = true;
+                break;
+            case "error":
+                Log.e(TAG, SUB_TAG+"setting state error");
+                Toast.makeText(mParent, "Could not find any Neighbors. Please try again later.", Toast.LENGTH_SHORT).show();
+                mParent.refreshButton.setVisibility(View.GONE);
+                mParent.loading.setVisibility(View.GONE);
+                mParent.refreshError.setVisibility(View.VISIBLE);
+                mParent.refreshError.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.shake));
+                handler.postDelayed(new Runnable() {
+                    public void run() {
+                        Log.e(TAG, SUB_TAG+"setting state error: refreshing");
+                        setLoading("refresh");
+                    }
+                }, 5000);
+                break;
+            default:
+        }
+    }
+
     public void refreshNeighbors(){
         Log.e(TAG, SUB_TAG+"Refreshing neighbors list.. " + loading);
         if(!loading) {
-            MainActivity.nearbyConnectionHandler.triggerNeighborRequest();
-            mParent.refreshList.setVisibility(View.GONE);
-            mParent.loading.setVisibility(View.VISIBLE);
-            loading = true;
+            // show error if neighborRequest returns false
+            if(!MainActivity.nearbyConnectionHandler.triggerNeighborRequest()){
+                setLoading("error");
+            }
+            else setLoading("waiting");
         }
         // only refresh if not loading already
     }
@@ -125,13 +178,11 @@ public class NearbyListFragment extends OneOnOneFragment {
             }
         } else if(type.equals((nbr_event.getStarted()))){
             Log.e(TAG, SUB_TAG+" neighbors list updating started");
-            loading = true;
+            setLoading("loading");
         }
         else if(type.equals((nbr_event.getEnded()))){
             Log.e(TAG, SUB_TAG+" neighbors list updating ended");
-            loading = false;
-            mParent.refreshList.setVisibility(View.VISIBLE);
-            mParent.loading.setVisibility(View.GONE);
+            setLoading("refresh");
             neighbors_updated((ArrayList<User>) packet.get("neighbors"), true);
         }
     }
