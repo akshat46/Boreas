@@ -538,8 +538,20 @@ public class ChatActivity2 extends AppCompatActivity implements EventListener, F
                 public void run() {
                     if(MainActivity.nearbyConnectionHandler.send1to1Message(mActivity, chatMessage)){
                         Log.e(TAG, SUB_TAG+"Message was sent yo");
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(ChatActivity2.this, "Mssg sent.", Toast.LENGTH_SHORT).show();
+                            }
+                        });
                         saveMessageLocally(chatMessage);
                     }else{
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(ChatActivity2.this, "Mssg NOT sent, please try again.", Toast.LENGTH_SHORT).show();
+                            }
+                        });
                         Log.e(TAG, SUB_TAG+"\tMssg didn't happen");
                     }
                 }
