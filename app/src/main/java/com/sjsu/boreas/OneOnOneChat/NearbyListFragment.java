@@ -163,7 +163,6 @@ public class NearbyListFragment extends OneOnOneFragment {
 
     @Override
     public void eventTriggered(HashMap<String, Object> packet, String type) {
-        Log.e(TAG, SUB_TAG+"I have received a message, my lord. It goes something like: "+ packet.toString());
         if(type.equals(Event.CHAT_MSSG)) {
             Log.e(TAG, SUB_TAG+"this is a chat message event");
             ChatMessage mssg = MessageUtility.convertHashMapToChatMessage(packet);
@@ -201,13 +200,13 @@ public class NearbyListFragment extends OneOnOneFragment {
             }
             adapterContentList.addAll(neighbors);
             Log.e(TAG, SUB_TAG+" updating adapterContentList with neighbors");
-            mParent.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    mAdapter.notifyDataSetChanged();
-                }
-            });
         }
+        mParent.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mAdapter.notifyDataSetChanged();
+            }
+        });
     }
 
     @Override
