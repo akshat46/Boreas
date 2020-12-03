@@ -69,8 +69,13 @@ public class Event {
     private void trigger(HashMap<String, Object> packet, String id){
         int i = 0;
         for(EventListener l : listeners){
-            Log.e(TAG, SUB_TAG+"In the loop, listener: " + l  + ", " + i++);
-            l.eventTriggered(packet, event_id);
+            Log.e(TAG, SUB_TAG+"In the loop, listener: " + l  + ", EVENT: " + event_id + ", " + i++);
+            try {
+                l.eventTriggered(packet, id);
+            }
+            catch(Exception e){
+                Log.e(TAG, SUB_TAG+"\terror: " + e);
+            }
         }
     }
 
