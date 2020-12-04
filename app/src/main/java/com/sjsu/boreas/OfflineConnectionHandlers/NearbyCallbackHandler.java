@@ -1,5 +1,6 @@
 package com.sjsu.boreas.OfflineConnectionHandlers;
 
+import android.os.AsyncTask;
 import android.util.Base64;
 import android.util.Log;
 
@@ -63,7 +64,7 @@ public class NearbyCallbackHandler implements EventEmitter {
     //Receiving payloads
     public PayloadCallback payloadCallback = new PayloadCallback() {
         @Override
-        public void onPayloadReceived(@NonNull String endpointId, @NonNull Payload payload) {
+        public void onPayloadReceived(@NonNull final String endpointId, @NonNull Payload payload) {
             try {
                 System.out.println(payload.getType());
                 //ByteArrayInputStream bytes = new ByteArrayInputStream();
@@ -243,18 +244,26 @@ public class NearbyCallbackHandler implements EventEmitter {
 
                 //String Message
                 else if(result instanceof String){
+                    Log.e(TAG, SUB_TAG+"\t\tDumbass");
                     String message = (String) result;
                     //Request to get list of neighbors
                     if(message.equals(NearbyConnectionHandler.REQUEST_GET_NEIGHBORS)){
                         Log.e(TAG, SUB_TAG+" received request to send neighbors");
-                        List<User> myNeighbors = new ArrayList<>();
-                        for(String userId : connectionHandler.neighbors.values()) {
-                            Log.e(TAG, SUB_TAG+" adding neighbor: " + userId);
-                            myNeighbors.add(localDatabaseReference.getUserById(userId));
-                        }
-                        NeighborRequestMessage response = new NeighborRequestMessage(MainActivity.currentUser, myNeighbors.toArray(new User[]{}));
-                        connectionHandler.getClient().sendPayload(endpointId, Payload.fromStream(constructStreamFromSerializable(response)));
-                        Log.e(TAG, SUB_TAG+" sending response..");
+                        AsyncTask.execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                List<User> myNeighbors = new ArrayList<>();
+                                for(String userId : connectionHandler.neighbors.keySet()) {//.values()
+                                    Log.e(TAG, SUB_TAG+" adding neighbor: " + userId);
+                                    myNeighbors.add(localDatabaseReference.getUserById(userId));
+                                }
+                                NeighborRequestMessage response = new NeighborRequestMessage(MainActivity.currentUser, myNeighbors.toArray(new User[]{}));
+                                Payload forwardPayload = Payload.fromStream(connectionHandler.getHandlerNearby().constructStreamFromSerializable(response));
+                                connectionHandler.getClient().sendPayload(endpointId, forwardPayload);
+                                Log.e(TAG, SUB_TAG+" sending response..");
+                            }
+                        });
+
                     }
                 }
             }catch(Exception e){
