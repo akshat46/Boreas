@@ -87,6 +87,8 @@ public class LandingPage extends FragmentActivity {
 
         Intent intent = getIntent();
         currentUser = (LoggedInUser) intent.getSerializableExtra("currentUser");
+        Log.e(TAG, SUB_TAG + " COME GET YOUR PRIVATE KEY HERE: \n" + currentUser.privateKey);
+        Log.e(TAG, SUB_TAG + " COME GET YOUR PUBLIC KEY HERE: \n" + currentUser.publicKey);
 
         initViews();
         makeADummyUserForFirebase();
