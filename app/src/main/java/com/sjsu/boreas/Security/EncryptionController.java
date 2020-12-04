@@ -81,20 +81,21 @@ public class EncryptionController {
 
             Log.e(TAG, SUB_TAG+" cipher.init()");
             cipher.init(Cipher.DECRYPT_MODE, kf.generatePrivate(spec));
-            Log.e(TAG, SUB_TAG+" decrypting text..");
+            Log.e(TAG, SUB_TAG+" decrypting text.. \n" + message.mssgText);
             message.mssgText = new String(cipher.doFinal(Base64.decode(message.mssgText, Base64.DEFAULT)), "UTF-8");
             message.isEncrypted = false;
+            Log.e(TAG, SUB_TAG+" pretended to decrypt text.. \n" + message.mssgText);
         }catch (NoSuchAlgorithmException e){
-            Toast.makeText(mContext, "Error: Could not encrypt text- RSA alg not found", Toast.LENGTH_SHORT);
+            Log.e(TAG, SUB_TAG+ "Error: Could not encrypt text- RSA alg not found"+ "error: " + e);
             e.printStackTrace();
         }catch (NoSuchPaddingException e){
-            Toast.makeText(mContext, "Error: Could not encrypt text- Padding alg not found", Toast.LENGTH_SHORT);
+            Log.e(TAG, SUB_TAG+ "Error: Could not encrypt text- Padding alg not found"+ "error: " + e);
             e.printStackTrace();
         }catch (InvalidKeySpecException | InvalidKeyException e){
-            Toast.makeText(mContext, "Error: Could not parse recipient's key", Toast.LENGTH_SHORT);
+            Log.e(TAG, SUB_TAG+ "Error: Could not parse recipient's key"+ "error: " + e);
             e.printStackTrace();
         }catch (UnsupportedEncodingException | BadPaddingException | IllegalBlockSizeException e){
-            Toast.makeText(mContext, "Error: Could not perform encryption", Toast.LENGTH_SHORT);
+            Log.e(TAG, SUB_TAG+ "Error: Could not perform encryption"+ "error: " + e);
             e.printStackTrace();
         }
         return message;

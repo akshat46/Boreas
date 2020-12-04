@@ -315,7 +315,7 @@ public class RegisterActivity extends AppCompatActivity implements LocationListe
             }
             System.out.println("\nEncryption Keys generated!\n"+publicString+"\n"+privateString);
             publicKey = Base64.encodeToString(publicKeyArr, Base64.DEFAULT);//publicString.toString();
-            privateKey = Base64.encodeToString(publicKeyArr, Base64.DEFAULT);//privateString.toString();
+            privateKey = Base64.encodeToString(privateKeyArr, Base64.DEFAULT);//privateString.toString();
         }catch (NoSuchAlgorithmException e){
             System.err.println("RSA alg not found!");
             Toast.makeText(this,"Something went wrong with encryption key generation", Toast.LENGTH_LONG);
