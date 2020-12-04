@@ -48,7 +48,7 @@ public class LandingPage extends FragmentActivity {
     private static String SUB_TAG = "-----Landing Page";
     private NavigationView mNavigationView;
     private FragmentTransaction mFragmentTransaction;
-    private LoggedInUser currentUser = null;
+    public static LoggedInUser currentUser = null;
     private AppBarButtonsHandler mbuttonsHandler = new AppBarButtonsHandler(0);
     private ViewPager2 mViewPager;
     private TextView fragmentTitle;
@@ -142,7 +142,7 @@ public class LandingPage extends FragmentActivity {
             public void onClick(View v) {
                 Log.e(TAG, SUB_TAG + "On click settings button");
                 Intent intent = new Intent(v.getContext(), SettingsActivity.class);
-                intent.putExtra("currentUser", currentUser);
+                //intent.putExtra("currentUser", currentUser);
                 startActivity(intent);
             }
         });
