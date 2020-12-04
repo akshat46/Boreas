@@ -202,6 +202,11 @@ public class NearbyConnectionHandler {
         return client;
     }
 
+    public NearbyCallbackHandler getHandlerNearby(){
+        Log.e(TAG, SUB_TAG+"--Nearby handler: " + handlerNearby);
+        return handlerNearby;
+    }
+
     public void setActiveActivity(Activity act){
         Log.e(TAG, SUB_TAG+"setActiveActivity");
         activeActivity = act;
@@ -357,17 +362,20 @@ public class NearbyConnectionHandler {
 
     /**
      * Sends messages to get neighbor's neighbor lists
+     Log.e(TAG, SUB_TAG+" requesting neighbors...");
      */
 
     public boolean triggerNeighborRequest(){
         subNeighbors.clear();
-        Log.e(TAG, SUB_TAG+" requesting neighbors...");
         if(neighbors.isEmpty()){
             return false;
         }
         else{
             for(String neighbor : neighbors.keySet()){
-                client.sendPayload(neighbors.get(neighbor), Payload.fromBytes(REQUEST_GET_NEIGHBORS.getBytes()));
+                Log.e(TAG, SUB_TAG+"\tH-----yo neigbor yo request yo " + neighbor);
+                Payload forwardPayload = Payload.fromStream(handlerNearby.constructStreamFromSerializable(REQUEST_GET_NEIGHBORS));
+                getClient().sendPayload(neighbors.get(neighbor), forwardPayload);
+//                getClient().sendPayload(neighbors.get(neighbor), Payload.fromBytes(REQUEST_GET_NEIGHBORS.getBytes()));
             }
         }
         return true;

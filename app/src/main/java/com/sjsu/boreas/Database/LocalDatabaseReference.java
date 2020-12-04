@@ -122,8 +122,11 @@ public class LocalDatabaseReference implements EventEmitter{
 
     public User getUserById(String id){
         List<User> users = database.userDao().getSpecificUser(id);
-        if(users.size() > 0)
+        if(users.size() > 0) {
+            Log.e(TAG, SUB_TAG+"\tFound user");
             return users.get(0);
+        }
+        Log.e(TAG, SUB_TAG+"\tDidn't find a user with that id");
         return null;
     }
 
