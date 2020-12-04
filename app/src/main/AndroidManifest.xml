@@ -30,15 +30,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-<<<<<<< HEAD
         <activity
             android:name=".LoginActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen" />
-=======
         <activity android:name=".LocationActivity"/>
         <activity android:name=".EditProfileActivity" />
-        <activity android:name=".LoginActivity" />
->>>>>>> 7574089da820d7d938a5c1a5be4e4c2b504ce941
         <activity android:name=".SettingsActivity" />
         <activity android:name=".AddContacts.AddContactActivity" />
         <activity android:name=".GroupChatActivity" />
@@ -51,14 +47,8 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".wifidirecttest.WDTestActivity" />
         <activity android:name=".ChatMenuActivity" />
-<<<<<<< HEAD
         <activity android:name=".ChatView.ChatActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
-=======
-        <activity
-            android:name=".ChatView.ChatActivity2"
-            android:theme="@style/AppTheme.NoActionBar" />
->>>>>>> 7574089da820d7d938a5c1a5be4e4c2b504ce941
         <activity
             android:name=".RegisterActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen" />
