@@ -11,6 +11,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Base64;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
@@ -57,17 +58,30 @@ import com.sjsu.boreas.OnlineConnectionHandlers.FirebaseController;
 import com.sjsu.boreas.MainActivity;
 import com.sjsu.boreas.PhoneBluetoothRadio.BlueTerm;
 import com.sjsu.boreas.R;
+import com.sjsu.boreas.Security.EncryptionController;
 import com.sjsu.boreas.SettingsActivity;
 
 import java.io.File;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.security.InvalidKeyException;
+import java.security.KeyFactory;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import javax.security.auth.Subject;
 
 public class ChatActivity extends AppCompatActivity implements EventListener, FileItemClickedAction {
@@ -121,7 +135,7 @@ public class ChatActivity extends AppCompatActivity implements EventListener, Fi
     public LocalDatabaseReference localDatabaseReference = LocalDatabaseReference.get();
 
     private static String TAG = "BOREAS";
-    private static String SUB_TAG = "----------------ChatActivity2 ";
+    private static String SUB_TAG = "----------------ChatActivity ";
 
     private static int MEDIA_RESULT = 1;
 
@@ -520,22 +534,25 @@ public class ChatActivity extends AppCompatActivity implements EventListener, Fi
 
     //This function is the function that will push the message to the
     //  outside world, whether thats offline or online
-    private void actuallySendingTheMessage(final ChatMessage chatMessage){
+    private void actuallySendingTheMessage(ChatMessage chatMessage){
         Log.e(TAG, SUB_TAG+"This function sends the message, actually!!!!");
+
+        chatMessage = EncryptionController.getInstance().getEncryptedMessage(chatMessage);
+        final ChatMessage fchatMessage = chatMessage;
 
         // TODO: add correct online/offline implementations here
         if(mode.getValue().equals(SendMode.ONLINE.getValue())){
             Toast.makeText(mActivity, "Sending Online.", Toast.LENGTH_SHORT).show();
-            FirebaseController.pushMessageToFirebase(chatMessage, mActivity);
-            saveMessageLocally(chatMessage);
+            FirebaseController.pushMessageToFirebase(fchatMessage, mActivity);
+            saveMessageLocally(fchatMessage);
         }
         else if(mode.getValue().equals(SendMode.OFFLINE_CONNECT_API.getValue())){
             Toast.makeText(mActivity, "Sending Offline.", Toast.LENGTH_SHORT).show();
-            chatMessage.mssgType = ChatMessage.ChatTypes.ONEONONEOFFLINECHAT.getValue();
+            fchatMessage.mssgType = ChatMessage.ChatTypes.ONEONONEOFFLINECHAT.getValue();
             AsyncTask.execute(new Runnable() {
                 @Override
                 public void run() {
-                    if(MainActivity.nearbyConnectionHandler.send1to1Message(mActivity, chatMessage)){
+                    if(MainActivity.nearbyConnectionHandler.send1to1Message(mActivity, fchatMessage)){
                         Log.e(TAG, SUB_TAG+"Message was sent yo");
                         runOnUiThread(new Runnable() {
                             @Override
@@ -543,7 +560,7 @@ public class ChatActivity extends AppCompatActivity implements EventListener, Fi
                                 Toast.makeText(mActivity, "Mssg sent.", Toast.LENGTH_SHORT).show();
                             }
                         });
-                        saveMessageLocally(chatMessage);
+                        saveMessageLocally(fchatMessage);
                     }else{
                         runOnUiThread(new Runnable() {
                             @Override
@@ -558,9 +575,9 @@ public class ChatActivity extends AppCompatActivity implements EventListener, Fi
         }
         else if(mode.getValue().equals(SendMode.OFFLINE_RADIO.getValue())){
             Toast.makeText(mActivity, "Sending thru the radio.", Toast.LENGTH_SHORT).show();
-            chatMessage.mssgType = ChatMessage.ChatTypes.ONEONONEOFFLINERADIO.getValue();
-            sendMessageThruRadio(chatMessage);
-            saveMessageLocally(chatMessage);
+            fchatMessage.mssgType = ChatMessage.ChatTypes.ONEONONEOFFLINERADIO.getValue();
+            sendMessageThruRadio(fchatMessage);
+            saveMessageLocally(fchatMessage);
         }
 
     }
