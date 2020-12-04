@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -9,25 +8,33 @@
     android:layout_marginTop="@dimen/space_unholy"
     tools:context=".SettingsActivity">
 
+
     <TextView
         android:id="@+id/settings_user_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="TextView" />
+        android:text="@string/username"
+        android:textColor="@color/colorBack"
+        android:textSize="25sp" />
 
-    <Button
-        android:id="@+id/logout_button"
+    <TextView
+        android:id="@+id/location"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Log Out"
-        app:layout_constraintEnd_toEndOf="parent" />
+        android:layout_marginTop="25dp"
+        android:text="@string/location"
+        android:textColor="@color/colorBack"
+        android:textSize="25sp" />
 
     <TextView
         android:id="@+id/user_token"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textIsSelectable="true"
-        android:text="User ID Token" />
+        android:layout_marginTop="25dp"
+        android:layout_marginBottom="25dp"
+        android:text="User ID Token"
+        android:textSize="25sp"
+        android:textIsSelectable="true" />
 
     <Button
         android:id="@+id/connect_pi"
@@ -78,4 +85,10 @@
         android:text="get_mssgs_from_radio"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
+
+    <Button
+        android:id="@+id/logout_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Log Out" />
 </LinearLayout>
