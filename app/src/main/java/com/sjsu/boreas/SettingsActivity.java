@@ -22,7 +22,9 @@ import com.sjsu.boreas.Events.Event;
 import com.sjsu.boreas.Events.EventListener;
 import com.sjsu.boreas.PhoneBluetoothRadio.BlueTerm;
 
+import java.util.Calendar;
 import java.util.HashMap;
+import java.util.UUID;
 
 import javax.security.auth.Subject;
 
@@ -41,6 +43,8 @@ public class SettingsActivity extends AppCompatActivity implements EventListener
     private TextView userToken;
     private EditText givenDeviceName;
     private Context mActivity;
+    private EditText numOfMssgs2send;
+    private Button sendMssgsSettings;
 
     public static boolean radio_is_connected = true;
 
@@ -73,6 +77,8 @@ public class SettingsActivity extends AppCompatActivity implements EventListener
         connectDevice = findViewById(R.id.connect_given_device);
         givenDeviceName = findViewById(R.id.given_device_name);
         getMessagesFromRadio = findViewById(R.id.get_mssgs_from_radio);
+        numOfMssgs2send = findViewById(R.id.num_of_mssg_2_send);
+        sendMssgsSettings = findViewById(R.id.send_mssgs_settings);
 
         userNameLabel.setText(currentUser.name);
 
@@ -107,6 +113,14 @@ public class SettingsActivity extends AppCompatActivity implements EventListener
             public void onClick(View v) {
                 Log.e(TAG, SUB_TAG+"On cick of getting mssgs from radio");
                 pokeRadioForMessages();
+            }
+        });
+
+        sendMssgsSettings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.e(TAG, SUB_TAG+"Set on click listener for testing mssgs sending");
+                sendAllTheseMssgsYo();
             }
         });
     }
@@ -180,6 +194,34 @@ public class SettingsActivity extends AppCompatActivity implements EventListener
 //            }
 //        });
 
+    }
+
+    private void sendAllTheseMssgsYo(){
+        Log.i(TAG, SUB_TAG+"Sending mssgs yo-------------------------------------------");
+
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                int amount = Integer.parseInt(numOfMssgs2send.getText().toString());
+                String recpientID = "e6b6eb7322cc0c9fac707cfd8400908d";
+                for(int i = 0; i < amount; i++){
+                    Log.i(TAG, SUB_TAG+"\t\t" + i);
+                    long time  = Calendar.getInstance().getTimeInMillis();
+                    User myChatPartner = localDatabaseReference.getUserById(recpientID);
+                    //If this is the last mssg to send
+                    if(i == (amount - 1)) {
+                        ChatMessage chatMessage = new ChatMessage(MainActivity.currentUser, myChatPartner, UUID.randomUUID().toString(),
+                                "Done", time, true, ChatMessage.ChatTypes.ONEONONEOFFLINERADIOTESTING.getValue());
+                        BlueTerm.sendMessage(chatMessage);
+                    }
+                    else{
+                        ChatMessage chatMessage = new ChatMessage(MainActivity.currentUser, myChatPartner, UUID.randomUUID().toString(),
+                                String.valueOf(i), time, true, ChatMessage.ChatTypes.ONEONONEOFFLINERADIOTESTING.getValue());
+                        BlueTerm.sendMessage(chatMessage);
+                    }
+                }
+            }
+        });
     }
 
     @Override

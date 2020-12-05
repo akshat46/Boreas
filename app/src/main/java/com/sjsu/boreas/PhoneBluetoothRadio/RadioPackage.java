@@ -6,6 +6,7 @@ import com.sjsu.boreas.Database.Contacts.User;
 import com.sjsu.boreas.Database.LocalDatabaseReference;
 import com.sjsu.boreas.Database.Messages.ChatMessage;
 import com.sjsu.boreas.Database.Messages.MessageUtility;
+import com.sjsu.boreas.MainActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -146,9 +147,12 @@ public class RadioPackage {
 
         for(int i = 0; i < rad_str_packgs_len; i++){
             RadioPackage radioPackage = stringToRadioPackg(rad_str_packgs[i]);
-            if(radioPackage != null)
+            if(radioPackage != null) {
+                Log.i(TAG, SUB_TAG+"\t:" + radioPackage.packg_id + ", \t" + radioPackage.sub_packg_position);
                 radioPackageArrayList.add(radioPackage);
+            }
         }
+        Log.i(TAG, SUB_TAG+"\n");
 
         sortOutThePackagesReceived(radioPackageArrayList);
     }
@@ -170,9 +174,13 @@ public class RadioPackage {
         Log.e(TAG, SUB_TAG+"\t:" + str_chat_mssg);
         ChatMessage chatMessage = MessageUtility.convertJsonToMessage(str_chat_mssg);
 //
-        if(chatMessage != null) {
+        if(chatMessage != null && chatMessage.recipient.getUid().equals(MainActivity.currentUser.getUid())) {
             Log.e(TAG, SUB_TAG+"\n\t" + chatMessage);
-            localDatabaseReference.saveChatMessageLocally(chatMessage);
+            Log.i(TAG, SUB_TAG+"Message for me: \t" + chatMessage.mssgText);
+
+            //Don't save the testing mssgs
+            if(chatMessage.mssgType != ChatMessage.ChatTypes.ONEONONEOFFLINERADIOTESTING.getValue())
+                localDatabaseReference.saveChatMessageLocally(chatMessage);
         }
     }
 
