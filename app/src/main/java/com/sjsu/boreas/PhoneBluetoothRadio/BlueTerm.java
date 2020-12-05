@@ -157,7 +157,17 @@ public class BlueTerm{
             String radio_packg_str = radio_packgs_to_send.get(i).toString();
             sendByte(radio_packg_str.getBytes(Charset.forName("UTF-8")));
         }
-        final String DONE = "DONE";
-        sendByte(DONE.getBytes(Charset.forName("UTF-8")));
+
+        //Finishing mssges
+        if(chatMessage.mssgType != ChatMessage.ChatTypes.ONEONONEOFFLINERADIOTESTING.getValue()) {
+            final String DONE = "DONE";
+            sendByte(DONE.getBytes(Charset.forName("UTF-8")));
+        }
+//        else if(chatMessage.mssgType == ChatMessage.ChatTypes.ONEONONEOFFLINERADIOTESTING.getValue() &&
+//                    chatMessage.mssgText.equals("Done")){
+//            Log.i(TAG, SUB_TAG+"Final mssg sent");
+//            final String DONETESTING = "DONETESTING";
+//            sendByte(DONETESTING.getBytes(Charset.forName("UTF-8")));
+//        }
     }
 }
