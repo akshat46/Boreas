@@ -9,6 +9,7 @@ import androidx.room.Room;
 import com.sjsu.boreas.ChatView.MediaFilesRecyclerItems.FileItem;
 import com.sjsu.boreas.Database.LoggedInUser.LoggedInUser;
 import com.sjsu.boreas.Database.Messages.ChatMessage;
+import com.sjsu.boreas.Database.NearByUsers.NearByUsers;
 import com.sjsu.boreas.Database.PotentialContacts.PotentialContacts;
 import com.sjsu.boreas.Database.Contacts.User;
 import com.sjsu.boreas.Events.Event;
@@ -303,8 +304,52 @@ public class LocalDatabaseReference implements EventEmitter{
         return database.userDao().getClosestUsers(message.recipient.latitude, message.recipient.longitude);
     }
 
+    public void addNearByUser(final NearByUsers nearByUser){
+        Log.e(TAG, SUB_TAG+"Adding a nearby user");
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                if (!isNearByUserAlreadyAdded(nearByUser)) {
+                    Log.e(TAG, SUB_TAG + "Nearby User doesn't already exist in the contacts and is being added now");
+                    database.nearByUsersDao().insertNewNearByUser(nearByUser);
+//                    HashMap<String, Object> contact_map = (HashMap<String, Object>) nearByUser.toMap();
+//                    event_user.trigger(contact_map);
+                }
+            }
+        });
+    }
+
+    private boolean isNearByUserAlreadyAdded(NearByUsers nearByUser){
+        Log.e(TAG, SUB_TAG+"Is near by user already added");
+        if(!database.nearByUsersDao().getSpecificNearByUser(nearByUser.getUid()).isEmpty()){
+            Log.e(TAG, SUB_TAG+"Near by user is already saved");
+            return true;
+        }
+        return false;
+    }
+
+    public NearByUsers getNearByUserBasedOnId(String id){
+        Log.e(TAG, SUB_TAG+"getting near by user based on id");
+        List<NearByUsers> nearByUsers = database.nearByUsersDao().getSpecificNearByUser(id);
+        if(nearByUsers.size() > 0) {
+            Log.e(TAG, SUB_TAG+"\tFound user");
+            return nearByUsers.get(0);
+        }
+        Log.e(TAG, SUB_TAG+"\tDidn't find a user with that id");
+        return null;
+    }
+
+    public List<NearByUsers> getClosestNearbyUsers(LongDistanceMessage message) {
+        Log.e(TAG, SUB_TAG + "Getting the closest nearby users based on location");
+        return database.nearByUsersDao().getClosestNearByUsers(message.recipient.latitude, message.recipient.longitude);
+    }
+
     public List<User> getClosestUsers(User recipient){
         return database.userDao().getClosestUsers(recipient.getLatitude(), recipient.getLongitude());
+    }
+
+    public List<NearByUsers> getClosestNearByUsers(NearByUsers recipient){
+        return database.nearByUsersDao().getClosestNearByUsers(recipient.getLatitude(), recipient.getLongitude());
     }
 
     public void wipeAllPreviousUserData(){
@@ -322,5 +367,6 @@ public class LocalDatabaseReference implements EventEmitter{
         database.potentialContactsDao().clearPotentialContactsTable();
         database.chatMessageDao().clearAllMessages();
         database.loggedInUserDao().clearLoggedInUserTable();
+        database.nearByUsersDao().clearNearByUserTable();
     }
 }
