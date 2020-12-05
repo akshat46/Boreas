@@ -15,6 +15,7 @@ import com.google.android.gms.nearby.connection.Payload;
 import com.google.android.gms.nearby.connection.PayloadCallback;
 import com.google.android.gms.nearby.connection.PayloadTransferUpdate;
 import com.sjsu.boreas.Database.LocalDatabaseReference;
+import com.sjsu.boreas.Database.NearByUsers.NearByUsers;
 import com.sjsu.boreas.Events.Event;
 import com.sjsu.boreas.Events.EventEmitter;
 import com.sjsu.boreas.MainActivity;
@@ -77,7 +78,7 @@ public class NearbyCallbackHandler implements EventEmitter {
                 //Don't connect if this device shares neighbors with the recipient to prevent graph from becoming too dense
                 if(result instanceof AdjacencyListMessage){
                     AdjacencyListMessage message = (AdjacencyListMessage) result;
-                    localDatabaseReference.addContact(message.sender);
+                    localDatabaseReference.addNearByUser((NearByUsers) message.sender);
                     //Check if received adjacency list overlaps current adjacency list
                     boolean isMeshMember = false;
                     HashSet<String> adjacencySet = createIdSet(connectionHandler.meshMembers);
@@ -99,8 +100,8 @@ public class NearbyCallbackHandler implements EventEmitter {
                     Log.e(TAG, SUB_TAG+"Textmssg: " + result);
                     TextMessage message = (TextMessage) result;
                     connectionHandler.receiveMessage(message);
-                    localDatabaseReference.addContact(message.sender);
-                    localDatabaseReference.addContact(message.forwarder);
+                    localDatabaseReference.addNearByUser((NearByUsers) message.sender);
+                    localDatabaseReference.addNearByUser((NearByUsers) message.forwarder);
 
                     localDatabaseReference.saveChatMessageLocally(
                             new ChatMessage(MainActivity.currentUser, message.sender, "",
@@ -143,7 +144,7 @@ public class NearbyCallbackHandler implements EventEmitter {
                     //If not, send to everyone except who sent it to you
                     //Decide who to forward it to based on distances to recipient
                     int forwardCount = 0;
-                    List<User> nearestUsers = localDatabaseReference.getClosestUsers(message.recipient);
+                    List<NearByUsers> nearestUsers = localDatabaseReference.getClosestNearByUsers((NearByUsers) message.recipient);
                     message.addForwarder(MainActivity.currentUser.getUid());
                     for(User user : nearestUsers){
                         //Complete message forwarding once messages have been sent to at most 3 users
@@ -167,14 +168,14 @@ public class NearbyCallbackHandler implements EventEmitter {
                 //Long distance chat message
                 else if(result instanceof LongDistanceMessage){
                     LongDistanceMessage message = (LongDistanceMessage) result;
-                    localDatabaseReference.addContact(message.recipient);
-                    localDatabaseReference.addContact(message.sender);
-                    User forwarder = message.forwarder;
+                    localDatabaseReference.addNearByUser((NearByUsers) message.recipient);
+                    localDatabaseReference.addNearByUser((NearByUsers) message.sender);
+                    NearByUsers forwarder = (NearByUsers) message.forwarder;
                     message.forwarder = MainActivity.currentUser;
                     //Decide who to forward it to based on distances to recipient
                     int forwardCount = 0;
-                    List<User> nearestUsers = localDatabaseReference.getClosestUsers(message);
-                    for(User user : nearestUsers){
+                    List<NearByUsers> nearestUsers = localDatabaseReference.getClosestNearbyUsers(message);
+                    for(NearByUsers user : nearestUsers){
                         //Complete message forwarding once messages have been sent to at most 3 users
                         if(forwardCount >= 3)
                             break;
@@ -221,12 +222,14 @@ public class NearbyCallbackHandler implements EventEmitter {
 //                    }
                     connectionHandler.subNeighbors.add(message.neighbor);
                     Log.e(TAG, SUB_TAG+" adding message neighbor: " + message.neighbor.name);
-                    localDatabaseReference.addContact(message.neighbor);
+                    NearByUsers newNearByUser = new NearByUsers(message.neighbor.uid, message.neighbor.name, message.neighbor.latitude, message.neighbor.longitude, message.neighbor.publicKey);
+                    localDatabaseReference.addNearByUser(newNearByUser);
                     for(User u : message.subNeighbors){
                         Log.e(TAG, SUB_TAG+" adding message sub-neighbor: " + u.name);
                         // can replace with addAll() but not sure if addAll() will use (overriden) add() or not
                         connectionHandler.subNeighbors.add(u);
-                        localDatabaseReference.addContact(u);
+                        newNearByUser = new NearByUsers(u.uid, u.name, u.latitude, u.longitude, u.publicKey);
+                        localDatabaseReference.addNearByUser(newNearByUser);
                     }
                     Log.e(TAG, SUB_TAG+" added message.neighbor, and message.subneighbors");
                     HashMap<String, Object> eventPkt = new HashMap<>();
@@ -255,7 +258,24 @@ public class NearbyCallbackHandler implements EventEmitter {
                                 List<User> myNeighbors = new ArrayList<>();
                                 for(String userId : connectionHandler.neighbors.keySet()) {//.values()
                                     Log.e(TAG, SUB_TAG+" adding neighbor: " + userId);
-                                    myNeighbors.add(localDatabaseReference.getUserById(userId));
+
+                                    //First check if the nearby user is in the nearbyusers table
+                                    NearByUsers nearByUsers = localDatabaseReference.getNearByUserBasedOnId(userId);
+
+                                    //If the user isn't in nearbyuser table then look at the contacts table
+                                    if(nearByUsers == null){
+                                        Log.e(TAG, SUB_TAG+"Couldn't find anythin in the nearby table, trying contacts");
+                                        User user = localDatabaseReference.getUserById(userId);
+                                        //Also save this user in the nearby table if not already saved
+                                        if(user != null){
+                                            NearByUsers newNearByUser = new NearByUsers(user.uid, user.name, user.latitude, user.longitude, user.publicKey);
+                                            localDatabaseReference.addNearByUser(newNearByUser);
+                                            myNeighbors.add(localDatabaseReference.getNearByUserBasedOnId(userId));
+                                        }else
+                                            Log.e(TAG, SUB_TAG+"!!!couldn't find anyone in contacts with that id");
+                                    }
+                                    else
+                                        myNeighbors.add(localDatabaseReference.getNearByUserBasedOnId(userId));
                                 }
                                 NeighborRequestMessage response = new NeighborRequestMessage(MainActivity.currentUser, myNeighbors.toArray(new User[]{}));
                                 Payload forwardPayload = Payload.fromStream(connectionHandler.getHandlerNearby().constructStreamFromSerializable(response));
@@ -301,6 +321,7 @@ public class NearbyCallbackHandler implements EventEmitter {
         public void onConnectionInitiated(@NonNull String endpointId, @NonNull ConnectionInfo connectionInfo) {
             //Map endpointId to userId
             Log.e(TAG, SUB_TAG+"Accepted: " + endpointId + "\n\t" + connectionHandler.getDeviceName());
+
             endPointNames.put(endpointId, connectionInfo.getEndpointName());
 //            connectedUsers.put(endpointId, connectionInfo.getEndpointName());
             MainActivity.makeLog("Accepting connection with "+endpointId+"/"+connectionInfo.getEndpointName());

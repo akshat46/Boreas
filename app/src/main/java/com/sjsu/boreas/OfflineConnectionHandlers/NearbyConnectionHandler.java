@@ -19,6 +19,7 @@ import com.google.android.gms.nearby.connection.Payload;
 import com.google.android.gms.nearby.connection.Strategy;
 import com.sjsu.boreas.Database.LocalDatabaseReference;
 import com.sjsu.boreas.Database.Messages.ChatMessage;
+import com.sjsu.boreas.Database.NearByUsers.NearByUsers;
 import com.sjsu.boreas.LandingPage;
 import com.sjsu.boreas.MainActivity;
 import com.sjsu.boreas.GroupChats.OfflineGroupFragment;
@@ -251,9 +252,9 @@ public class NearbyConnectionHandler {
         }
 
         int forwardCount = 0;
-        List<User> nearestUsers = localDatabaseReference.getClosestUsers(message.recipient);
+        List<NearByUsers> nearestUsers = localDatabaseReference.getClosestNearByUsers((NearByUsers) message.recipient);
         message.addForwarder(MainActivity.currentUser.getUid());
-        for(User user : nearestUsers){
+        for(NearByUsers user : nearestUsers){
             Log.e(TAG, SUB_TAG+"Nearest user: \t" + user.name);
             //Complete message forwarding once messages have been sent to at most 3 users
             if(forwardCount >= 3)
