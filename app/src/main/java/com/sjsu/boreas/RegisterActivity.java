@@ -32,6 +32,7 @@ import android.widget.Toast;
 import com.sjsu.boreas.Database.LocalDatabaseReference;
 import com.sjsu.boreas.Database.LoggedInUser.LoggedInUser;
 import com.sjsu.boreas.OnlineConnectionHandlers.FirebaseController;
+import com.sjsu.boreas.Security.EncryptionController;
 import com.sjsu.boreas.Security.PasswordManager;
 
 import java.security.KeyPairGenerator;
@@ -297,29 +298,30 @@ public class RegisterActivity extends AppCompatActivity implements LocationListe
             Toast.makeText(this,"Something went wrong with the password provided yo", Toast.LENGTH_LONG);
         }
 
-        String publicKey = "", privateKey = "";
+        String[] keys = EncryptionController.getInstance().generateKeys("RSA", 514);
+        String publicKey = keys[1], privateKey = keys[0];
 
-        try {
-            KeyPairGenerator keygen = KeyPairGenerator.getInstance("RSA");
-            keygen.initialize(512);
-            byte [] publicKeyArr = keygen.genKeyPair().getPublic().getEncoded();
-            byte [] privateKeyArr = keygen.genKeyPair().getPrivate().getEncoded();
-
-            StringBuffer publicString = new StringBuffer();
-            StringBuffer privateString = new StringBuffer();
-            for (int i = 0; i < publicKeyArr.length; ++i) {
-                publicString.append(Integer.toHexString(0x0100 + (publicKeyArr[i] & 0x00FF)).substring(1));
-            }
-            for (int i = 0; i < privateKeyArr.length; ++i) {
-                privateString.append(Integer.toHexString(0x0100 + (privateKeyArr[i] & 0x00FF)).substring(1));
-            }
-            System.out.println("\nEncryption Keys generated!\n"+publicString+"\n"+privateString);
-            publicKey = Base64.encodeToString(publicKeyArr, Base64.DEFAULT);//publicString.toString();
-            privateKey = Base64.encodeToString(privateKeyArr, Base64.DEFAULT);//privateString.toString();
-        }catch (NoSuchAlgorithmException e){
-            System.err.println("RSA alg not found!");
-            Toast.makeText(this,"Something went wrong with encryption key generation", Toast.LENGTH_LONG);
-        }
+//        try {
+//            KeyPairGenerator keygen = KeyPairGenerator.getInstance("RSA");
+//            keygen.initialize(512);
+//            byte [] publicKeyArr = keygen.genKeyPair().getPublic().getEncoded();
+//            byte [] privateKeyArr = keygen.genKeyPair().getPrivate().getEncoded();
+//
+//            StringBuffer publicString = new StringBuffer();
+//            StringBuffer privateString = new StringBuffer();
+//            for (int i = 0; i < publicKeyArr.length; ++i) {
+//                publicString.append(Integer.toHexString(0x0100 + (publicKeyArr[i] & 0x00FF)).substring(1));
+//            }
+//            for (int i = 0; i < privateKeyArr.length; ++i) {
+//                privateString.append(Integer.toHexString(0x0100 + (privateKeyArr[i] & 0x00FF)).substring(1));
+//            }
+//            System.out.println("\nEncryption Keys generated!\n"+publicString+"\n"+privateString);
+//            publicKey = Base64.encodeToString(publicKeyArr, Base64.DEFAULT);//publicString.toString();
+//            privateKey = Base64.encodeToString(privateKeyArr, Base64.DEFAULT);//privateString.toString();
+//        }catch (NoSuchAlgorithmException e){
+//            System.err.println("RSA alg not found!");
+//            Toast.makeText(this,"Something went wrong with encryption key generation", Toast.LENGTH_LONG);
+//        }
 
         final LoggedInUser myUser = new LoggedInUser(uniqueId, name, location.getLatitude(), location.getLongitude(), hashedPassword, publicKey, privateKey);
         localDatabaseReference.registerUser(myUser);
