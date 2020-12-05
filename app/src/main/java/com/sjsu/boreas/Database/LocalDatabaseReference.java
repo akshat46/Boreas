@@ -68,7 +68,9 @@ public class LocalDatabaseReference implements EventEmitter{
                         Log.e(TAG, SUB_TAG+"There is image data");
                         String uri = FileItem.saveImageAndGetUri(message);
                     }
-                    ChatMessage temp = EncryptionController.getInstance().getDecryptedMessage(message);
+                    //message will be encrypted if incoming, plain text if outgoing. but we always save plain text
+                    ChatMessage temp = message.isEncrypted ? EncryptionController.getInstance().getDecryptedMessage(message) :
+                            message;
                     database.chatMessageDao().insertAll(temp);
                     HashMap<String, Object> cm_map = (HashMap<String, Object>) temp.toMap();
                     if(!(temp.isMyMssg)) {

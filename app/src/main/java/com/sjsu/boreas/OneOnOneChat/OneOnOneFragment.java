@@ -29,6 +29,7 @@ import com.sjsu.boreas.ContactRecyclerItems.UserListAdapter;
 import com.sjsu.boreas.ContactRecyclerItems.UserListItemClickAction;
 import com.sjsu.boreas.Database.AppDatabase;
 import com.sjsu.boreas.Database.Contacts.User;
+import com.sjsu.boreas.Security.EncryptionController;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -316,7 +317,9 @@ public class OneOnOneFragment extends Fragment implements EventListener, UserLis
         if(type.equals(Event.CHAT_MSSG)) {
             Log.e(TAG, SUB_TAG+"this is a chat message event");
             ChatMessage mssg = MessageUtility.convertHashMapToChatMessage(packet);
-            manageMessage(mssg);
+            ChatMessage temp = mssg.isEncrypted ? EncryptionController.getInstance().getDecryptedMessage(mssg) :
+                    mssg;
+            manageMessage(temp);
         }else if(type.equals(Event.USER_ADDED)){
             Log.e(TAG, SUB_TAG+"this is a new user event");
             User user = User.convertHashMapToUser(packet);

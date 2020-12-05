@@ -13,7 +13,12 @@ import com.sjsu.boreas.Misc.ContextHelper;
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
 import java.security.KeyFactory;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.spec.EncodedKeySpec;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
@@ -38,32 +43,65 @@ public class EncryptionController {
         else return instance;
     }
 
-    public ChatMessage getEncryptedMessage(ChatMessage message){
-        Log.e(TAG, SUB_TAG+"Encrypting mssg");
-
-        User recipient = message.recipient;
-
-        String encryptedText = "";
+    // generateKey() source: https://gist.githubusercontent.com/liudong/3993726/raw/e8c3e2309710a7da797dad61de987e4f6484a14c/gistfile1.java
+    public String[] generateKeys(String keyAlgorithm, int numBits) {
+        String[] keypair = new String[2];
         try {
+            // Get the public/private key pair
+            KeyPairGenerator keyGen = KeyPairGenerator.getInstance(keyAlgorithm);
+            keyGen.initialize(numBits);
+            KeyPair keyPair = keyGen.genKeyPair();
+
+            PrivateKey privateKey = keyPair.getPrivate();
+            PublicKey publicKey = keyPair.getPublic();
+
+            keypair[0] = Base64.encodeToString(privateKey.getEncoded(), Base64.DEFAULT); //0 private
+            keypair[1] = Base64.encodeToString(publicKey.getEncoded(), Base64.DEFAULT);//1 public
+
+        } catch (NoSuchAlgorithmException e) {
+            Log.e(TAG, SUB_TAG + "Exception. No such algorithm: " + keyAlgorithm);
+        } catch (Exception e){
+            Log.e(TAG, SUB_TAG + "Exception. See the following error stack: " + e);
+        }
+        return keypair;
+    }
+
+    public ChatMessage getEncryptedMessage(ChatMessage message){
+        try {
+            User recipient = message.recipient;
+            Log.e(TAG, SUB_TAG+" encryptor: initializing cipher");
             Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
-            X509EncodedKeySpec keySpec = new X509EncodedKeySpec(Base64.decode(recipient.publicKey, Base64.DEFAULT));
+
+            Log.e(TAG, SUB_TAG+" encryptor: initializing spec");
+            X509EncodedKeySpec keySpec = new X509EncodedKeySpec(Base64.decode(MainActivity.currentUser.publicKey, Base64.DEFAULT));
+
+            Log.e(TAG, SUB_TAG+" encryptor: initializing keyfactory");
             KeyFactory fac = KeyFactory.getInstance("RSA");
 
+            Log.e(TAG, SUB_TAG+" encryptor: cipher.init()");
             cipher.init(Cipher.ENCRYPT_MODE, fac.generatePublic(keySpec));
+
+            Log.e(TAG, SUB_TAG+" encryptor: encrypt text.. \n" + message.mssgText);
             message.mssgText = Base64.encodeToString(cipher.doFinal(message.mssgText.getBytes("UTF-8")), Base64.DEFAULT);
             message.isEncrypted = true;
+            Log.e(TAG, SUB_TAG+" encryptor: encrypted text.. \n" + message.mssgText);
         }catch (NoSuchAlgorithmException e){
-            Toast.makeText(mContext, "Error: Could not encrypt text- RSA alg not found", Toast.LENGTH_SHORT);
+            Log.e(TAG, SUB_TAG+ "Error encrypting: Could not encrypt text- RSA alg not found. \nerror:"+e);
             e.printStackTrace();
-        }catch (NoSuchPaddingException e){
-            Toast.makeText(mContext, "Error: Could not encrypt text- Padding alg not found", Toast.LENGTH_SHORT);
+        }
+        catch (NoSuchPaddingException e){
+            Log.e(TAG, SUB_TAG+ "Error encrypting: Could not encrypt text- Padding alg not found. \nerror:"+e);
             e.printStackTrace();
-        }catch (InvalidKeySpecException | InvalidKeyException e){
-            Toast.makeText(mContext, "Error: Could not parse recipient's key", Toast.LENGTH_SHORT);
+        }
+        catch (InvalidKeySpecException | InvalidKeyException e){
+            Log.e(TAG, SUB_TAG+ "Error encrypting: Could not parse recipient's key. \nerror:"+e);
             e.printStackTrace();
-        }catch (UnsupportedEncodingException | BadPaddingException | IllegalBlockSizeException e){
-            Toast.makeText(mContext, "Error: Could not perform encryption", Toast.LENGTH_SHORT);
+        }
+        catch (UnsupportedEncodingException | BadPaddingException | IllegalBlockSizeException e){
+            Log.e(TAG, SUB_TAG+ "Error encrypting: Could not perform encryption. \nerror:"+e);
             e.printStackTrace();
+        }catch (Exception e){
+            Log.e(TAG, SUB_TAG+ "Error encrypting: Unknown encryption. See the following message.\nerror: " + e);
         }
 
         return message;
@@ -72,31 +110,36 @@ public class EncryptionController {
     public ChatMessage getDecryptedMessage(ChatMessage message){
 
         try {
-            Log.e(TAG, SUB_TAG+" initializing cupher");
-            Cipher cipher = Cipher.getInstance("RSA");
-            Log.e(TAG, SUB_TAG+" initializing spec");
-            PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(Base64.decode(MainActivity.currentUser.privateKey, Base64.DEFAULT));
-            Log.e(TAG, SUB_TAG+" initializing keyfactory");
-            KeyFactory kf = KeyFactory.getInstance("RSA");
+            Log.e(TAG, SUB_TAG+" decryptor: initializing cipher");
+            Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
 
-            Log.e(TAG, SUB_TAG+" cipher.init()");
-            cipher.init(Cipher.DECRYPT_MODE, kf.generatePrivate(spec));
-            Log.e(TAG, SUB_TAG+" decrypting text.. \n" + message.mssgText);
+            Log.e(TAG, SUB_TAG+" decryptor: initializing spec");
+            PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(Base64.decode(MainActivity.currentUser.privateKey, Base64.DEFAULT));
+
+            Log.e(TAG, SUB_TAG+" decryptor: initializing keyfactory");
+            KeyFactory fac = KeyFactory.getInstance("RSA");
+
+            Log.e(TAG, SUB_TAG+" decryptor: cipher.init()");
+            cipher.init(Cipher.DECRYPT_MODE, fac.generatePrivate(keySpec));
+
+            Log.e(TAG, SUB_TAG+" decryptor: decrypting text.. \n" + message.mssgText);
             message.mssgText = new String(cipher.doFinal(Base64.decode(message.mssgText, Base64.DEFAULT)), "UTF-8");
             message.isEncrypted = false;
-            Log.e(TAG, SUB_TAG+" pretended to decrypt text.. \n" + message.mssgText);
+            Log.e(TAG, SUB_TAG+" decryptor: decrypted text.. \n" + message.mssgText );
         }catch (NoSuchAlgorithmException e){
-            Log.e(TAG, SUB_TAG+ "Error: Could not encrypt text- RSA alg not found"+ "error: " + e);
+            Log.e(TAG, SUB_TAG+ "Error decrypting: Could not encrypt text- RSA alg not found"+ "error: " + e);
             e.printStackTrace();
         }catch (NoSuchPaddingException e){
-            Log.e(TAG, SUB_TAG+ "Error: Could not encrypt text- Padding alg not found"+ "error: " + e);
+            Log.e(TAG, SUB_TAG+ "Error decrypting: Could not encrypt text- Padding alg not found"+ "error: " + e);
             e.printStackTrace();
         }catch (InvalidKeySpecException | InvalidKeyException e){
-            Log.e(TAG, SUB_TAG+ "Error: Could not parse recipient's key"+ "error: " + e);
+            Log.e(TAG, SUB_TAG+ "Error decrypting: Could not parse recipient's key"+ "error: " + e);
             e.printStackTrace();
         }catch (UnsupportedEncodingException | BadPaddingException | IllegalBlockSizeException e){
-            Log.e(TAG, SUB_TAG+ "Error: Could not perform encryption"+ "error: " + e);
+            Log.e(TAG, SUB_TAG+ "Error decrypting: Could not perform encryption"+ "error: " + e);
             e.printStackTrace();
+        }catch (Exception e){
+            Log.e(TAG, SUB_TAG+ "Error decrypting: Unknown encryption. See the following message.\nerror: " + e);
         }
         return message;
     }

@@ -11,7 +11,6 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.Base64;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
@@ -26,7 +25,6 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -61,28 +59,12 @@ import com.sjsu.boreas.R;
 import com.sjsu.boreas.Security.EncryptionController;
 import com.sjsu.boreas.SettingsActivity;
 
-import java.io.File;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.security.InvalidKeyException;
-import java.security.KeyFactory;
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
-import java.security.spec.PKCS8EncodedKeySpec;
-import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
-
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-import javax.security.auth.Subject;
 
 public class ChatActivity extends AppCompatActivity implements EventListener, FileItemClickedAction {
 
@@ -117,7 +99,7 @@ public class ChatActivity extends AppCompatActivity implements EventListener, Fi
 
     private enum SendMode{
         ONLINE("ONLINE"),
-        OFFLINE_CONNECT_API("OFFLINE"),
+        OFFLINE_API("OFFLINE"),
         OFFLINE_RADIO("RADIO");
 
         public final String label;
@@ -389,11 +371,11 @@ public class ChatActivity extends AppCompatActivity implements EventListener, Fi
                     public boolean onMenuItemClick(MenuItem item) {
                         Log.e(TAG, SUB_TAG+"Inside popup");
                         // cant use switch. doesn't work with enum.values
-                        if(item.getTitle().toString().toUpperCase().equals(SendMode.OFFLINE_CONNECT_API.getValue())) {
+                        if(item.getTitle().toString().toUpperCase().equals(SendMode.OFFLINE_API.getValue())) {
                             Log.e(TAG, SUB_TAG+"changing the mode to offline");
                             btnSend.setImageResource(R.drawable.ic_offline_send_f);
                             btnSend.setBackgroundResource(R.drawable.bg_button_send_offline);
-                            mode =SendMode.OFFLINE_CONNECT_API;
+                            mode =SendMode.OFFLINE_API;
                         }
                         else if(item.getTitle().toString().toUpperCase().equals(SendMode.ONLINE.getValue())){
                             Log.e(TAG, SUB_TAG+"Changing the mode to online");
@@ -495,11 +477,24 @@ public class ChatActivity extends AppCompatActivity implements EventListener, Fi
         }else {
             //Clear the text box on the screen
             mssgText.setText("");
+            int m = 0;
+
+            switch(mode){
+                case ONLINE:
+                    m = ChatMessage.ChatTypes.ONEONONEONLINECHAT.getValue();
+                    break;
+                case OFFLINE_API:
+                    m = ChatMessage.ChatTypes.ONEONONEOFFLINECHAT.getValue();
+                    break;
+                case OFFLINE_RADIO:
+                    m = ChatMessage.ChatTypes.ONEONONEOFFLINERADIO.getValue();
+                    break;
+                default:
+            }
 
             long time  = Calendar.getInstance().getTimeInMillis();
             ChatMessage chatMessage = new ChatMessage(MainActivity.currentUser, myChatPartner, UUID.randomUUID().toString(),
-                    mssg, time, true, ChatMessage.ChatTypes.ONEONONEONLINECHAT.getValue());
-
+                    mssg, time, true, m);
             actuallySendingTheMessage(chatMessage);
         }
     }
@@ -534,38 +529,30 @@ public class ChatActivity extends AppCompatActivity implements EventListener, Fi
 
     //This function is the function that will push the message to the
     //  outside world, whether thats offline or online
-    private void actuallySendingTheMessage(ChatMessage chatMessage){
-        Log.e(TAG, SUB_TAG+"This function sends the message, actually!!!!");
+    private void actuallySendingTheMessage(final ChatMessage chatMessage){
+        final ChatMessage encrypted = EncryptionController.getInstance().getEncryptedMessage(chatMessage);
 
-        chatMessage = EncryptionController.getInstance().getEncryptedMessage(chatMessage);
-        final ChatMessage fchatMessage = chatMessage;
+        // save plain text locally unless sending offline
+        if(!mode.getValue().equals(SendMode.OFFLINE_API.getValue())) localDatabaseReference.saveChatMessageLocally(chatMessage);
 
-        // TODO: add correct online/offline implementations here
         if(mode.getValue().equals(SendMode.ONLINE.getValue())){
             Toast.makeText(mActivity, "Sending Online.", Toast.LENGTH_SHORT).show();
-            FirebaseController.pushMessageToFirebase(fchatMessage, mActivity);
-            saveMessageLocally(fchatMessage);
+            FirebaseController.pushMessageToFirebase(encrypted, mActivity); // save plain text || should save encrypted
         }
-        else if(mode.getValue().equals(SendMode.OFFLINE_CONNECT_API.getValue())){
+        else if(mode.getValue().equals(SendMode.OFFLINE_API.getValue())){
             Toast.makeText(mActivity, "Sending Offline.", Toast.LENGTH_SHORT).show();
-            fchatMessage.mssgType = ChatMessage.ChatTypes.ONEONONEOFFLINECHAT.getValue();
             AsyncTask.execute(new Runnable() {
                 @Override
                 public void run() {
-                    if(MainActivity.nearbyConnectionHandler.send1to1Message(mActivity, fchatMessage)){
-                        Log.e(TAG, SUB_TAG+"Message was sent yo");
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(mActivity, "Mssg sent.", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                        saveMessageLocally(fchatMessage);
+                    if(MainActivity.nearbyConnectionHandler.send1to1Message(mActivity, encrypted)){ // send encrypted
+                        Log.e(TAG, SUB_TAG+"Message was sent.");
+                        // save plain text locally if sent successfully
+                        localDatabaseReference.saveChatMessageLocally(chatMessage);
                     }else{
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                Toast.makeText(mActivity, "Mssg NOT sent, please try again.", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(mActivity, "Mssg not sent, please try again.", Toast.LENGTH_SHORT).show();
                             }
                         });
                         Log.e(TAG, SUB_TAG+"\tMssg didn't happen");
@@ -575,32 +562,22 @@ public class ChatActivity extends AppCompatActivity implements EventListener, Fi
         }
         else if(mode.getValue().equals(SendMode.OFFLINE_RADIO.getValue())){
             Toast.makeText(mActivity, "Sending thru the radio.", Toast.LENGTH_SHORT).show();
-            fchatMessage.mssgType = ChatMessage.ChatTypes.ONEONONEOFFLINERADIO.getValue();
-            sendMessageThruRadio(fchatMessage);
-            saveMessageLocally(fchatMessage);
+            sendMessageThruRadio(chatMessage);
         }
-
-    }
-
-    private void saveMessageLocally(final ChatMessage chatMessage){
-        Log.e(TAG, SUB_TAG+"Saving message locally: " + chatMessage);
-        AsyncTask.execute(new Runnable() {
-            @Override
-            public void run() {
-                localDatabaseReference.saveChatMessageLocally(chatMessage);
-            }
-        });
     }
 
     private void addMessageOnScreen(final ChatMessage mssg){
         Log.e(TAG, SUB_TAG+"Adding the mssg on screen: " + mssg);
+
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                chatMessages.add(mssg);
+                ChatMessage temp = mssg.isEncrypted ? EncryptionController.getInstance().getDecryptedMessage(mssg) :
+                        mssg;
+                chatMessages.add(temp);
                 adapter.notifyDataSetChanged();
                 recyclerView.scrollToPosition(adapter.getItemCount() - 1);
-                if(!(mssg.sender.getUid().equals(MainActivity.currentUser.getUid())))
+                if(!(temp.sender.getUid().equals(MainActivity.currentUser.getUid())))
                     mssgText.setText("");
             }
         });
