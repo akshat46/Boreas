@@ -131,7 +131,7 @@ public class NearbyConnectionHandler {
                 timer.schedule(taskAdvertise, ADVERTISE_PERIOD);
                 break;
             case 1:
-                client.stopDiscovery();
+//                client.stopDiscovery();
                 isDiscovering = false;
                 startAdvertising();
                 taskAdvertise = new TimerTask() {
