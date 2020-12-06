@@ -131,7 +131,8 @@ public class ChatMessage implements Serializable {
                 +   "\"mssgType\": " + String.valueOf(mssgType) + ","
                 +   "\"imgData\": " + imgData + ","
                 +   "\"imgUri\": " + imgUri + ","
-                +   "\"contains_img\": " + contains_img
+                +   "\"contains_img\": " + contains_img + ","
+               +   "\"isEncrypted\": " + isEncrypted
                 + "} \n";
         return mssgStr;
     }
@@ -146,6 +147,7 @@ public class ChatMessage implements Serializable {
         time = (Long) chatMessage.get("time");
         imgUri = (String) chatMessage.get("imgUri");
         contains_img = (boolean) chatMessage.get("contains_img");
+        isEncrypted = (boolean) chatMessage.get("isEncrypted");
 
         if(contains_img){
             imgData = (String) chatMessage.get("imgData");
@@ -161,6 +163,7 @@ public class ChatMessage implements Serializable {
         result.put("time", time);
         result.put("isMyMssg", isMyMssg);
         result.put("mssgType", mssgType);
+        result.put("isEncrypted", isEncrypted);
         //We don't push the imgUri to online since thats only in the scope of local storage
         String tmp = "";
         if(imgData != null) {
