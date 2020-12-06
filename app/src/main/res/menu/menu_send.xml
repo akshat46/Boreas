@@ -12,7 +12,7 @@
         android:title="Offline" />
     <item
         android:id="@+id/action_send_radio"
-        android:icon="@drawable/ic_offline_send"
+        android:icon="@drawable/ic_radio_send"
         android:orderInCategory="3"
         android:title="Radio" />
 </menu>

@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.TextView;
 
@@ -35,7 +36,6 @@ import java.util.ArrayList;
 
 public class OnlineListOfPeopleFragment extends Fragment implements UserListItemClickAction {
     private static final String EXTRA_TAB_NAME = "tab_name";
-    private String mTabName;
     private static String TAG = "BOREAS";
     private static String SUB_TAG = "---Online list of people ---";
 
@@ -70,7 +70,6 @@ public class OnlineListOfPeopleFragment extends Fragment implements UserListItem
         Log.e(TAG, SUB_TAG+"onCreateView");
         // Inflate the layout for this fragment
         rootView = inflater.inflate(R.layout.fragment_online_people_list, container, false);
-        mTabName = getArguments().getString(EXTRA_TAB_NAME);
         mContext = container.getContext();
         return rootView;
     }
@@ -193,11 +192,8 @@ public class OnlineListOfPeopleFragment extends Fragment implements UserListItem
     private void markAddedContact(int position){
         Log.e(TAG, SUB_TAG+"Marking the added contact");
         View view = layoutManager.findViewByPosition(position);
-        TextView userNameView = (TextView) view.findViewById(R.id.userName);
-        userNameView.setTextColor(Color.GREEN);
-        userNameView.setVisibility(View.VISIBLE);
-        userNameView.setText(userNameView.getText() + " Added !");
-
+        ImageView added = (ImageView) view.findViewById(R.id.added);
+        added.setVisibility(View.VISIBLE);
         mAdapter2.notifyItemChanged(position);
     }
 }

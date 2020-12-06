@@ -8,6 +8,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:background="@drawable/bg_bubble_in"
+        android:orientation="vertical"
         android:layout_marginBottom="@dimen/space_small"
         android:layout_marginLeft="@dimen/space_standard">
 

@@ -71,7 +71,7 @@
                     android:id="@+id/dynamic_button"
                     android:layout_width="wrap_content"
                     android:layout_height="40dp"
-                    android:tint="@color/colorAccentSecondary"
+                    android:tint="@color/colorAccentDanger"
                     android:background="@null"
                     android:layout_gravity="right"/>
 

@@ -64,10 +64,6 @@ public class UserListAdapter extends RecyclerView.Adapter<UserViewHolder>{
             }
         });
 
-        if(model instanceof PotentialContacts){
-            Log.e(TAG, SUB_TAG+"This is the item for the non contact user, changin color");
-            holder.setUnKnownUserUi();  //green color i think
-        }
     }
 
     @Override

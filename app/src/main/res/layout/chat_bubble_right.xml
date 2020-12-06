@@ -10,6 +10,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:background="@drawable/bg_bubble_out"
+        android:orientation="vertical"
         android:layout_marginBottom="@dimen/space_small"
         android:layout_marginRight="@dimen/space_standard">
 
