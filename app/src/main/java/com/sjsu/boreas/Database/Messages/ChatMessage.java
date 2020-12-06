@@ -79,6 +79,24 @@ public class ChatMessage implements Serializable {
         forwarderIds = new LinkedList<>();
     }
 
+    @Ignore
+    public ChatMessage(ChatMessage m){
+        this.mssgId = m.mssgId;
+        this.time = m.time;
+        this.mssgText = m.mssgText;
+        this.isMyMssg = m.isMyMssg;
+        this.mssgType = m.mssgType;
+        this.sender = m.sender;
+        this.recipient = m.recipient;
+        this.isEncrypted = m.isEncrypted;
+        this.contains_img = m.contains_img;
+        if(contains_img){
+            this.imgData = m.imgData;
+            this.imgUri = m.imgUri;
+        }
+        forwarderIds = m.forwarderIds;
+    }
+
     public String getSenderName(){return sender.name;}
 
     @NonNull
