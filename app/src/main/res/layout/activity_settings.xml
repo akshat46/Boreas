@@ -8,45 +8,95 @@
     android:layout_marginTop="@dimen/space_unholy"
     tools:context=".SettingsActivity">
 
-
-    <TextView
-        android:id="@+id/settings_user_name"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/username"
-        android:textColor="@color/colorBack"
-        android:textSize="25sp" />
+        android:layout_margin="@dimen/space_standard">
+        <ImageView
+            android:id="@+id/name_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/space_small"
+            android:layout_marginTop="2dp"
+            android:tint="@color/colorSubtext"
+            android:src="@drawable/ic_user"/>
+        <TextView
+            android:id="@+id/label_user_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/name_icon"
+            android:text="Name"
+            android:textColor="@color/colorSubtext"
+            android:textSize="@dimen/text_standard" />
+
+        <TextView
+            android:id="@+id/settings_user_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:textSize="@dimen/text_standard"
+            android:textColor="@color/colorButtonText"
+            android:text=""/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/space_standard">
+        <ImageView
+            android:id="@+id/token_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:tint="@color/colorSubtext"
+            android:src="@drawable/ic_token"
+            android:layout_marginTop="2dp"
+            android:layout_marginRight="@dimen/space_small"
+            android:layout_marginEnd="@dimen/space_small" />
+        <TextView
+            android:id="@+id/label_user_token"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Token"
+            android:textColor="@color/colorSubtext"
+            android:textSize="@dimen/text_standard"
+            android:layout_toRightOf="@id/token_icon"
+            android:layout_toEndOf="@id/token_icon" />
+
+        <ImageButton
+            android:id="@+id/copy_to_clipboard"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:tint="@color/colorButtonText"
+            android:src="@drawable/ic_copy"
+            android:background="@null"
+            android:layout_marginTop="2dp"
+            android:layout_toLeftOf="@id/user_token"
+            android:layout_marginRight="@dimen/space_small"
+            android:layout_marginEnd="@dimen/space_small" />
+
+        <TextView
+            android:id="@+id/user_token"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:maxWidth="120dp"
+            android:singleLine="true"
+            android:ellipsize="end"
+            android:textSize="@dimen/text_standard"
+            android:textColor="@color/colorButtonText"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" />
+    </RelativeLayout>
 
     <TextView
         android:id="@+id/location"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="25dp"
         android:text="@string/location"
+        android:layout_marginBottom="@dimen/space_standard"
+        android:layout_marginLeft="@dimen/space_standard"
         android:textColor="@color/colorBack"
-        android:textSize="25sp" />
-
-    <TextView
-        android:id="@+id/user_token"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="25dp"
-        android:layout_marginBottom="25dp"
-        android:text="User ID Token"
-        android:textSize="25sp"
-        android:textIsSelectable="true" />
-
-    <Button
-        android:id="@+id/connect_pi"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="19dp"
-        android:layout_marginLeft="19dp"
-        android:layout_marginTop="76dp"
-        android:gravity="bottom"
-        android:text="Connect 2 PI"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/user_token" />
+        android:textSize="@dimen/text_standard" />
 
     <EditText
         android:id="@+id/given_device_name"
@@ -66,25 +116,13 @@
         android:id="@+id/connect_given_device"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginRight="32dp"
-        android:gravity="bottom"
-        android:text="Connect 2 device"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/given_device_name" />
+        android:text="Connect 2 device"/>
 
     <Button
         android:id="@+id/get_mssgs_from_radio"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="32dp"
-        android:layout_marginRight="32dp"
-        android:layout_marginBottom="110dp"
-        android:gravity="bottom"
-        android:text="get_mssgs_from_radio"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        android:text="get_mssgs_from_radio"/>
 
     <Button
         android:id="@+id/logout_button"
