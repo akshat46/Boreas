@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.TextView;
 
@@ -193,11 +194,8 @@ public class OnlineListOfPeopleFragment extends Fragment implements UserListItem
     private void markAddedContact(int position){
         Log.e(TAG, SUB_TAG+"Marking the added contact");
         View view = layoutManager.findViewByPosition(position);
-        TextView userNameView = (TextView) view.findViewById(R.id.userName);
-        userNameView.setTextColor(Color.GREEN);
-        userNameView.setVisibility(View.VISIBLE);
-        userNameView.setText(userNameView.getText() + " Added !");
-
+        ImageView added = (ImageView) view.findViewById(R.id.added);
+        added.setVisibility(View.VISIBLE);
         mAdapter2.notifyItemChanged(position);
     }
 }
