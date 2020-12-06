@@ -79,6 +79,24 @@ public class ChatMessage implements Serializable {
         forwarderIds = new LinkedList<>();
     }
 
+    @Ignore
+    public ChatMessage(ChatMessage m){
+        this.mssgId = m.mssgId;
+        this.time = m.time;
+        this.mssgText = m.mssgText;
+        this.isMyMssg = m.isMyMssg;
+        this.mssgType = m.mssgType;
+        this.sender = m.sender;
+        this.recipient = m.recipient;
+        this.isEncrypted = m.isEncrypted;
+        this.contains_img = m.contains_img;
+        if(contains_img){
+            this.imgData = m.imgData;
+            this.imgUri = m.imgUri;
+        }
+        forwarderIds = m.forwarderIds;
+    }
+
     public String getSenderName(){return sender.name;}
 
     @NonNull
@@ -131,7 +149,8 @@ public class ChatMessage implements Serializable {
                 +   "\"mssgType\": " + String.valueOf(mssgType) + ","
                 +   "\"imgData\": " + imgData + ","
                 +   "\"imgUri\": " + imgUri + ","
-                +   "\"contains_img\": " + contains_img
+                +   "\"contains_img\": " + contains_img + ","
+               +   "\"isEncrypted\": " + isEncrypted
                 + "} \n";
         return mssgStr;
     }
@@ -146,6 +165,7 @@ public class ChatMessage implements Serializable {
         time = (Long) chatMessage.get("time");
         imgUri = (String) chatMessage.get("imgUri");
         contains_img = (boolean) chatMessage.get("contains_img");
+        isEncrypted = (boolean) chatMessage.get("isEncrypted");
 
         if(contains_img){
             imgData = (String) chatMessage.get("imgData");
@@ -161,6 +181,7 @@ public class ChatMessage implements Serializable {
         result.put("time", time);
         result.put("isMyMssg", isMyMssg);
         result.put("mssgType", mssgType);
+        result.put("isEncrypted", isEncrypted);
         //We don't push the imgUri to online since thats only in the scope of local storage
         String tmp = "";
         if(imgData != null) {
