@@ -73,7 +73,7 @@ public class EncryptionController {
             Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
 
             Log.e(TAG, SUB_TAG+" encryptor: initializing spec");
-            X509EncodedKeySpec keySpec = new X509EncodedKeySpec(Base64.decode(MainActivity.currentUser.publicKey, Base64.DEFAULT));
+            X509EncodedKeySpec keySpec = new X509EncodedKeySpec(Base64.decode(message.recipient.publicKey, Base64.DEFAULT));
 
             Log.e(TAG, SUB_TAG+" encryptor: initializing keyfactory");
             KeyFactory fac = KeyFactory.getInstance("RSA");

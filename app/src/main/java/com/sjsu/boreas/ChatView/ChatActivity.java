@@ -537,7 +537,7 @@ public class ChatActivity extends AppCompatActivity implements EventListener, Fi
 
         if(mode.getValue().equals(SendMode.ONLINE.getValue())){
             Toast.makeText(mActivity, "Sending Online.", Toast.LENGTH_SHORT).show();
-            FirebaseController.pushMessageToFirebase(encrypted, mActivity); // save plain text || should save encrypted
+            FirebaseController.pushMessageToFirebase(encrypted, mActivity); // saving encrypted
         }
         else if(mode.getValue().equals(SendMode.OFFLINE_API.getValue())){
             Toast.makeText(mActivity, "Sending Offline.", Toast.LENGTH_SHORT).show();
