@@ -140,7 +140,7 @@ public class FirebaseController { //This is class should be used to access fireb
         String oneOnOneChatId = "";
 
 
-        String firstUser = MainActivity.currentUser.getUid();
+        String firstUser = MainActivity.currentUser.getUid(); // private key sent?
         String secondUser = chatMessage.recipient.getUid();
 
         Map<String, Object> new_chat_mssg = chatMessage.toMap();
@@ -148,6 +148,7 @@ public class FirebaseController { //This is class should be used to access fireb
         Map<String, Object> firebase_child_update = new HashMap<>();
 
         if(getOneOnOneChatFirebaseID(firstUser, secondUser)){
+            // TODO: change this dumbdumbydumbdumb to einstein
             oneOnOneChatId = firstUser + secondUser;
             firebase_child_update.put("/oneOnOneChats/" + oneOnOneChatId + "/user1", firstUser);
             firebase_child_update.put("/oneOnOneChats/" + oneOnOneChatId + "/user2", secondUser);
