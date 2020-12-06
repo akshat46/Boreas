@@ -39,6 +39,9 @@ public interface LoggedInUserDao {
     @Update
     void logUserOut(LoggedInUser user);
 
+    @Query("UPDATE loggedinuser SET name=:name WHERE uid is :uid")
+    void updateName(String name, String uid);
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertNewUser(LoggedInUser user);
 
