@@ -5,16 +5,20 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.sjsu.boreas.Database.Contacts.User;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.sjsu.boreas.Database.LocalDatabaseReference;
 import com.sjsu.boreas.Database.LoggedInUser.LoggedInUser;
 import com.sjsu.boreas.Database.Messages.ChatMessage;
@@ -23,16 +27,16 @@ import com.sjsu.boreas.Events.EventListener;
 import com.sjsu.boreas.PhoneBluetoothRadio.BlueTerm;
 
 import java.util.HashMap;
-
+import java.util.Locale;
 import javax.security.auth.Subject;
 
 public class SettingsActivity extends AppCompatActivity implements EventListener {
-
     private static String TAG = "BOREAS";
     private static String SUB_TAG = "-------Settings activity-- ";
 
-    private LoggedInUser currentUser = null;
+    private LoggedInUser currentUser;
     private TextView userNameLabel;
+    private TextView location;
     private Button logoutButton;
     private Button connectDevice;
     private Button connectPi;
@@ -52,36 +56,40 @@ public class SettingsActivity extends AppCompatActivity implements EventListener
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
-        Log.e(TAG, SUB_TAG+"on create");
-
+        Log.e(TAG, SUB_TAG + "on create");
         mActivity = this;
 
         Intent intent = getIntent();
         currentUser = (LoggedInUser) intent.getSerializableExtra("currentUser");
 
         localDatabaseReference = LocalDatabaseReference.get();
+        initView();
+    }
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        localDatabaseReference = LocalDatabaseReference.get();
         initView();
     }
 
     private void initView(){
         Log.e(TAG, SUB_TAG+"Initializing view: " + currentUser.getUid());
         userNameLabel = findViewById(R.id.settings_user_name);
+        location = findViewById(R.id.location);
         logoutButton = findViewById(R.id.logout_button);
         userToken = findViewById(R.id.user_token);
         connectPi = findViewById(R.id.connect_pi);
         connectDevice = findViewById(R.id.connect_given_device);
         givenDeviceName = findViewById(R.id.given_device_name);
         getMessagesFromRadio = findViewById(R.id.get_mssgs_from_radio);
-
         userNameLabel.setText(currentUser.name);
-
         userToken.setText(currentUser.getUid());
 
         logoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.e(TAG, SUB_TAG+"onclick logout");
+                Log.e(TAG, SUB_TAG + "onclick logout");
                 logout();
             }
         });
@@ -105,19 +113,38 @@ public class SettingsActivity extends AppCompatActivity implements EventListener
         getMessagesFromRadio.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.e(TAG, SUB_TAG+"On cick of getting mssgs from radio");
+                Log.e(TAG, SUB_TAG + "On cick of getting mssgs from radio");
                 pokeRadioForMessages();
+            }
+        });
+
+        userNameLabel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(SettingsActivity.this, EditProfileActivity.class);
+               //intent.putExtra("currentUser", currentUser);
+                startActivity(intent);
+            }
+        });
+
+        location.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String uri = String.format(Locale.ENGLISH, "http://maps.google.com/maps?q=loc:%f,%f",
+                        currentUser.latitude,currentUser.longitude);
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+                startActivity(intent);
             }
         });
     }
 
-    private void logout(){
-        Log.e(TAG, SUB_TAG+"loging out");
+    private void logout() {
+        Log.e(TAG, SUB_TAG + "loging out");
 
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
-                localDatabaseReference.logUserOut(currentUser);
+                localDatabaseReference.logUserOut(LandingPage.currentUser);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
