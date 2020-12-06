@@ -1,29 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
 
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tabs"
+<!--    <androidx.viewpager.widget.ViewPager-->
+<!--        android:id="@+id/viewpager"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        app:layout_behavior="@string/appbar_scrolling_view_behavior" />-->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/home_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:layout_gravity="top"
+        app:contentInsetLeft="0dp"
+        app:contentInsetStart="0dp">
+
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:layout_marginBottom="@dimen/space_standard"
+            android:paddingLeft="@dimen/space_small"
+            android:paddingTop="@dimen/space_small"
+            android:paddingRight="@dimen/space_small">
 
-    </com.google.android.material.appbar.AppBarLayout>
+            <TextView
+                android:id="@+id/fragmentTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:fontFamily="@font/bold"
+                android:textStyle="bold"
+                android:text="ADD CONTACTS"
+                android:textColor="@color/colorText"
+                android:textSize="@dimen/text_sub"
+                android:layout_marginTop="@dimen/space_small"/>
 
+        </RelativeLayout>
 
-    <androidx.viewpager.widget.ViewPager
-        android:id="@+id/viewpager"
+    </androidx.appcompat.widget.Toolbar>
+    <FrameLayout
+        android:id="@+id/usersList"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+        android:layout_height="match_parent" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
