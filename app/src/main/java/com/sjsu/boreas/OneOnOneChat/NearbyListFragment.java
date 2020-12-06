@@ -20,6 +20,7 @@ import com.sjsu.boreas.Events.Event;
 import com.sjsu.boreas.LandingPage;
 import com.sjsu.boreas.MainActivity;
 import com.sjsu.boreas.R;
+import com.sjsu.boreas.Security.EncryptionController;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -168,7 +169,9 @@ public class NearbyListFragment extends OneOnOneFragment {
         if(type.equals(Event.CHAT_MSSG)) {
             Log.e(TAG, SUB_TAG+"this is a chat message event");
             ChatMessage mssg = MessageUtility.convertHashMapToChatMessage(packet);
-            manageMessage(mssg);
+            ChatMessage temp = mssg.isEncrypted ? EncryptionController.getInstance().getDecryptedMessage(mssg) :
+                    mssg;
+            manageMessage(temp);
         } else if(type.equals(Event.NBR_UPDATED)){
             Log.e(TAG, SUB_TAG+" neighbors list updating...");
             try {
