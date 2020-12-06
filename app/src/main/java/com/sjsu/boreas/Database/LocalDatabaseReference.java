@@ -9,6 +9,7 @@ import androidx.room.Room;
 import com.sjsu.boreas.ChatView.MediaFilesRecyclerItems.FileItem;
 import com.sjsu.boreas.Database.LoggedInUser.LoggedInUser;
 import com.sjsu.boreas.Database.Messages.ChatMessage;
+import com.sjsu.boreas.Database.NearByUsers.NearByUsers;
 import com.sjsu.boreas.Database.PotentialContacts.PotentialContacts;
 import com.sjsu.boreas.Database.Contacts.User;
 import com.sjsu.boreas.Events.Event;
@@ -16,6 +17,7 @@ import com.sjsu.boreas.Events.EventEmitter;
 import com.sjsu.boreas.Messages.LongDistanceMessage;
 import com.sjsu.boreas.Notifications.CustomNotification;
 import com.sjsu.boreas.OnlineConnectionHandlers.FirebaseController;
+import com.sjsu.boreas.Security.EncryptionController;
 
 import java.util.HashMap;
 import java.util.List;
@@ -57,6 +59,7 @@ public class LocalDatabaseReference implements EventEmitter{
 
     public void saveChatMessageLocally(final ChatMessage message){
         Log.e(TAG, SUB_TAG+"saving chat message locally");
+
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
@@ -66,11 +69,14 @@ public class LocalDatabaseReference implements EventEmitter{
                         Log.e(TAG, SUB_TAG+"There is image data");
                         String uri = FileItem.saveImageAndGetUri(message);
                     }
-
-                    database.chatMessageDao().insertAll(message);
-                    HashMap<String, Object> cm_map = (HashMap<String, Object>) message.toMap();
-                    if(!(message.isMyMssg)) {
-                        customNotification.sendMssgRecvdNotification(message);
+                    //message will be encrypted if incoming, plain text if outgoing. but we always save plain text
+                    Log.e(TAG, SUB_TAG+"isencrypted? " + message.isEncrypted + "\n" + message.mssgText);
+                    ChatMessage temp = message.isEncrypted ? EncryptionController.getInstance().getDecryptedMessage(message) :
+                            message;
+                    database.chatMessageDao().insertAll(temp);
+                    HashMap<String, Object> cm_map = (HashMap<String, Object>) temp.toMap();
+                    if(!(temp.isMyMssg)) {
+                        customNotification.sendMssgRecvdNotification(temp);
                     }
                     event_chatmessage.trigger(cm_map);
                 }
@@ -303,8 +309,52 @@ public class LocalDatabaseReference implements EventEmitter{
         return database.userDao().getClosestUsers(message.recipient.latitude, message.recipient.longitude);
     }
 
+    public void addNearByUser(final NearByUsers nearByUser){
+        Log.e(TAG, SUB_TAG+"Adding a nearby user");
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                if (!isNearByUserAlreadyAdded(nearByUser)) {
+                    Log.e(TAG, SUB_TAG + "Nearby User doesn't already exist in the contacts and is being added now");
+                    database.nearByUsersDao().insertNewNearByUser(nearByUser);
+//                    HashMap<String, Object> contact_map = (HashMap<String, Object>) nearByUser.toMap();
+//                    event_user.trigger(contact_map);
+                }
+            }
+        });
+    }
+
+    private boolean isNearByUserAlreadyAdded(NearByUsers nearByUser){
+        Log.e(TAG, SUB_TAG+"Is near by user already added");
+        if(!database.nearByUsersDao().getSpecificNearByUser(nearByUser.getUid()).isEmpty()){
+            Log.e(TAG, SUB_TAG+"Near by user is already saved");
+            return true;
+        }
+        return false;
+    }
+
+    public NearByUsers getNearByUserBasedOnId(String id){
+        Log.e(TAG, SUB_TAG+"getting near by user based on id");
+        List<NearByUsers> nearByUsers = database.nearByUsersDao().getSpecificNearByUser(id);
+        if(nearByUsers.size() > 0) {
+            Log.e(TAG, SUB_TAG+"\tFound user");
+            return nearByUsers.get(0);
+        }
+        Log.e(TAG, SUB_TAG+"\tDidn't find a user with that id");
+        return null;
+    }
+
+    public List<NearByUsers> getClosestNearbyUsers(LongDistanceMessage message) {
+        Log.e(TAG, SUB_TAG + "Getting the closest nearby users based on location");
+        return database.nearByUsersDao().getClosestNearByUsers(message.recipient.latitude, message.recipient.longitude);
+    }
+
     public List<User> getClosestUsers(User recipient){
         return database.userDao().getClosestUsers(recipient.getLatitude(), recipient.getLongitude());
+    }
+
+    public List<NearByUsers> getClosestNearByUsers(NearByUsers recipient){
+        return database.nearByUsersDao().getClosestNearByUsers(recipient.getLatitude(), recipient.getLongitude());
     }
 
     public void wipeAllPreviousUserData(){
@@ -322,5 +372,6 @@ public class LocalDatabaseReference implements EventEmitter{
         database.potentialContactsDao().clearPotentialContactsTable();
         database.chatMessageDao().clearAllMessages();
         database.loggedInUserDao().clearLoggedInUserTable();
+        database.nearByUsersDao().clearNearByUserTable();
     }
 }

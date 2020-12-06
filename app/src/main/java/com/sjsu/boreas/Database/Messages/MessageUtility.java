@@ -22,7 +22,6 @@ public class MessageUtility {
         double latitude, longitude;
         long time;
         int mssgType;
-        boolean isMyMssg, contains_img;
 
         //First get json object from string
         try {
@@ -42,12 +41,11 @@ public class MessageUtility {
             //longitude = Double.parseDouble(jsonMssg.getString("longitude"));
             //Log.e(TAG, SUB_TAG+"SO far so good 2");
             time = Long.parseLong(jsonMssg.getString("time"));
-            isMyMssg = false;
-            contains_img = Boolean.parseBoolean(jsonMssg.getString("contains_img"));
             mssgType = Integer.parseInt(jsonMssg.getString("mssgType"));
 
-            mssg = new ChatMessage(sender, recipient, mssgId, mssgText, time, isMyMssg, mssgType);
-            mssg.contains_img = contains_img;
+            mssg = new ChatMessage(sender, recipient, mssgId, mssgText, time, false, mssgType);
+            mssg.contains_img = Boolean.parseBoolean(jsonMssg.getString("contains_img"));
+            mssg.isEncrypted = Boolean.parseBoolean(jsonMssg.getString("isEncrypted"));
 //            mssg.imgData = imgData;
 
 //            ContextHelper contextHelper = ContextHelper.get(null);
