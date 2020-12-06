@@ -17,6 +17,7 @@ import com.sjsu.boreas.Events.EventEmitter;
 import com.sjsu.boreas.Messages.LongDistanceMessage;
 import com.sjsu.boreas.Notifications.CustomNotification;
 import com.sjsu.boreas.OnlineConnectionHandlers.FirebaseController;
+import com.sjsu.boreas.Security.EncryptionController;
 
 import java.util.HashMap;
 import java.util.List;
@@ -58,6 +59,7 @@ public class LocalDatabaseReference implements EventEmitter{
 
     public void saveChatMessageLocally(final ChatMessage message){
         Log.e(TAG, SUB_TAG+"saving chat message locally");
+
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
@@ -67,11 +69,14 @@ public class LocalDatabaseReference implements EventEmitter{
                         Log.e(TAG, SUB_TAG+"There is image data");
                         String uri = FileItem.saveImageAndGetUri(message);
                     }
-
-                    database.chatMessageDao().insertAll(message);
-                    HashMap<String, Object> cm_map = (HashMap<String, Object>) message.toMap();
-                    if(!(message.isMyMssg)) {
-                        customNotification.sendMssgRecvdNotification(message);
+                    //message will be encrypted if incoming, plain text if outgoing. but we always save plain text
+                    Log.e(TAG, SUB_TAG+"isencrypted? " + message.isEncrypted + "\n" + message.mssgText);
+                    ChatMessage temp = message.isEncrypted ? EncryptionController.getInstance().getDecryptedMessage(message) :
+                            message;
+                    database.chatMessageDao().insertAll(temp);
+                    HashMap<String, Object> cm_map = (HashMap<String, Object>) temp.toMap();
+                    if(!(temp.isMyMssg)) {
+                        customNotification.sendMssgRecvdNotification(temp);
                     }
                     event_chatmessage.trigger(cm_map);
                 }
