@@ -252,7 +252,8 @@ public class NearbyConnectionHandler {
         }
 
         int forwardCount = 0;
-        List<NearByUsers> nearestUsers = localDatabaseReference.getClosestNearByUsers((NearByUsers) message.recipient);
+        NearByUsers recipient = new NearByUsers(message.recipient.uid, message.recipient.name, message.recipient.latitude, message.recipient.longitude, message.recipient.publicKey);
+        List<NearByUsers> nearestUsers = localDatabaseReference.getClosestNearByUsers(recipient);
         message.addForwarder(MainActivity.currentUser.getUid());
         for(NearByUsers user : nearestUsers){
             Log.e(TAG, SUB_TAG+"Nearest user: \t" + user.name);
@@ -369,6 +370,8 @@ public class NearbyConnectionHandler {
     public boolean triggerNeighborRequest(){
         subNeighbors.clear();
         if(neighbors.isEmpty()){
+//            startAdvertising();
+            startDiscovering();
             return false;
         }
         else{
