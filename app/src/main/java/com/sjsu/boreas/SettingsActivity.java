@@ -46,7 +46,7 @@ public class SettingsActivity extends AppCompatActivity implements EventListener
     private TextView userNameLabel;
     private TextView location;
     private Button logoutButton;
-    private Button connectDevice;
+    private ImageButton connectDevice;
 //    private Button connectPi;
     private Button getMessagesFromRadio;
     private LocalDatabaseReference localDatabaseReference;
