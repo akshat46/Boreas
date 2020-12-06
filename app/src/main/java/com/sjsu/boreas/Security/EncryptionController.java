@@ -66,7 +66,8 @@ public class EncryptionController {
         return keypair;
     }
 
-    public ChatMessage getEncryptedMessage(ChatMessage message){
+    public ChatMessage getEncryptedMessage(ChatMessage m){
+        ChatMessage message = new ChatMessage(m);
         try {
             User recipient = message.recipient;
             Log.e(TAG, SUB_TAG+" encryptor: initializing cipher");
@@ -107,8 +108,8 @@ public class EncryptionController {
         return message;
     }
 
-    public ChatMessage getDecryptedMessage(ChatMessage message){
-
+    public ChatMessage getDecryptedMessage(ChatMessage m){
+        ChatMessage message = new ChatMessage(m);
         try {
             Log.e(TAG, SUB_TAG+" decryptor: initializing cipher");
             Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
@@ -139,7 +140,7 @@ public class EncryptionController {
             Log.e(TAG, SUB_TAG+ "Error decrypting: Could not perform encryption"+ "error: " + e);
             e.printStackTrace();
         }catch (Exception e){
-            Log.e(TAG, SUB_TAG+ "Error decrypting: Unknown encryption. See the following message.\nerror: " + e);
+            Log.e(TAG, SUB_TAG+ "Error decrypting: Unknown error. See the following message.\nerror: " + e);
         }
         return message;
     }

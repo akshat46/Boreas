@@ -69,6 +69,7 @@ public class LocalDatabaseReference implements EventEmitter{
                         String uri = FileItem.saveImageAndGetUri(message);
                     }
                     //message will be encrypted if incoming, plain text if outgoing. but we always save plain text
+                    Log.e(TAG, SUB_TAG+"isencrypted? " + message.isEncrypted + "\n" + message.mssgText);
                     ChatMessage temp = message.isEncrypted ? EncryptionController.getInstance().getDecryptedMessage(message) :
                             message;
                     database.chatMessageDao().insertAll(temp);
