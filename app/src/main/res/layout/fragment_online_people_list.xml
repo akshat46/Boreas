@@ -14,7 +14,7 @@
         <android.widget.SearchView
             android:id="@+id/search_bar_online"
             android:layout_weight="1"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
     </LinearLayout>
@@ -26,7 +26,7 @@
         android:orientation="vertical">
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/online_ppl_list"
+        android:id="@+id/online_ppl_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             tools:listitem="@layout/item_chat" />

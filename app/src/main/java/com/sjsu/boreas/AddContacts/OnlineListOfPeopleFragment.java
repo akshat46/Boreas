@@ -36,7 +36,6 @@ import java.util.ArrayList;
 
 public class OnlineListOfPeopleFragment extends Fragment implements UserListItemClickAction {
     private static final String EXTRA_TAB_NAME = "tab_name";
-    private String mTabName;
     private static String TAG = "BOREAS";
     private static String SUB_TAG = "---Online list of people ---";
 
@@ -71,7 +70,6 @@ public class OnlineListOfPeopleFragment extends Fragment implements UserListItem
         Log.e(TAG, SUB_TAG+"onCreateView");
         // Inflate the layout for this fragment
         rootView = inflater.inflate(R.layout.fragment_online_people_list, container, false);
-        mTabName = getArguments().getString(EXTRA_TAB_NAME);
         mContext = container.getContext();
         return rootView;
     }

@@ -1,11 +1,16 @@
 package com.sjsu.boreas.AddContacts;
 
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.SearchView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
@@ -15,6 +20,7 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.material.tabs.TabLayout;
 import com.sjsu.boreas.Database.LocalDatabaseReference;
 import com.sjsu.boreas.LandingPage;
+import com.sjsu.boreas.Misc.ContextHelper;
 import com.sjsu.boreas.Misc.FragmentTabAdapter;
 import com.sjsu.boreas.MainActivity;
 import com.sjsu.boreas.R;
@@ -54,13 +60,25 @@ public class AddContactActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         userArrayList = new ArrayList<User>();
         setContentView(R.layout.activity_add_contact);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+            Window window = getWindow();
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+            window.setStatusBarColor(ContextCompat.getColor(ContextHelper.get().getApplicationContext(),R.color.backgroundAlt));
+        }
+
+        mFragmentTransaction = getSupportFragmentManager().beginTransaction();
+        mFragmentTransaction.replace(R.id.usersList, new OnlineListOfPeopleFragment());
+        mFragmentTransaction.commit();
         initViews();
     }
 
     private void initViews() {
         Log.e(TAG, SUB_TAG+"InitViews");
-        initViewPager();
-        initTabLayout();
+//        initViewPager();
+//        initTabLayout();
     }
 
     private void initViewPager() {
@@ -73,13 +91,13 @@ public class AddContactActivity extends AppCompatActivity {
         mViewPager.setAdapter(fragmentTabAdapter);
     }
 
-    private void initTabLayout() {
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
-        tabLayout.setupWithViewPager(mViewPager);
-        tabLayout.setSelectedTabIndicatorColor(Color.parseColor("#FFFFFF"));
-        tabLayout.getTabAt(0).setIcon(R.drawable.ic_contacts);
-        tabLayout.getTabAt(1).setIcon(R.drawable.ic_contacts);
-    }
+//    private void initTabLayout() {
+//        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+//        tabLayout.setupWithViewPager(mViewPager);
+//        tabLayout.setSelectedTabIndicatorColor(Color.parseColor("#FFFFFF"));
+//        tabLayout.getTabAt(0).setIcon(R.drawable.ic_contacts);
+//        tabLayout.getTabAt(1).setIcon(R.drawable.ic_contacts);
+//    }
 
     private List<Fragment> getFragments() {
 
