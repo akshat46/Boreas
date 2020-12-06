@@ -2,28 +2,37 @@ package com.sjsu.boreas;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
+import com.sjsu.boreas.Database.Contacts.User;
 import com.sjsu.boreas.Database.LocalDatabaseReference;
 import com.sjsu.boreas.Database.LoggedInUser.LoggedInUser;
 import com.sjsu.boreas.Database.Messages.ChatMessage;
 import com.sjsu.boreas.Events.Event;
 import com.sjsu.boreas.Events.EventListener;
+import com.sjsu.boreas.Misc.ContextHelper;
 import com.sjsu.boreas.PhoneBluetoothRadio.BlueTerm;
 
 import java.util.HashMap;
@@ -34,17 +43,18 @@ public class SettingsActivity extends AppCompatActivity implements EventListener
     private static String TAG = "BOREAS";
     private static String SUB_TAG = "-------Settings activity-- ";
 
-    private LoggedInUser currentUser;
     private TextView userNameLabel;
     private TextView location;
     private Button logoutButton;
     private Button connectDevice;
-    private Button connectPi;
+//    private Button connectPi;
     private Button getMessagesFromRadio;
     private LocalDatabaseReference localDatabaseReference;
     private TextView userToken;
     private EditText givenDeviceName;
     private Context mActivity;
+    private LoggedInUser mCurrentUser;
+    private ImageButton clipboard;
 
     public static boolean radio_is_connected = true;
 
@@ -55,12 +65,18 @@ public class SettingsActivity extends AppCompatActivity implements EventListener
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
+        mCurrentUser = MainActivity.currentUser;
 
         Log.e(TAG, SUB_TAG + "on create");
         mActivity = this;
 
-        Intent intent = getIntent();
-        currentUser = (LoggedInUser) intent.getSerializableExtra("currentUser");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+            Window window = getWindow();
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+            window.setStatusBarColor(ContextCompat.getColor(ContextHelper.get().getApplicationContext(),R.color.backgroundAlt));
+        }
 
         localDatabaseReference = LocalDatabaseReference.get();
         initView();
@@ -74,17 +90,27 @@ public class SettingsActivity extends AppCompatActivity implements EventListener
     }
 
     private void initView(){
-        Log.e(TAG, SUB_TAG+"Initializing view: " + currentUser.getUid());
+        Log.e(TAG, SUB_TAG+"Initializing view: " + mCurrentUser.getUid());
         userNameLabel = findViewById(R.id.settings_user_name);
         location = findViewById(R.id.location);
         logoutButton = findViewById(R.id.logout_button);
         userToken = findViewById(R.id.user_token);
-        connectPi = findViewById(R.id.connect_pi);
+//        connectPi = findViewById(R.id.connect_pi);
         connectDevice = findViewById(R.id.connect_given_device);
         givenDeviceName = findViewById(R.id.given_device_name);
         getMessagesFromRadio = findViewById(R.id.get_mssgs_from_radio);
-        userNameLabel.setText(currentUser.name);
-        userToken.setText(currentUser.getUid());
+        userNameLabel.setText(mCurrentUser.name);
+        userToken.setText(mCurrentUser.getUid());
+        clipboard = findViewById(R.id.copy_to_clipboard);
+
+        clipboard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData clip = ClipData.newPlainText("boreas user token", mCurrentUser.getUid());
+                clipboard.setPrimaryClip(clip);
+            }
+        });
 
         logoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -94,13 +120,13 @@ public class SettingsActivity extends AppCompatActivity implements EventListener
             }
         });
 
-        connectPi.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.e(TAG, SUB_TAG + "Setting device name to pi");
-                setDeviceNameToRaspberryPi();
-            }
-        });
+////        connectPi.setOnClickListener(new View.OnClickListener() {
+////            @Override
+////            public void onClick(View v) {
+//                Log.e(TAG, SUB_TAG + "Setting device name to pi");
+//                setDeviceNameToRaspberryPi();
+//            }
+//        });
 
         connectDevice.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -122,7 +148,7 @@ public class SettingsActivity extends AppCompatActivity implements EventListener
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(SettingsActivity.this, EditProfileActivity.class);
-               //intent.putExtra("currentUser", currentUser);
+               //intent.putExtra("mCurrentUser", mCurrentUser);
                 startActivity(intent);
             }
         });
@@ -131,7 +157,7 @@ public class SettingsActivity extends AppCompatActivity implements EventListener
             @Override
             public void onClick(View v) {
                 String uri = String.format(Locale.ENGLISH, "http://maps.google.com/maps?q=loc:%f,%f",
-                        currentUser.latitude,currentUser.longitude);
+                        mCurrentUser.latitude,mCurrentUser.longitude);
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
                 startActivity(intent);
             }
@@ -144,7 +170,7 @@ public class SettingsActivity extends AppCompatActivity implements EventListener
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
-                localDatabaseReference.logUserOut(LandingPage.currentUser);
+                localDatabaseReference.logUserOut(mCurrentUser);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
