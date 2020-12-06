@@ -294,6 +294,7 @@
             android:paddingRight="@dimen/space_standard"
             android:paddingTop="@dimen/space_small"
             android:paddingBottom="@dimen/space_small"
+            android:focusedByDefault="false"
             android:background="@drawable/bg_search_input"
             android:layout_marginRight="@dimen/space_standard"
             android:hint="Device Name" />

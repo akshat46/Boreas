@@ -1,10 +1,16 @@
 package com.sjsu.boreas;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -13,6 +19,8 @@ import android.view.WindowManager;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -29,6 +37,8 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.snackbar.BaseTransientBottomBar;
+import com.google.android.material.snackbar.Snackbar;
 import com.sjsu.boreas.AddContacts.AddContactActivity;
 import com.sjsu.boreas.Database.LoggedInUser.LoggedInUser;
 import com.sjsu.boreas.Misc.AppBarButtonsHandler;
@@ -112,20 +122,44 @@ public class LandingPage extends FragmentActivity {
         Log.e(TAG, SUB_TAG + "Showing the token dialog box");
         MainActivity.newAcct = false;
         Log.e(TAG, SUB_TAG + "new acct got created");
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-        dialog.setMessage("Your USER Id token is: " + currentUser.getUid() +
-                "\nPlease save this in a secure location, you need this to access your account in-case you get logged out.");
-        dialog.setTitle("User ID");
-        dialog.setCancelable(true);
-        dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                Log.e(TAG, SUB_TAG + "Clicked the ok button in dialog box");
-                dialog.dismiss();
+        // inflate the layout of the popup window
+        LayoutInflater inflater = (LayoutInflater)
+                getSystemService(LAYOUT_INFLATER_SERVICE);
+        final View popupView = inflater.inflate(R.layout.popup_userid, null);
+        TextView id = popupView.findViewById(R.id.user_token);
+        id.setText(MainActivity.currentUser.getUid());
+        // create the popup window
+        Point size = new Point();
+        getWindowManager().getDefaultDisplay().getSize(size);
+        int width = size.x-60;
+        int height = LinearLayout.LayoutParams.WRAP_CONTENT;
+        final PopupWindow popupWindow = new PopupWindow(popupView, width, height, true);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            popupWindow.setElevation(12);
+        }
+        findViewById(R.id.landing_page_main).post(new Runnable() {
+            public void run() {
+                popupWindow.showAtLocation(findViewById(R.id.landing_page_main), Gravity.CENTER, 0, 0);
             }
         });
 
-        dialog.create().show();
+//        popupWindow.showAtLocation(popupView.findViewById(R.id.landing_page_main), Gravity.CENTER, 0, 0);
+        popupView.findViewById(R.id.userid_popup_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                popupWindow.dismiss();
+            }
+        });
+        popupView.findViewById(R.id.ll_token).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData clip = ClipData.newPlainText("boreas user token", MainActivity.currentUser.getUid());
+                clipboard.setPrimaryClip(clip);
+                Snackbar copied = Snackbar.make(findViewById(R.id.landing_page_main), "Token Copied", BaseTransientBottomBar.LENGTH_SHORT);
+                copied.show();
+            }
+        });
     }
 
     private void initToolbar() {

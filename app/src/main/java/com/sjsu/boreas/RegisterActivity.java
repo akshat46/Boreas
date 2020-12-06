@@ -9,16 +9,20 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.graphics.Point;
 import android.graphics.Typeface;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -26,6 +30,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -60,6 +65,7 @@ public class RegisterActivity extends AppCompatActivity implements LocationListe
     private EditText confirmPassword;
     private Button sign_up;
     private TextView log_in;
+    public PopupWindow mPopupWindow;
 
     public LocalDatabaseReference localDatabaseReference = LocalDatabaseReference.get();
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
@@ -150,9 +156,7 @@ public class RegisterActivity extends AppCompatActivity implements LocationListe
             public void onClick(View v) {
                 Log.e(TAG, SUB_TAG + "On click for signUp.");
                 //TODO: check if location is on at all.
-                if(addLocation(v)){
-                    completeRegistration(v);
-                }
+                obtainLocation();
             }
         });
     }
@@ -177,11 +181,15 @@ public class RegisterActivity extends AppCompatActivity implements LocationListe
 
     private boolean obtainLocation(){
 		Log.e(TAG, SUB_TAG+"Obtain Location");
-        checkLocationPermission();
-        if(ContextCompat.checkSelfPermission(this, "android.permission.ACCESS_FINE_LOCATION") == PackageManager.PERMISSION_DENIED){
-			Log.e(TAG, SUB_TAG+"obtainLocation(): Don't have permission for Location");
-            return false;
-		}
+		if(mPopupWindow==null){
+            showLoading();
+        }
+//        checkLocationPermission();
+//        if(ContextCompat.checkSelfPermission(this, "android.permission.ACCESS_FINE_LOCATION") == PackageManager.PERMISSION_DENIED){
+//			Log.e(TAG, SUB_TAG+"obtainLocation(): Don't have permission for Location");
+//            return false;
+//		}
+        if(!checkLocationPermission()) return false;
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 		//TODO: Request Location Update and implement callback onLocationChanged function
         if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
@@ -197,12 +205,35 @@ public class RegisterActivity extends AppCompatActivity implements LocationListe
 
             else{
                 Toast.makeText(RegisterActivity.this, "latitude:" + location.getLatitude() + " longitude:" + location.getLongitude(), Toast.LENGTH_SHORT).show();
-                Log.e(TAG, SUB_TAG+"Location found: " + locationLabel.getText());
+                completeRegistration();
             }
 
             return true;
         }
         return false;
+    }
+
+    private void showLoading(){
+        Log.e(TAG, SUB_TAG + "Showing the token dialog box");
+        Log.e(TAG, SUB_TAG + "new acct got created");
+        // inflate the layout of the popup window
+        LayoutInflater inflater = (LayoutInflater)
+                getSystemService(LAYOUT_INFLATER_SERVICE);
+        final View popupView = inflater.inflate(R.layout.popup_loading, null);
+        // create the popup window
+        Point size = new Point();
+        getWindowManager().getDefaultDisplay().getSize(size);
+        int width = size.x-60;
+        int height = LinearLayout.LayoutParams.WRAP_CONTENT;
+        mPopupWindow = new PopupWindow(popupView, width, height, false);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            mPopupWindow.setElevation(12);
+        }
+        findViewById(R.id.register_main).post(new Runnable() {
+            public void run() {
+                mPopupWindow.showAtLocation(findViewById(R.id.register_main), Gravity.CENTER, 0, 0);
+            }
+        });
     }
 
     @Override
@@ -214,22 +245,13 @@ public class RegisterActivity extends AppCompatActivity implements LocationListe
         //open the map:
         this.location = location;
         Toast.makeText(RegisterActivity.this, "latitude:" + location.getLatitude() + " longitude:" + location.getLongitude(), Toast.LENGTH_SHORT).show();
+        completeRegistration();
     }
 
     public void onRequestPermissionsResult(int requestCode,
                                            String[] permissions, int[] grantResults){
 		Log.e(TAG, SUB_TAG+"Request Permission");
-		checkLocationPermission();
-        switch(requestCode){
-            case 0: //Location permission to add current location
-                Log.e(TAG, SUB_TAG+"Location permission to add");
-                obtainLocation();
-//                if(grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//                    Log.e(TAG, SUB_TAG+"Permission Granted");
-//                    obtainLocation();
-//                }
-                break;
-        }
+		obtainLocation();
     }
 
     /**
@@ -259,11 +281,7 @@ public class RegisterActivity extends AppCompatActivity implements LocationListe
         }
     }
 
-    /**
-     * Called by REGISTER button
-     * @param view The register button itself
-     */
-    public void completeRegistration(View view){
+    public void completeRegistration(){
 		Log.e(TAG, SUB_TAG+"Complete Registration");
 		String passwordStr = password.getText().toString();
 		String confirmPasswordStr = confirmPassword.getText().toString();
@@ -301,28 +319,6 @@ public class RegisterActivity extends AppCompatActivity implements LocationListe
         String[] keys = EncryptionController.getInstance().generateKeys("RSA", 514);
         String publicKey = keys[1], privateKey = keys[0];
 
-//        try {
-//            KeyPairGenerator keygen = KeyPairGenerator.getInstance("RSA");
-//            keygen.initialize(512);
-//            byte [] publicKeyArr = keygen.genKeyPair().getPublic().getEncoded();
-//            byte [] privateKeyArr = keygen.genKeyPair().getPrivate().getEncoded();
-//
-//            StringBuffer publicString = new StringBuffer();
-//            StringBuffer privateString = new StringBuffer();
-//            for (int i = 0; i < publicKeyArr.length; ++i) {
-//                publicString.append(Integer.toHexString(0x0100 + (publicKeyArr[i] & 0x00FF)).substring(1));
-//            }
-//            for (int i = 0; i < privateKeyArr.length; ++i) {
-//                privateString.append(Integer.toHexString(0x0100 + (privateKeyArr[i] & 0x00FF)).substring(1));
-//            }
-//            System.out.println("\nEncryption Keys generated!\n"+publicString+"\n"+privateString);
-//            publicKey = Base64.encodeToString(publicKeyArr, Base64.DEFAULT);//publicString.toString();
-//            privateKey = Base64.encodeToString(privateKeyArr, Base64.DEFAULT);//privateString.toString();
-//        }catch (NoSuchAlgorithmException e){
-//            System.err.println("RSA alg not found!");
-//            Toast.makeText(this,"Something went wrong with encryption key generation", Toast.LENGTH_LONG);
-//        }
-
         final LoggedInUser myUser = new LoggedInUser(uniqueId, name, location.getLatitude(), location.getLongitude(), hashedPassword, publicKey, privateKey);
         localDatabaseReference.registerUser(myUser);
         FirebaseController.pushNewUserToFIrebase(myUser, this);
@@ -330,8 +326,10 @@ public class RegisterActivity extends AppCompatActivity implements LocationListe
         Log.e(TAG, SUB_TAG+"User: " + myUser);
         System.out.println(myUser);
 
+
 //        localDatabaseReference.wipeAllPreviousUserData();
         MainActivity.context.onActivityResult(0, MainActivity.REGISTER_ACTIVITY_DONE_CODE, null);
+        if(mPopupWindow!=null)  mPopupWindow.dismiss();
     }
 
 

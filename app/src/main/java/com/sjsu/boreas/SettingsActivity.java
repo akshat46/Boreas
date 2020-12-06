@@ -109,8 +109,6 @@ public class SettingsActivity extends AppCompatActivity implements EventListener
         userNameLabel.setText(mCurrentUser.name);
         userToken.setText(mCurrentUser.getUid());
 
-        givenDeviceName.clearFocus();
-
         clipboard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
