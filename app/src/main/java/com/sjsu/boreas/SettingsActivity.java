@@ -7,7 +7,6 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -19,14 +18,11 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
-import com.sjsu.boreas.Database.Contacts.User;
 import com.sjsu.boreas.Database.LocalDatabaseReference;
 import com.sjsu.boreas.Database.LoggedInUser.LoggedInUser;
 import com.sjsu.boreas.Database.Messages.ChatMessage;
@@ -37,7 +33,6 @@ import com.sjsu.boreas.PhoneBluetoothRadio.BlueTerm;
 
 import java.util.HashMap;
 import java.util.Locale;
-import javax.security.auth.Subject;
 
 public class SettingsActivity extends AppCompatActivity implements EventListener {
     private static String TAG = "BOREAS";
@@ -55,6 +50,10 @@ public class SettingsActivity extends AppCompatActivity implements EventListener
     private Context mActivity;
     private LoggedInUser mCurrentUser;
     private ImageButton clipboard;
+    private ImageButton publicKey;
+    private ImageButton privatekey;
+    private TextView publicKeytext;
+    private TextView privatekeytext;
 
     public static boolean radio_is_connected = true;
 
@@ -95,13 +94,22 @@ public class SettingsActivity extends AppCompatActivity implements EventListener
         location = findViewById(R.id.location);
         logoutButton = findViewById(R.id.logout_button);
         userToken = findViewById(R.id.user_token);
+        clipboard = findViewById(R.id.copy_userid);
+        publicKey = findViewById(R.id.copy_public_key);
+        privatekey = findViewById(R.id.copy_private_key);
+        publicKeytext = findViewById(R.id.public_key);
+        privatekeytext = findViewById(R.id.private_key);
 //        connectPi = findViewById(R.id.connect_pi);
         connectDevice = findViewById(R.id.connect_given_device);
         givenDeviceName = findViewById(R.id.given_device_name);
         getMessagesFromRadio = findViewById(R.id.get_mssgs_from_radio);
+
+        publicKeytext.setText(mCurrentUser.publicKey);
+        privatekeytext.setText(mCurrentUser.privateKey);
         userNameLabel.setText(mCurrentUser.name);
         userToken.setText(mCurrentUser.getUid());
-        clipboard = findViewById(R.id.copy_to_clipboard);
+
+        givenDeviceName.clearFocus();
 
         clipboard.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -111,6 +119,26 @@ public class SettingsActivity extends AppCompatActivity implements EventListener
                 clipboard.setPrimaryClip(clip);
             }
         });
+
+        publicKey.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData clip = ClipData.newPlainText("boreas user token", mCurrentUser.publicKey);
+                clipboard.setPrimaryClip(clip);
+            }
+        });
+
+        privatekey.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData clip = ClipData.newPlainText("boreas user token", mCurrentUser.privateKey);
+                clipboard.setPrimaryClip(clip);
+            }
+        });
+
+
 
         logoutButton.setOnClickListener(new View.OnClickListener() {
             @Override

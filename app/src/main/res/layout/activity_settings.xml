@@ -89,7 +89,7 @@
             android:layout_toEndOf="@id/token_icon" />
 
         <ImageButton
-            android:id="@+id/copy_to_clipboard"
+            android:id="@+id/copy_userid"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:tint="@color/colorButtonText"
@@ -153,6 +153,98 @@
             android:textColor="@color/colorButtonText"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"  />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/space_standard">
+        <ImageView
+            android:id="@+id/private_key_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/space_small"
+            android:layout_marginTop="2dp"
+            android:tint="@color/colorSubtext"
+            android:src="@drawable/ic_key"/>
+        <TextView
+            android:id="@+id/label_private_key"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/private_key_icon"
+            android:text="Private Key"
+            android:textColor="@color/colorSubtext"
+            android:textSize="@dimen/text_standard" />
+
+        <ImageButton
+            android:id="@+id/copy_private_key"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:tint="@color/colorButtonText"
+            android:src="@drawable/ic_copy"
+            android:background="@null"
+            android:layout_marginTop="2dp"
+            android:layout_toLeftOf="@id/private_key"
+            android:layout_marginRight="@dimen/space_small"
+            android:layout_marginEnd="@dimen/space_small" />
+        <TextView
+            android:id="@+id/private_key"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:maxWidth="120dp"
+            android:singleLine="true"
+            android:ellipsize="end"
+            android:textSize="@dimen/text_standard"
+            android:textColor="@color/colorButtonText"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/space_standard">
+        <ImageView
+            android:id="@+id/public_key_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/space_small"
+            android:layout_marginTop="2dp"
+            android:tint="@color/colorSubtext"
+            android:src="@drawable/ic_key"/>
+        <TextView
+            android:id="@+id/label_public_key"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/public_key_icon"
+            android:text="Public Key"
+            android:textColor="@color/colorSubtext"
+            android:textSize="@dimen/text_standard" />
+
+        <ImageButton
+            android:id="@+id/copy_public_key"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:tint="@color/colorButtonText"
+            android:src="@drawable/ic_copy"
+            android:background="@null"
+            android:layout_marginTop="2dp"
+            android:layout_toLeftOf="@id/public_key"
+            android:layout_marginRight="@dimen/space_small"
+            android:layout_marginEnd="@dimen/space_small" />
+        <TextView
+            android:id="@+id/public_key"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:maxWidth="120dp"
+            android:singleLine="true"
+            android:ellipsize="end"
+            android:textSize="@dimen/text_standard"
+            android:textColor="@color/colorButtonText"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" />
     </RelativeLayout>
 
     <View
@@ -252,10 +344,10 @@
         android:elevation="0dp"
         android:drawableLeft="@drawable/ic_refresh_16"
         android:textColor="@color/colorButtonText"
-        android:textFontWeight="bold"
         android:textAllCaps="false"
         android:paddingLeft="@dimen/space_small"
         android:text="Refresh" />
+
 
     <View
         android:layout_width="match_parent"
@@ -274,7 +366,6 @@
         android:elevation="0dp"
         android:drawableLeft="@drawable/ic_logout"
         android:textColor="@color/colorButtonText"
-        android:textFontWeight="bold"
         android:textAllCaps="false"
         android:layout_margin="@dimen/space_standard"
         android:paddingLeft="@dimen/space_small"
