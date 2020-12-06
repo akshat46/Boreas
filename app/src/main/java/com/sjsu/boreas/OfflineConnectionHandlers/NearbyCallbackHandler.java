@@ -78,7 +78,8 @@ public class NearbyCallbackHandler implements EventEmitter {
                 //Don't connect if this device shares neighbors with the recipient to prevent graph from becoming too dense
                 if(result instanceof AdjacencyListMessage){
                     AdjacencyListMessage message = (AdjacencyListMessage) result;
-                    localDatabaseReference.addNearByUser((NearByUsers) message.sender);
+                    NearByUsers sender = new NearByUsers(message.sender.uid, message.sender.name, message.sender.latitude, message.sender.longitude, message.sender.publicKey);
+                    localDatabaseReference.addNearByUser(sender);
                     //Check if received adjacency list overlaps current adjacency list
                     boolean isMeshMember = false;
                     HashSet<String> adjacencySet = createIdSet(connectionHandler.meshMembers);
@@ -100,8 +101,12 @@ public class NearbyCallbackHandler implements EventEmitter {
                     Log.e(TAG, SUB_TAG+"Textmssg: " + result);
                     TextMessage message = (TextMessage) result;
                     connectionHandler.receiveMessage(message);
-                    localDatabaseReference.addNearByUser((NearByUsers) message.sender);
-                    localDatabaseReference.addNearByUser((NearByUsers) message.forwarder);
+
+                    NearByUsers sender = new NearByUsers(message.sender.uid, message.sender.name, message.sender.latitude, message.sender.longitude, message.sender.publicKey);
+                    NearByUsers forwarder = new NearByUsers(message.forwarder.uid, message.forwarder.name, message.forwarder.latitude, message.forwarder.longitude, message.forwarder.publicKey);
+
+                    localDatabaseReference.addNearByUser(sender);
+                    localDatabaseReference.addNearByUser(forwarder);
 
                     localDatabaseReference.saveChatMessageLocally(
                             new ChatMessage(MainActivity.currentUser, message.sender, "",
@@ -124,27 +129,16 @@ public class NearbyCallbackHandler implements EventEmitter {
                     if(message.recipient.getUid().equals(MainActivity.currentUser.getUid())){
                         Log.e(TAG, SUB_TAG + "\t\tThe message is for me!!!!");
                         //Message has arrived at destination!
-                        if(message.isEncrypted){
-                            Log.e(TAG, SUB_TAG+"\t\tencrypted");
-                            Cipher cipher = Cipher.getInstance("RSA");
-                            Log.e(TAG, SUB_TAG+"\t\tdecrypting 1");
-                            PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(Base64.decode(MainActivity.currentUser.privateKey, Base64.DEFAULT));
-                            Log.e(TAG, SUB_TAG+"\t\tdecrypting 2");
-                            KeyFactory kf = KeyFactory.getInstance("RSA");
-
-                            Log.e(TAG, SUB_TAG+"\t\tdecrypting 3");
-                            cipher.init(Cipher.DECRYPT_MODE, kf.generatePrivate(spec));
-                            Log.e(TAG, SUB_TAG+"\t\tdecrypting 4");
-                            message.mssgText = new String(cipher.doFinal(Base64.decode(message.mssgText, Base64.DEFAULT)), "UTF-8");
-                            Log.e(TAG, SUB_TAG+"Decrypted text: " + message.mssgText);
-                        }
                         localDatabaseReference.saveChatMessageLocally(message);
                         return;
                     }
                     //If not, send to everyone except who sent it to you
                     //Decide who to forward it to based on distances to recipient
                     int forwardCount = 0;
-                    List<NearByUsers> nearestUsers = localDatabaseReference.getClosestNearByUsers((NearByUsers) message.recipient);
+
+                    NearByUsers recepient = new NearByUsers(message.recipient.uid, message.recipient.name, message.recipient.latitude, message.recipient.longitude, message.recipient.publicKey);
+                    List<NearByUsers> nearestUsers = localDatabaseReference.getClosestNearByUsers(recepient);
+
                     message.addForwarder(MainActivity.currentUser.getUid());
                     for(User user : nearestUsers){
                         //Complete message forwarding once messages have been sent to at most 3 users
@@ -168,8 +162,12 @@ public class NearbyCallbackHandler implements EventEmitter {
                 //Long distance chat message
                 else if(result instanceof LongDistanceMessage){
                     LongDistanceMessage message = (LongDistanceMessage) result;
-                    localDatabaseReference.addNearByUser((NearByUsers) message.recipient);
-                    localDatabaseReference.addNearByUser((NearByUsers) message.sender);
+
+                    NearByUsers sender = new NearByUsers(message.sender.uid, message.sender.name, message.sender.latitude, message.sender.longitude, message.sender.publicKey);
+                    NearByUsers recepient = new NearByUsers(message.recipient.uid, message.recipient.name, message.recipient.latitude, message.recipient.longitude, message.recipient.publicKey);
+                    localDatabaseReference.addNearByUser(recepient);
+                    localDatabaseReference.addNearByUser(sender);
+
                     NearByUsers forwarder = (NearByUsers) message.forwarder;
                     message.forwarder = MainActivity.currentUser;
                     //Decide who to forward it to based on distances to recipient
