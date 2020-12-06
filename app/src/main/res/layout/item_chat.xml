@@ -73,9 +73,6 @@
         android:textColor="@color/colorSubtext"
         android:textSize="@dimen/text_sub" />
 
-    <!--
-
-    -->
     <View
         android:id="@+id/newMessage"
         android:layout_width="@dimen/space_standard"
@@ -87,5 +84,37 @@
         android:background="@drawable/bg_newmessage"
         android:gravity="center"
         android:visibility="invisible"/>
+
+    <LinearLayout
+        android:id="@+id/isPotential"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:paddingLeft="@dimen/space_small"
+        android:paddingRight="@dimen/space_small"
+        android:layout_marginTop="@dimen/space_small"
+        android:visibility="gone"
+        android:layout_below="@id/newMessage"
+        android:background="@drawable/bg_button_send_radio">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Request"
+            android:fontFamily="@font/bold"
+            android:textColor="@color/colorText"
+            android:textSize="@dimen/text_sub" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/added"
+        android:layout_width="@dimen/space_large"
+        android:layout_height="@dimen/space_large"
+        android:layout_below="@id/lastMessageTime"
+        android:layout_alignParentRight="true"
+        android:tint="@color/colorAccent"
+        android:visibility="gone"
+        android:layout_marginRight="@dimen/space_small"
+        android:layout_marginTop="@dimen/space_small"
+        android:src="@drawable/ic_check"/>
 
 </RelativeLayout>

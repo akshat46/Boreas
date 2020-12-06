@@ -33,9 +33,13 @@
         <activity
             android:name=".LoginActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen" />
-        <activity android:name=".SettingsActivity" />
-        <activity android:name=".AddContacts.AddContactActivity" />
+        <activity android:name=".LocationActivity"/>
+        <activity android:name=".EditProfileActivity" />
+        <activity android:name=".SettingsActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".GroupChatActivity" />
+        <activity android:name=".AddContacts.AddContactActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".LandingPage"
             android:theme="@style/AppTheme.NoActionBar" />

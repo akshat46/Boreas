@@ -8,11 +8,13 @@ import android.net.Uri;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.sjsu.boreas.Database.PotentialContacts.PotentialContacts;
 import com.sjsu.boreas.Misc.ContextHelper;
 import com.sjsu.boreas.R;
 import com.sjsu.boreas.Database.Contacts.User;
@@ -29,6 +31,7 @@ public class UserViewHolder extends RecyclerView.ViewHolder {
     private String uid;
     private View newMessageIndicator;
     private ImageView userAvatar;
+    private LinearLayout potential;
     public Context context = ContextHelper.get().getApplicationContext();
 
     public UserViewHolder(@NonNull View itemView) {
@@ -39,6 +42,7 @@ public class UserViewHolder extends RecyclerView.ViewHolder {
         this.newMessageIndicator = itemView.findViewById(R.id.newMessage);
         this.lastMessage = itemView.findViewById(R.id.lastMessage);
         this.userAvatar = itemView.findViewById(R.id.userAvatar);
+        this.potential = itemView.findViewById(R.id.isPotential);
     }
 
     public void bindToListItemView(User user) {
@@ -65,17 +69,20 @@ public class UserViewHolder extends RecyclerView.ViewHolder {
             this.lastMessage.setTypeface(this.lastMessage.getTypeface(), Typeface.NORMAL);
             this.lastMessage.setTextColor(context.getResources().getColor(R.color.colorSubtext));
         }
+
+        if(user instanceof PotentialContacts){
+            Log.e(TAG, SUB_TAG+"This is the item for the non contact user, changin color");
+            this.potential.setVisibility(View.VISIBLE);
+        }
+        else{
+            this.potential.setVisibility(View.GONE);
+        }
     }
 
     // what is this for?
     public void hideThisView(){
         rootView.setVisibility(View.GONE);
         rootView.setLayoutParams(new RecyclerView.LayoutParams(0, 0));
-    }
-
-    public void setUnKnownUserUi(){
-        Log.e(TAG, SUB_TAG+"Setting the color for an unknown user");
-        this.name.setTextColor(Color.MAGENTA);
     }
 
     public String getUID(){
