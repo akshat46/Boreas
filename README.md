@@ -31,3 +31,5 @@ Following are the major functionalities of boreas:
 ## Architecture Overview
 
 <p align="center"><img src="https://github.com/akshat46/boreas/blob/master/assets/architecture.svg"></p>
+
+### [See More in Wiki](https://github.com/akshat46/Boreas/wiki)
