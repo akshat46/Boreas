@@ -2,6 +2,7 @@
 <p align="center"><img src="https://github.com/akshat46/boreas/blob/master/assets/logo.png" width="500"></p>
 
 <p align="center">A decentralized encrypted offline chatting application.</p>
+<p align="center"><a href="https://drive.google.com/file/d/1aw7bde9RUFunkEi6PhOpkJVmyOFW7VZ9/view?usp=sharing"><strong>Demo Video</strong></a></p>
 
 ## Table of Content
 
