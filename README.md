@@ -1,4 +1,5 @@
-# Boreas
+
+<p align="center"><img src="https://github.com/akshat46/boreas/blob/master/assets/logo.png" width="500"></p>
 
 A decentralized encrypted offline chatting application.
 
@@ -29,4 +30,4 @@ Following are the major functionalities of boreas:
 
 ## Architecture Overview
 
-
+<p align="center"><img src="https://github.com/akshat46/boreas/blob/master/assets/architecture.svg" width="500"></p>
